@@ -24,7 +24,12 @@ export function Footer() {
             <Link href="#" className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white">
               <Twitter className="w-4 h-4" />
             </Link>
-            <Link href="#" className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white">
+            <Link 
+              href="https://www.instagram.com/digitaleventcd?igsh=aXVmcHVkZDYyazNx" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white"
+            >
               <Instagram className="w-4 h-4" />
             </Link>
             <Link href="#" className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white">
