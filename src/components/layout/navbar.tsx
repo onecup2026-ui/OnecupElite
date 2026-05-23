@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -27,6 +26,7 @@ const navItems = [
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const auth = useAuth();
   const { user, loading } = useUser();
   const { toast } = useToast();
@@ -38,10 +38,9 @@ export function Navbar() {
   }, [pathname]);
 
   const handleLogin = async () => {
-    if (!auth) {
-      toast({ variant: "destructive", title: "Erreur", description: "Le service d'authentification n'est pas prêt." });
-      return;
-    }
+    if (!auth || isAuthenticating) return;
+
+    setIsAuthenticating(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     
@@ -49,26 +48,24 @@ export function Navbar() {
       await signInWithPopup(auth, provider);
       toast({ title: "Connexion réussie", description: "Bienvenue sur OneCup Elite !" });
     } catch (error: any) {
-      console.error("Auth error:", error);
-      if (error.code === 'auth/popup-blocked') {
+      // Ignorer l'erreur si l'utilisateur a simplement fermé la fenêtre ou si une autre requête est en cours
+      if (error.code === 'auth/cancelled-popup-request' || error.code === 'auth/popup-closed-by-user') {
+        console.log("Connexion annulée par l'utilisateur.");
+      } else if (error.code === 'auth/popup-blocked') {
         toast({ 
           variant: "destructive", 
           title: "Fenêtre bloquée", 
-          description: "Votre navigateur a bloqué la fenêtre de connexion. Veuillez autoriser les popups pour ce site." 
-        });
-      } else if (error.code === 'auth/unauthorized-domain') {
-        toast({ 
-          variant: "destructive", 
-          title: "Domaine non autorisé", 
-          description: "Ce domaine n'est pas autorisé dans votre console Firebase. Veuillez ajouter l'URL actuelle aux domaines autorisés." 
+          description: "Veuillez autoriser les popups pour vous connecter." 
         });
       } else {
         toast({ 
           variant: "destructive", 
-          title: "Échec de connexion", 
-          description: error.message || "Impossible de s'authentifier." 
+          title: "Erreur de connexion", 
+          description: error.message || "Vérifiez votre clé API dans la console Firebase." 
         });
       }
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
@@ -117,8 +114,8 @@ export function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+          {(loading || isAuthenticating) ? (
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
           ) : user ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
@@ -160,8 +157,8 @@ export function Navbar() {
               </DropdownMenu>
             </div>
           ) : (
-            <Button onClick={handleLogin} className="bg-primary hover:bg-primary/90 glow-blue h-9 text-xs font-bold uppercase px-6">
-              Connexion
+            <Button onClick={handleLogin} disabled={isAuthenticating} className="bg-primary hover:bg-primary/90 glow-blue h-9 text-xs font-bold uppercase px-6">
+              {isAuthenticating ? "Chargement..." : "Connexion"}
             </Button>
           )}
         </div>
@@ -182,9 +179,7 @@ export function Navbar() {
         isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0 pointer-events-none"
       )}>
         <div className="flex flex-col p-4 gap-2 bg-card/50 max-h-[calc(100vh-4rem)] overflow-y-auto">
-          {loading ? (
-            <div className="flex justify-center p-4"><Loader2 className="w-6 h-6 animate-spin" /></div>
-          ) : user ? (
+          {user ? (
             <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl mb-2">
                <Avatar className="h-10 w-10 border border-primary/20">
                 <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
@@ -229,8 +224,8 @@ export function Navbar() {
               </Button>
             </>
           ) : (
-            <Button onClick={handleLogin} className="w-full bg-primary h-12 text-sm font-bold uppercase glow-blue mt-2">
-              Se connecter maintenant
+            <Button onClick={handleLogin} disabled={isAuthenticating} className="w-full bg-primary h-12 text-sm font-bold uppercase glow-blue mt-2">
+              {isAuthenticating ? "Patientez..." : "Se connecter maintenant"}
             </Button>
           )}
         </div>
