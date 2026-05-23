@@ -36,6 +36,7 @@ export default function Home() {
   const heroTitle = siteConfig?.heroTitle || "LA VICTOIRE EST UNE PASSION.";
   const heroSubtitle = siteConfig?.heroSubtitle || "Dominez le terrain avec l'écosystème OneCup. La plateforme numéro 1 pour les compétitions de football et d'e-sport de haut niveau.";
 
+  // On filtre ou on prend les deux premiers tournois, en s'assurant qu'ils mentionnent la capacité
   const featuredTournaments = tournaments?.slice(0, 2) || [];
 
   // Configuration de la cagnotte
@@ -43,10 +44,10 @@ export default function Home() {
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
   const tiers = [
-    { rank: "Gagnant Or", amount: Math.floor(currentPool * (1000000 / 1350000)), percentage: 74 },
-    { rank: "Finaliste", amount: Math.floor(currentPool * (200000 / 1350000)), percentage: 15 },
-    { rank: "Meilleur Joueur", amount: Math.floor(currentPool * (100000 / 1350000)), percentage: 7 },
-    { rank: "Meilleur Gardien", amount: Math.floor(currentPool * (50000 / 1350000)), percentage: 4 },
+    { rank: "Gagnant Or", amount: 1000000, percentage: 74 },
+    { rank: "Finaliste", amount: 200000, percentage: 15 },
+    { rank: "Meilleur Joueur", amount: 100000, percentage: 7 },
+    { rank: "Meilleur Gardien", amount: 50000, percentage: 4 },
   ];
 
   return (
@@ -128,7 +129,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-12 gap-6">
             <div className="space-y-2 text-center md:text-left">
               <h2 className="text-3xl md:text-4xl font-headline font-bold uppercase tracking-tight">TOURNOIS À LA UNE</h2>
-              <p className="text-muted-foreground">Inscrivez votre équipe pour entrer dans l'histoire.</p>
+              <p className="text-muted-foreground">Découvrez nos compétitions majeures accueillant plus de 16 équipes.</p>
             </div>
             <Link href="/tournaments">
               <Button variant="ghost" className="gap-2 group uppercase font-bold text-sm">
@@ -150,6 +151,7 @@ export default function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
                   <Badge className="absolute top-4 left-4 bg-primary/90 text-white font-bold">{tournament.sport}</Badge>
+                  <Badge variant="secondary" className="absolute top-4 right-4 bg-background/90 font-bold">16+ ÉQUIPES</Badge>
                 </div>
                 <div className="p-6 md:p-8 space-y-4">
                   <h3 className="text-xl md:text-2xl font-headline font-bold group-hover:text-primary transition-colors uppercase">{tournament.name}</h3>
@@ -161,6 +163,10 @@ export default function Home() {
                     <div className="flex items-center gap-2">
                       <Trophy className="w-4 h-4 text-primary" />
                       {tournament.prize}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-primary" />
+                      {tournament.teamsMax || "16"} Équipes Max
                     </div>
                   </div>
                   <div className="pt-4 flex flex-col sm:flex-row gap-4">
