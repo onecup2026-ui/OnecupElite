@@ -76,7 +76,7 @@ export default function CalendarPage() {
       url: window.location.href,
     };
 
-    if (navigator.share && navigator.canShare(shareData)) {
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
       navigator.share(shareData).catch((err) => console.log('Erreur de partage:', err));
     } else {
       navigator.clipboard.writeText(window.location.href);
@@ -98,7 +98,7 @@ export default function CalendarPage() {
           Des coulisses du tirage au sort jusqu'à l'extase de la finale.
         </p>
         <div className="flex justify-center gap-4">
-           <Button variant="ghost" onClick={handleShare} className="gap-2 uppercase font-bold text-xs"><Share2 className="w-4 h-4" /> Partager l'agenda</Button>
+           <Button variant="ghost" onClick={handleShare} className="gap-2 uppercase font-bold text-xs hover:bg-primary/10 transition-colors"><Share2 className="w-4 h-4" /> Partager l'agenda</Button>
         </div>
       </header>
 
@@ -177,9 +177,11 @@ export default function CalendarPage() {
             Les billets pour la finale et l'After Cup sont disponibles en quantité limitée.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-6">
-            <Button size="lg" className="h-16 px-12 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold text-sm rounded-2xl gap-3 transition-transform hover:scale-105">
-              Réserver mes places <ArrowRight className="w-5 h-5" />
-            </Button>
+            <Link href="/tickets">
+              <Button size="lg" className="h-16 px-12 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold text-sm rounded-2xl gap-3 transition-transform hover:scale-105">
+                Réserver mes places <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
