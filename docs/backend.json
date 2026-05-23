@@ -2,7 +2,7 @@
   "entities": {
     "User": {
       "title": "User",
-      "description": "Profil utilisateur étendu selon le schéma @table",
+      "description": "Profil utilisateur étendu",
       "type": "object",
       "properties": {
         "username": { "type": "string" },
@@ -17,7 +17,7 @@
     },
     "Tournament": {
       "title": "Tournament",
-      "description": "Détails d'un tournoi élite",
+      "description": "Détails d'un tournoi",
       "type": "object",
       "properties": {
         "name": { "type": "string" },
@@ -25,11 +25,11 @@
         "startDate": { "type": "string", "format": "date-time" },
         "endDate": { "type": "string", "format": "date-time" },
         "registrationDeadline": { "type": "string", "format": "date-time" },
-        "organizerId": { "type": "string", "description": "UID de l'utilisateur organisateur" },
+        "organizerId": { "type": "string" },
         "description": { "type": "string" },
         "rules": { "type": "string" },
-        "entryFee": { "type": "number", "default": 0 },
-        "maxTeams": { "type": "number", "default": 16 }
+        "entryFee": { "type": "number" },
+        "maxTeams": { "type": "number" }
       },
       "required": ["name", "gameType", "startDate", "endDate", "registrationDeadline", "organizerId"]
     },
@@ -39,7 +39,7 @@
       "type": "object",
       "properties": {
         "name": { "type": "string" },
-        "captainId": { "type": "string", "description": "UID du capitaine" },
+        "captainId": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
         "tagline": { "type": "string" },
         "logoUrl": { "type": "string" }
@@ -53,7 +53,7 @@
       "properties": {
         "tournamentId": { "type": "string" },
         "teamId": { "type": "string" },
-        "userId": { "type": "string", "description": "Pour les inscriptions individuelles" },
+        "userId": { "type": "string" },
         "registrationDate": { "type": "string", "format": "date-time" },
         "status": { "type": "string" }
       },
@@ -61,7 +61,7 @@
     },
     "Match": {
       "title": "Match",
-      "description": "Détails d'une rencontre",
+      "description": "Rencontre entre deux équipes",
       "type": "object",
       "properties": {
         "tournamentId": { "type": "string" },
@@ -70,8 +70,8 @@
         "matchNumber": { "type": "number" },
         "scheduledTime": { "type": "string", "format": "date-time" },
         "status": { "type": "string" },
-        "scoreTeam1": { "type": "number", "default": 0 },
-        "scoreTeam2": { "type": "number", "default": 0 },
+        "scoreTeam1": { "type": "number" },
+        "scoreTeam2": { "type": "number" },
         "winnerId": { "type": "string" },
         "resultDetails": { "type": "string" }
       },
@@ -79,7 +79,7 @@
     },
     "TeamMembership": {
       "title": "Team Membership",
-      "description": "Lien entre un utilisateur et une équipe",
+      "description": "Lien utilisateur-équipe",
       "type": "object",
       "properties": {
         "userId": { "type": "string" },
