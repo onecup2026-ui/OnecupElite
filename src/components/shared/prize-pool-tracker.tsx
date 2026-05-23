@@ -4,6 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, Award, DollarSign } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PrizePoolProps {
   currentPool: number;
@@ -15,38 +16,38 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
   const progressValue = (currentPool / targetPool) * 100;
 
   return (
-    <Card className="bg-card/50 backdrop-blur-sm border-primary/20 overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-lg font-headline font-bold">LIVE PRIZE POOL</CardTitle>
+    <Card className="bg-card/40 backdrop-blur-md border-primary/20 overflow-hidden shadow-2xl">
+      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 px-6">
+        <CardTitle className="text-base md:text-lg font-headline font-bold uppercase tracking-tight">Cagnotte Live</CardTitle>
         <TrendingUp className="w-5 h-5 text-primary animate-pulse" />
       </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-4xl font-headline font-bold text-primary">
-            ${currentPool.toLocaleString()}
+      <CardContent className="px-6 pb-6">
+        <div className="flex items-baseline gap-2 mb-3">
+          <span className="text-3xl md:text-4xl font-headline font-bold text-primary tabular-nums">
+            {currentPool.toLocaleString()}€
           </span>
-          <span className="text-muted-foreground text-sm">/ target ${targetPool.toLocaleString()}</span>
+          <span className="text-muted-foreground text-[10px] md:text-xs font-bold uppercase tracking-wider">/ Obj. {targetPool.toLocaleString()}€</span>
         </div>
         
-        <Progress value={progressValue} className="h-2 mb-8 bg-muted" />
+        <Progress value={progressValue} className="h-2 mb-6 bg-muted border border-white/5" />
 
-        <div className="space-y-4">
-          <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Distribution Tiers</h4>
+        <div className="space-y-3">
+          <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 border-b border-white/5 pb-1">Répartition des Gains</h4>
           {tiers.map((tier, idx) => (
-            <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-white/5">
+            <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-background/50 border border-white/5 hover:bg-muted/30 transition-colors">
               <div className="flex items-center gap-3">
                 <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs",
-                  idx === 0 ? "bg-primary text-white" : "bg-muted text-muted-foreground"
+                  "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[10px]",
+                  idx === 0 ? "bg-primary text-white shadow-sm" : "bg-muted text-muted-foreground"
                 )}>
                   {idx + 1}
                 </div>
                 <div>
-                  <p className="font-bold text-sm">{tier.rank}</p>
-                  <p className="text-xs text-muted-foreground">{tier.percentage}% of pool</p>
+                  <p className="font-bold text-xs uppercase tracking-tight">{tier.rank}</p>
+                  <p className="text-[10px] text-muted-foreground">{tier.percentage}% de la pool</p>
                 </div>
               </div>
-              <p className="font-headline font-bold text-primary">${tier.amount.toLocaleString()}</p>
+              <p className="font-headline font-bold text-primary text-sm">{tier.amount.toLocaleString()}€</p>
             </div>
           ))}
         </div>
@@ -54,5 +55,3 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
     </Card>
   );
 }
-
-import { cn } from "@/lib/utils";

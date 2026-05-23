@@ -136,214 +136,283 @@ export default function AdminDashboard() {
       });
   };
 
+  const handleDelete = (coll: string, id: string) => {
+    if (!db) return;
+    deleteDoc(doc(db, coll, id))
+      .then(() => toast({ title: "Élément supprimé" }));
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6">
         <div>
-          <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">ADMINISTRATION</h1>
-          <p className="text-muted-foreground">Pilotez votre plateforme OneCup Elite en temps réel.</p>
+          <h1 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter">ADMINISTRATION</h1>
+          <p className="text-muted-foreground text-sm">Pilotez votre plateforme OneCup Elite en temps réel.</p>
         </div>
         <Badge variant="outline" className="border-primary text-primary px-4 py-1">MODE ÉDITION ACTIF</Badge>
       </div>
 
       <Tabs defaultValue="site" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-card border h-12">
-          <TabsTrigger value="site"><Settings className="w-4 h-4 mr-2" /> Paramètres</TabsTrigger>
-          <TabsTrigger value="tournaments"><Trophy className="w-4 h-4 mr-2" /> Tournois</TabsTrigger>
-          <TabsTrigger value="articles"><Newspaper className="w-4 h-4 mr-2" /> News</TabsTrigger>
-          <TabsTrigger value="tickets"><TicketIcon className="w-4 h-4 mr-2" /> Billets</TabsTrigger>
+        <TabsList className="flex flex-wrap h-auto p-1 bg-muted rounded-xl mb-6 gap-1 overflow-x-auto no-scrollbar">
+          <TabsTrigger value="site" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Settings className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Paramètres</span>
+          </TabsTrigger>
+          <TabsTrigger value="tournaments" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Trophy className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Tournois</span>
+          </TabsTrigger>
+          <TabsTrigger value="articles" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Newspaper className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">News</span>
+          </TabsTrigger>
+          <TabsTrigger value="tickets" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TicketIcon className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Billets</span>
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="site" className="mt-6">
-          <Card className="bg-card/50 border-white/5">
-            <CardHeader><CardTitle>Configuration Accueil & Cagnotte</CardTitle></CardHeader>
+        <TabsContent value="site" className="space-y-6">
+          <Card className="shadow-lg border-white/5">
+            <CardHeader><CardTitle className="text-xl">Configuration Accueil & Cagnotte</CardTitle></CardHeader>
             <CardContent>
               <form onSubmit={handleUpdateConfig} className="space-y-6">
-                <div className="grid gap-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold uppercase text-muted-foreground">Titre Héro</p>
-                      <Input name="heroTitle" placeholder="Titre principal" defaultValue={siteConfig?.heroTitle} />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold uppercase text-muted-foreground">Cagnotte Actuelle (€)</p>
-                      <Input name="currentPrizePool" type="number" defaultValue={siteConfig?.currentPrizePool || 0} />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold uppercase text-muted-foreground">Sous-titre</p>
-                      <Textarea name="heroSubtitle" placeholder="Description courte" defaultValue={siteConfig?.heroSubtitle} className="h-20" />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold uppercase text-muted-foreground">Objectif Cagnotte (€)</p>
-                      <Input name="targetPrizePool" type="number" defaultValue={siteConfig?.targetPrizePool || 100000} />
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold uppercase text-muted-foreground">Titre Héro</p>
+                    <Input name="heroTitle" placeholder="Titre principal" defaultValue={siteConfig?.heroTitle} />
                   </div>
-                  
-                  <div className="space-y-4">
-                    <p className="text-xs font-bold uppercase text-muted-foreground">Image de fond (Héro)</p>
-                    <div className="flex gap-4 items-start">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex gap-2">
-                          <label className="flex-1">
-                            <Button type="button" variant="secondary" className="w-full gap-2 cursor-pointer" asChild>
-                              <span><Upload className="w-4 h-4" /> Téléverser</span>
-                            </Button>
-                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setSiteImages({heroImageUrl: url}))} />
-                          </label>
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            className="flex-1 gap-2"
-                            disabled={isGenerating === 'site'}
-                            onClick={() => handleAiGeneration("Un stade de football moderne épique", "cinématique", (url) => setSiteImages({heroImageUrl: url}), 'site')}
-                          >
-                            {isGenerating === 'site' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} IA
-                          </Button>
-                        </div>
-                      </div>
-                      {(siteImages.heroImageUrl || siteConfig?.heroImageUrl) && (
-                        <div className="w-32 aspect-video rounded border overflow-hidden bg-muted">
-                          <img src={siteImages.heroImageUrl || siteConfig?.heroImageUrl} className="w-full h-full object-cover" />
-                        </div>
-                      )}
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold uppercase text-muted-foreground">Cagnotte Actuelle (€)</p>
+                    <Input name="currentPrizePool" type="number" defaultValue={siteConfig?.currentPrizePool || 0} />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold uppercase text-muted-foreground">Sous-titre</p>
+                    <Textarea name="heroSubtitle" placeholder="Description courte" defaultValue={siteConfig?.heroSubtitle} className="min-h-[100px]" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold uppercase text-muted-foreground">Objectif Cagnotte (€)</p>
+                    <Input name="targetPrizePool" type="number" defaultValue={siteConfig?.targetPrizePool || 100000} />
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <p className="text-xs font-bold uppercase text-muted-foreground">Image de fond (Héro)</p>
+                  <div className="flex flex-col sm:flex-row gap-4 items-center">
+                    <div className="w-full sm:w-48 aspect-video rounded-xl border overflow-hidden bg-muted shadow-inner shrink-0">
+                      <img src={siteImages.heroImageUrl || siteConfig?.heroImageUrl} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 w-full grid grid-cols-2 gap-2">
+                      <label className="flex-1">
+                        <Button type="button" variant="outline" className="w-full gap-2 cursor-pointer h-12" asChild>
+                          <span><Upload className="w-4 h-4" /> Téléverser</span>
+                        </Button>
+                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setSiteImages({heroImageUrl: url}))} />
+                      </label>
+                      <Button 
+                        type="button" 
+                        variant="secondary" 
+                        className="w-full h-12 gap-2"
+                        disabled={isGenerating === 'site'}
+                        onClick={() => handleAiGeneration("Un stade de football moderne épique", "cinématique", (url) => setSiteImages({heroImageUrl: url}), 'site')}
+                      >
+                        {isGenerating === 'site' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} IA
+                      </Button>
                     </div>
                   </div>
                 </div>
-                <Button type="submit" disabled={isSaving} className="w-full bg-primary glow-blue">Mettre à jour la plateforme</Button>
+                <Button type="submit" disabled={isSaving} className="w-full bg-primary glow-blue h-12 font-bold uppercase">Enregistrer les modifications</Button>
               </form>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="tournaments" className="mt-6 space-y-6">
-          <Card className="bg-card/50 border-white/5">
-            <CardHeader><CardTitle>Nouveau Tournoi</CardTitle></CardHeader>
+        <TabsContent value="tournaments" className="space-y-6">
+          <Card className="shadow-lg">
+            <CardHeader><CardTitle className="text-xl">Ajouter un Tournoi</CardTitle></CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
-                <Input placeholder="Sport" value={newTournament.sport} onChange={e => setNewTournament({...newTournament, sport: e.target.value})} />
-                <Input placeholder="Date (ex: 2026-07-15)" value={newTournament.date} onChange={e => setNewTournament({...newTournament, date: e.target.value})} />
-                <Input placeholder="Lieu" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
-                <Input placeholder="Cashprize" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Nom</p>
+                  <Input placeholder="ex: Champions League Elite" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Sport</p>
+                  <Input placeholder="Football, Valorant..." value={newTournament.sport} onChange={e => setNewTournament({...newTournament, sport: e.target.value})} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Date</p>
+                  <Input placeholder="YYYY-MM-DD" value={newTournament.date} onChange={e => setNewTournament({...newTournament, date: e.target.value})} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Lieu</p>
+                  <Input placeholder="Ville ou en ligne" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Cashprize</p>
+                  <Input placeholder="ex: 5000 €" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
+                </div>
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-bold uppercase text-muted-foreground">Illustration du tournoi</p>
-                <div className="flex gap-4">
-                  <div className="flex-1 space-y-2">
-                    <div className="flex gap-2">
-                      <label className="flex-1">
-                        <Button variant="secondary" className="w-full gap-2" asChild>
-                          <span><Upload className="w-4 h-4" /> Téléverser</span>
-                        </Button>
-                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setNewTournament({...newTournament, imageUrl: url}))} />
-                      </label>
-                      <Button 
-                        variant="outline" 
-                        className="flex-1 gap-2"
-                        disabled={isGenerating === 'tourn'}
-                        onClick={() => handleAiGeneration(newTournament.name, `Sport: ${newTournament.sport}`, (url) => setNewTournament({...newTournament, imageUrl: url}), 'tourn')}
-                      >
-                        {isGenerating === 'tourn' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Générer IA
-                      </Button>
-                    </div>
+                <p className="text-xs font-bold uppercase text-muted-foreground">Illustration</p>
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <div className="w-full sm:w-32 aspect-square rounded-xl border overflow-hidden bg-muted shrink-0">
+                    <img src={newTournament.imageUrl} className="w-full h-full object-cover" />
                   </div>
-                  {newTournament.imageUrl && (
-                    <div className="w-24 h-24 rounded border overflow-hidden">
-                      <img src={newTournament.imageUrl} className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4 border-t pt-4">
-                <p className="text-xs font-bold uppercase">Programme & Phases</p>
-                <div className="flex gap-2">
-                  <Input placeholder="Phase (ex: Finale)" value={scheduleItem.label} onChange={e => setScheduleItem({...scheduleItem, label: e.target.value})} />
-                  <Input placeholder="Date" value={scheduleItem.date} onChange={e => setScheduleItem({...scheduleItem, date: e.target.value})} />
-                  <Button variant="secondary" onClick={addScheduleItem}>Ajouter</Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {newTournament.schedule.map((s, i) => (
-                    <Badge key={i} className="gap-2">{s.label} ({s.date}) <Trash2 className="w-3 h-3 cursor-pointer" onClick={() => {
-                      const updated = [...newTournament.schedule];
-                      updated.splice(i, 1);
-                      setNewTournament({...newTournament, schedule: updated});
-                    }} /></Badge>
-                  ))}
-                </div>
-              </div>
-              <Button onClick={handleAddTournament} className="w-full bg-primary glow-blue h-12 font-bold uppercase">Publier le tournoi</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="articles" className="mt-6 space-y-6">
-          <Card className="bg-card/50 border-white/5">
-            <CardHeader><CardTitle>Nouvelle Actualité</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <Input placeholder="Titre de l'article" value={newArticle.title} onChange={e => setNewArticle({...newArticle, title: e.target.value})} />
-              <Textarea placeholder="Résumé accrocheur" value={newArticle.excerpt} onChange={e => setNewArticle({...newArticle, excerpt: e.target.value})} />
-              <div className="flex gap-4">
-                <div className="flex-1 space-y-2">
-                  <div className="flex gap-2">
+                  <div className="w-full grid grid-cols-2 gap-2">
                     <label className="flex-1">
-                      <Button variant="secondary" className="w-full gap-2" asChild>
+                      <Button variant="outline" className="w-full gap-2 h-12" asChild>
                         <span><Upload className="w-4 h-4" /> Téléverser</span>
                       </Button>
-                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setNewArticle({...newArticle, imageUrl: url}))} />
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setNewTournament({...newTournament, imageUrl: url}))} />
                     </label>
                     <Button 
-                      variant="outline" 
-                      className="flex-1 gap-2"
-                      disabled={isGenerating === 'art'}
-                      onClick={() => handleAiGeneration(newArticle.title, "Magazine sport", (url) => setNewArticle({...newArticle, imageUrl: url}), 'art')}
+                      variant="secondary" 
+                      className="w-full h-12 gap-2"
+                      disabled={isGenerating === 'tourn'}
+                      onClick={() => handleAiGeneration(newTournament.name, `Sport: ${newTournament.sport}`, (url) => setNewTournament({...newTournament, imageUrl: url}), 'tourn')}
                     >
-                      {isGenerating === 'art' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Illustration IA
+                      {isGenerating === 'tourn' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} IA
                     </Button>
                   </div>
                 </div>
-                {newArticle.imageUrl && (
-                  <div className="w-24 h-24 rounded border overflow-hidden">
-                    <img src={newArticle.imageUrl} className="w-full h-full object-cover" />
-                  </div>
-                )}
               </div>
-              <Button onClick={handleAddArticle} className="w-full bg-primary glow-blue uppercase font-bold">Publier sur le flux</Button>
+
+              <div className="space-y-4 border-t pt-6">
+                <p className="text-xs font-bold uppercase tracking-wider">Programme du tournoi</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <Input className="sm:col-span-1" placeholder="Phase (ex: Finale)" value={scheduleItem.label} onChange={e => setScheduleItem({...scheduleItem, label: e.target.value})} />
+                  <Input className="sm:col-span-1" placeholder="Date" value={scheduleItem.date} onChange={e => setScheduleItem({...scheduleItem, date: e.target.value})} />
+                  <Button variant="secondary" onClick={addScheduleItem} className="w-full">Ajouter</Button>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {newTournament.schedule.map((s, i) => (
+                    <Badge key={i} className="gap-2 py-1.5 px-3 bg-primary/10 text-primary border-primary/20">
+                      {s.label} ({s.date}) 
+                      <Trash2 className="w-3 h-3 cursor-pointer hover:text-destructive transition-colors" onClick={() => {
+                        const updated = [...newTournament.schedule];
+                        updated.splice(i, 1);
+                        setNewTournament({...newTournament, schedule: updated});
+                      }} />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <Button onClick={handleAddTournament} className="w-full bg-primary glow-blue h-14 font-bold uppercase text-lg">Publier le tournoi</Button>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="tickets" className="mt-6 space-y-6">
-          <Card className="bg-card/50 border-white/5">
-            <CardHeader><CardTitle>Nouvelle Billetterie</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="Nom du pass" value={newTicket.title} onChange={e => setNewTicket({...newTicket, title: e.target.value})} />
-                <Input placeholder="Tournoi lié" value={newTicket.tournamentName} onChange={e => setNewTicket({...newTicket, tournamentName: e.target.value})} />
-                <Input placeholder="Prix" value={newTicket.price} onChange={e => setNewTicket({...newTicket, price: e.target.value})} />
-                <Input placeholder="Lien Billetterie Externe" value={newTicket.externalUrl} onChange={e => setNewTicket({...newTicket, externalUrl: e.target.value})} />
-                <div className="col-span-2 space-y-2">
-                  <p className="text-xs font-bold uppercase text-muted-foreground">Image du billet</p>
-                  <div className="flex gap-4">
-                    <label className="flex-1">
-                      <Button variant="secondary" className="w-full gap-2" asChild>
-                        <span><Upload className="w-4 h-4" /> Téléverser l'image</span>
-                      </Button>
-                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setNewTicket({...newTicket, imageUrl: url}))} />
-                    </label>
-                    {newTicket.imageUrl && (
-                      <div className="w-32 h-20 rounded border overflow-hidden">
-                        <img src={newTicket.imageUrl} className="w-full h-full object-cover" />
-                      </div>
-                    )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {tournaments?.map((t: any) => (
+              <Card key={t.id} className="relative group overflow-hidden border-white/5 shadow hover:shadow-lg transition-all">
+                <div className="aspect-video relative overflow-hidden">
+                  <img src={t.imageUrl} className="w-full h-full object-cover" />
+                  <div className="absolute top-2 right-2">
+                    <Button size="icon" variant="destructive" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleDelete('tournaments', t.id)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
-                <Textarea placeholder="Détails de l'offre" className="col-span-2" value={newTicket.description} onChange={e => setNewTicket({...newTicket, description: e.target.value})} />
+                <CardContent className="p-4">
+                  <h4 className="font-bold uppercase truncate">{t.name}</h4>
+                  <p className="text-xs text-muted-foreground">{t.sport} • {t.date}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="articles" className="space-y-6">
+          <Card>
+            <CardHeader><CardTitle className="text-xl">Nouvelle Actualité</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <Input placeholder="Titre de l'article" value={newArticle.title} onChange={e => setNewArticle({...newArticle, title: e.target.value})} />
+              <Textarea placeholder="Résumé accrocheur..." value={newArticle.excerpt} onChange={e => setNewArticle({...newArticle, excerpt: e.target.value})} className="min-h-[80px]" />
+              <div className="flex flex-col sm:flex-row gap-4 items-center pt-2">
+                <div className="w-full sm:w-24 aspect-square rounded-xl border overflow-hidden shrink-0">
+                  <img src={newArticle.imageUrl} className="w-full h-full object-cover" />
+                </div>
+                <div className="w-full grid grid-cols-2 gap-2">
+                  <label className="flex-1">
+                    <Button variant="outline" className="w-full h-12" asChild>
+                      <span><Upload className="w-4 h-4 mr-2" /> Téléverser</span>
+                    </Button>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setNewArticle({...newArticle, imageUrl: url}))} />
+                  </label>
+                  <Button 
+                    variant="secondary" 
+                    className="w-full h-12"
+                    disabled={isGenerating === 'art'}
+                    onClick={() => handleAiGeneration(newArticle.title, "Magazine sport", (url) => setNewArticle({...newArticle, imageUrl: url}), 'art')}
+                  >
+                    {isGenerating === 'art' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />} IA
+                  </Button>
+                </div>
               </div>
-              <Button onClick={handleAddTicket} className="w-full bg-primary glow-blue uppercase font-bold">Ajouter à la billetterie</Button>
+              <Button onClick={handleAddArticle} className="w-full bg-primary glow-blue h-12 uppercase font-bold">Publier sur le flux</Button>
             </CardContent>
           </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {articles?.map((a: any) => (
+              <Card key={a.id} className="flex gap-4 p-4 items-center group relative overflow-hidden border-white/5">
+                <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+                  <img src={a.imageUrl} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold uppercase truncate">{a.title}</h4>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{a.excerpt}</p>
+                </div>
+                <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleDelete('articles', a.id)}>
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="tickets" className="space-y-6">
+          <Card>
+            <CardHeader><CardTitle className="text-xl">Nouvelle Billetterie</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input placeholder="Nom du pass" value={newTicket.title} onChange={e => setNewTicket({...newTicket, title: e.target.value})} />
+                <Input placeholder="Tournoi lié" value={newTicket.tournamentName} onChange={e => setNewTicket({...newTicket, tournamentName: e.target.value})} />
+                <Input placeholder="Prix (ex: 15€)" value={newTicket.price} onChange={e => setNewTicket({...newTicket, price: e.target.value})} />
+                <Input placeholder="Lien Billetterie Externe" value={newTicket.externalUrl} onChange={e => setNewTicket({...newTicket, externalUrl: e.target.value})} />
+              </div>
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Image du billet</p>
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <div className="w-full sm:w-32 aspect-video rounded-xl border overflow-hidden shrink-0">
+                    <img src={newTicket.imageUrl} className="w-full h-full object-cover" />
+                  </div>
+                  <label className="w-full">
+                    <Button variant="outline" className="w-full h-12" asChild>
+                      <span><Upload className="w-4 h-4 mr-2" /> Téléverser l'image</span>
+                    </Button>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setNewTicket({...newTicket, imageUrl: url}))} />
+                  </label>
+                </div>
+              </div>
+              <Textarea placeholder="Détails de l'offre et avantages..." value={newTicket.description} onChange={e => setNewTicket({...newTicket, description: e.target.value})} />
+              <Button onClick={handleAddTicket} className="w-full bg-primary glow-blue h-12 uppercase font-bold">Ajouter à la billetterie</Button>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tickets?.map((t: any) => (
+              <Card key={t.id} className="p-4 group relative overflow-hidden border-white/5">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-bold uppercase">{t.title}</h4>
+                    <p className="text-xs text-primary font-bold">{t.price}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">{t.tournamentName}</p>
+                  </div>
+                  <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleDelete('tickets', t.id)}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

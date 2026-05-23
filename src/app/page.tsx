@@ -39,68 +39,74 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[90vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden py-12 md:py-20">
         <div className="absolute inset-0 z-0">
           <Image
             src={heroImage}
             alt="OneCup Hero"
             fill
-            className="object-cover opacity-60 scale-100"
+            className="object-cover opacity-40 md:opacity-60"
             priority
             unoptimized={heroImage.startsWith('data:')}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl space-y-6">
-            <Badge variant="outline" className="border-primary text-primary px-4 py-1 rounded-full animate-pulse bg-primary/10 font-bold uppercase tracking-widest">
-              ÉDITION ÉLITE 2026
-            </Badge>
-            <h1 className="text-6xl md:text-8xl font-headline font-bold leading-none tracking-tighter uppercase whitespace-pre-line">
-              {heroTitle}
-            </h1>
-            <p className="text-xl text-muted-foreground font-body max-w-xl">
-              {heroSubtitle}
-            </p>
-            <div className="flex flex-wrap gap-4 pt-4">
-              <Link href="/tournaments">
-                <Button size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90 glow-blue text-lg gap-2 uppercase font-bold">
-                  Participer Maintenant <ArrowRight className="w-5 h-5" />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 items-center">
+            <div className="max-w-2xl space-y-6 text-center xl:text-left">
+              <div className="flex justify-center xl:justify-start">
+                <Badge variant="outline" className="border-primary text-primary px-4 py-1 rounded-full animate-pulse bg-primary/10 font-bold uppercase tracking-widest text-[10px] md:text-xs">
+                  ÉDITION ÉLITE 2026
+                </Badge>
+              </div>
+              <h1 className="text-4xl md:text-6xl lg:text-8xl font-headline font-bold leading-none tracking-tighter uppercase whitespace-pre-line text-foreground drop-shadow-sm">
+                {heroTitle}
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground font-body max-w-xl mx-auto xl:mx-0">
+                {heroSubtitle}
+              </p>
+              <div className="flex flex-wrap justify-center xl:justify-start gap-4 pt-4">
+                <Link href="/tournaments" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full h-14 px-8 bg-primary hover:bg-primary/90 glow-blue text-lg gap-2 uppercase font-bold">
+                    Participer <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg gap-2 backdrop-blur-sm uppercase font-bold">
+                  <Play className="w-5 h-5 fill-current" /> Teaser
                 </Button>
-              </Link>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg gap-2 backdrop-blur-sm uppercase font-bold">
-                <Play className="w-5 h-5 fill-current" /> Voir le Teaser
-              </Button>
+              </div>
+            </div>
+
+            {/* Dynamic Prize Pool Widget - Responsive position */}
+            <div className="flex justify-center xl:justify-end animate-float">
+              <div className="w-full max-w-[400px]">
+                <PrizePoolTracker
+                  currentPool={siteConfig?.currentPrizePool || 52400}
+                  targetPool={siteConfig?.targetPrizePool || 150000}
+                  tiers={[
+                    { rank: "Champion Or", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.5), percentage: 50 },
+                    { rank: "Finaliste Argent", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.3), percentage: 30 },
+                    { rank: "3ème Place Bronze", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.2), percentage: 20 },
+                  ]}
+                />
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Dynamic Prize Pool Widget */}
-        <div className="hidden xl:block absolute right-24 top-1/2 -translate-y-1/2 w-[400px] animate-float">
-          <PrizePoolTracker
-            currentPool={siteConfig?.currentPrizePool || 52400}
-            targetPool={siteConfig?.targetPrizePool || 150000}
-            tiers={[
-              { rank: "Champion Or", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.5), percentage: 50 },
-              { rank: "Finaliste Argent", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.3), percentage: 30 },
-              { rank: "3ème Place Bronze", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.2), percentage: 20 },
-            ]}
-          />
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 border-y bg-card/30 backdrop-blur-sm">
+      <section className="py-12 md:py-20 border-y bg-card/30 backdrop-blur-sm">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {stats.map((stat, idx) => (
-              <div key={idx} className="flex flex-col items-center text-center space-y-2 p-6 rounded-2xl border border-white/5 hover:bg-muted/30 transition-colors group">
+              <div key={idx} className="flex flex-col items-center text-center space-y-2 p-4 md:p-6 rounded-2xl border border-white/5 hover:bg-muted/30 transition-all group shadow-sm hover:shadow-md">
                 <div className="p-3 bg-primary/10 rounded-xl mb-2 group-hover:bg-primary/20 transition-colors">
-                  <stat.icon className="w-6 h-6 text-primary" />
+                  <stat.icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                 </div>
-                <p className="text-3xl font-headline font-bold">{stat.value}</p>
-                <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">{stat.label}</p>
+                <p className="text-2xl md:text-3xl font-headline font-bold">{stat.value}</p>
+                <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -108,15 +114,15 @@ export default function Home() {
       </section>
 
       {/* Featured Tournaments */}
-      <section className="py-24">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <div className="flex items-end justify-between mb-12">
-            <div className="space-y-2">
-              <h2 className="text-4xl font-headline font-bold uppercase">TOURNOIS À LA UNE</h2>
+          <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-12 gap-6">
+            <div className="space-y-2 text-center md:text-left">
+              <h2 className="text-3xl md:text-4xl font-headline font-bold uppercase tracking-tight">TOURNOIS À LA UNE</h2>
               <p className="text-muted-foreground">Inscrivez votre équipe pour entrer dans l'histoire.</p>
             </div>
             <Link href="/tournaments">
-              <Button variant="ghost" className="gap-2 group uppercase font-bold">
+              <Button variant="ghost" className="gap-2 group uppercase font-bold text-sm">
                 Tous les événements <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -124,7 +130,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {featuredTournaments.map((tournament: any) => (
-              <div key={tournament.id} className="group relative overflow-hidden rounded-3xl bg-card border hover:border-primary/50 transition-all duration-500">
+              <div key={tournament.id} className="group relative overflow-hidden rounded-3xl bg-card border hover:border-primary/50 transition-all duration-500 shadow-lg">
                 <div className="aspect-[16/9] relative overflow-hidden">
                   <Image
                     src={tournament.imageUrl || "https://picsum.photos/seed/onecup-foot/800/600"}
@@ -133,25 +139,25 @@ export default function Home() {
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     unoptimized={tournament.imageUrl?.startsWith('data:')}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />
-                  <Badge className="absolute top-6 left-6 bg-primary/90 text-white font-bold">{tournament.sport}</Badge>
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
+                  <Badge className="absolute top-4 left-4 bg-primary/90 text-white font-bold">{tournament.sport}</Badge>
                 </div>
-                <div className="p-8 space-y-4">
-                  <h3 className="text-2xl font-headline font-bold group-hover:text-primary transition-colors uppercase">{tournament.name}</h3>
-                  <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                <div className="p-6 md:p-8 space-y-4">
+                  <h3 className="text-xl md:text-2xl font-headline font-bold group-hover:text-primary transition-colors uppercase">{tournament.name}</h3>
+                  <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-primary" />
                       {tournament.date}
                     </div>
                     <div className="flex items-center gap-2">
                       <Trophy className="w-4 h-4 text-primary" />
-                      {tournament.prize} de Cashprize
+                      {tournament.prize}
                     </div>
                   </div>
-                  <div className="pt-4 flex gap-4">
-                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold">S'inscrire</Button>
+                  <div className="pt-4 flex flex-col sm:flex-row gap-4">
+                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold h-12">S'inscrire</Button>
                     <Link href={`/tournaments/${tournament.id}`} className="flex-1">
-                      <Button variant="outline" className="w-full uppercase font-bold">Détails</Button>
+                      <Button variant="outline" className="w-full uppercase font-bold h-12">Détails</Button>
                     </Link>
                   </div>
                 </div>
