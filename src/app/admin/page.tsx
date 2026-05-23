@@ -6,6 +6,7 @@ import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Image 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -274,7 +275,6 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="matches">
-          {/* Matches content remains similar, just adding animations */}
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
              <Card className="border-primary/20">
               <CardHeader><CardTitle className="text-lg uppercase">Programmation</CardTitle></CardHeader>
@@ -293,7 +293,6 @@ export default function AdminDashboard() {
                 <Button onClick={handleAddMatch} className="w-full uppercase font-bold bg-primary glow-blue">Valider le Match</Button>
               </CardContent>
             </Card>
-            {/* List of matches */}
             <div className="grid grid-cols-1 gap-4">
               {matches?.map((m: any) => (
                 <Card key={m.id} className="p-4 flex items-center justify-between border-white/5 bg-card/50 hover:border-primary/20 transition-all">
