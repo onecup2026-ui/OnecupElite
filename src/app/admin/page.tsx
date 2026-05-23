@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Image as ImageIcon, Save } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Image as ImageIcon, Save, Video } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,11 @@ export default function AdminDashboard() {
     entryFee: 0, 
     maxTeams: 16, 
     description: "", 
-    imageUrl: ""
+    imageUrl: "",
+    locationStade: "",
+    locationCommune: "",
+    locationAdresse: "",
+    teaserVideoUrl: ""
   });
 
   const [newMatch, setNewMatch] = useState({
@@ -110,7 +114,7 @@ export default function AdminDashboard() {
       .then(() => {
         toast({ title: "Tournoi publié !" });
         setNewTournament({
-          name: "", gameType: "Football", startDate: "", endDate: "", registrationDeadline: "", entryFee: 0, maxTeams: 16, description: "", imageUrl: ""
+          name: "", gameType: "Football", startDate: "", endDate: "", registrationDeadline: "", entryFee: 0, maxTeams: 16, description: "", imageUrl: "", locationStade: "", locationCommune: "", locationAdresse: "", teaserVideoUrl: ""
         });
       })
       .catch(e => errorEmitter.emit('permission-error', new FirestorePermissionError({ 
@@ -171,24 +175,62 @@ export default function AdminDashboard() {
             <CardHeader><CardTitle className="text-lg uppercase">Nouveau Tournoi</CardTitle></CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
-                <Select onValueChange={(val) => setNewTournament({...newTournament, gameType: val})}>
-                  <SelectTrigger><SelectValue placeholder="Sport/Jeu" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Football">Football</SelectItem>
-                    <SelectItem value="Esport">Esport</SelectItem>
-                    <SelectItem value="Basketball">Basketball</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input placeholder="Date de début" type="date" value={newTournament.startDate} onChange={e => setNewTournament({...newTournament, startDate: e.target.value})} />
-                <Input placeholder="Date de fin" type="date" value={newTournament.endDate} onChange={e => setNewTournament({...newTournament, endDate: e.target.value})} />
-                <Input placeholder="Clôture Inscriptions" type="date" value={newTournament.registrationDeadline} onChange={e => setNewTournament({...newTournament, registrationDeadline: e.target.value})} />
-                <Input type="number" placeholder="Équipes Max" value={newTournament.maxTeams} onChange={e => setNewTournament({...newTournament, maxTeams: Number(e.target.value)})} />
-                <Input type="number" placeholder="Frais d'entrée (FC)" value={newTournament.entryFee} onChange={e => setNewTournament({...newTournament, entryFee: Number(e.target.value)})} />
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Nom du tournoi</Label>
+                  <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Sport / Jeu</Label>
+                  <Select onValueChange={(val) => setNewTournament({...newTournament, gameType: val})}>
+                    <SelectTrigger><SelectValue placeholder="Sport/Jeu" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Football">Football</SelectItem>
+                      <SelectItem value="Esport">Esport</SelectItem>
+                      <SelectItem value="Basketball">Basketball</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Date de début</Label>
+                  <Input placeholder="Date de début" type="date" value={newTournament.startDate} onChange={e => setNewTournament({...newTournament, startDate: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Date de fin</Label>
+                  <Input placeholder="Date de fin" type="date" value={newTournament.endDate} onChange={e => setNewTournament({...newTournament, endDate: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Clôture Inscriptions</Label>
+                  <Input placeholder="Clôture Inscriptions" type="date" value={newTournament.registrationDeadline} onChange={e => setNewTournament({...newTournament, registrationDeadline: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Équipes Max</Label>
+                  <Input type="number" placeholder="Équipes Max" value={newTournament.maxTeams} onChange={e => setNewTournament({...newTournament, maxTeams: Number(e.target.value)})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Frais d'entrée (FC)</Label>
+                  <Input type="number" placeholder="Frais d'entrée (FC)" value={newTournament.entryFee} onChange={e => setNewTournament({...newTournament, entryFee: Number(e.target.value)})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Stade / Terrain</Label>
+                  <Input placeholder="Ex: Stade des Martyrs" value={newTournament.locationStade} onChange={e => setNewTournament({...newTournament, locationStade: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Commune</Label>
+                  <Input placeholder="Ex: Lingwala" value={newTournament.locationCommune} onChange={e => setNewTournament({...newTournament, locationCommune: e.target.value})} />
+                </div>
+                <div className="space-y-2 lg:col-span-2">
+                  <Label className="text-[10px] uppercase font-bold">Adresse précise</Label>
+                  <Input placeholder="Adresse complète" value={newTournament.locationAdresse} onChange={e => setNewTournament({...newTournament, locationAdresse: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">URL Vidéo Teaser (YouTube)</Label>
+                  <Input placeholder="https://youtube.com/watch?v=..." value={newTournament.teaserVideoUrl} onChange={e => setNewTournament({...newTournament, teaserVideoUrl: e.target.value})} />
+                </div>
               </div>
               
               <div className="space-y-4">
                 <div className="flex flex-col gap-4">
+                  <Label className="text-[10px] uppercase font-bold">Image de l'affiche</Label>
                   <div className="flex items-center gap-4">
                     <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'tournament')} />
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2 border-primary/30 text-primary hover:bg-primary/5 uppercase font-bold text-xs">
@@ -202,9 +244,12 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
-                <Textarea placeholder="Règlement complet..." value={newTournament.description} onChange={e => setNewTournament({...newTournament, description: e.target.value})} className="min-h-[120px]" />
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Présentation / Règlement</Label>
+                  <Textarea placeholder="Présentez le tournoi et son règlement..." value={newTournament.description} onChange={e => setNewTournament({...newTournament, description: e.target.value})} className="min-h-[120px]" />
+                </div>
               </div>
-              <Button onClick={handleAddTournament} className="w-full h-12 uppercase font-bold bg-primary glow-blue">Publier le Tournoi</Button>
+              <Button onClick={handleAddTournament} className="w-full h-12 uppercase font-bold bg-primary glow-blue">Publier le Tournoi ONECUP</Button>
             </CardContent>
           </Card>
 
@@ -215,7 +260,7 @@ export default function AdminDashboard() {
                   {t.imageUrl ? <img src={t.imageUrl} className="w-12 h-12 rounded-lg object-cover" alt="" /> : <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center"><Trophy className="w-6 h-6 text-primary" /></div>}
                   <div>
                     <p className="font-bold text-xs uppercase">{t.name}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">{t.gameType} • {t.maxTeams} équipes</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">{t.gameType} • {t.locationCommune || "N/A"}</p>
                   </div>
                 </div>
                 <Button size="icon" variant="ghost" onClick={() => handleDelete('tournaments', t.id)} className="hover:text-destructive"><Trash2 className="w-4 h-4" /></Button>

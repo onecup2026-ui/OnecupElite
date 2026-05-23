@@ -32,7 +32,11 @@
         "entryFee": { "type": "number" },
         "maxTeams": { "type": "number" },
         "teamsRegistered": { "type": "number" },
-        "imageUrl": { "type": "string" }
+        "imageUrl": { "type": "string" },
+        "locationStade": { "type": "string" },
+        "locationCommune": { "type": "string" },
+        "locationAdresse": { "type": "string" },
+        "teaserVideoUrl": { "type": "string" }
       },
       "required": ["name", "gameType", "startDate", "organizerId"]
     },

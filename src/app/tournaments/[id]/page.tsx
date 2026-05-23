@@ -7,7 +7,7 @@ import {
   Trophy, Calendar, MapPin, Users, ArrowLeft, Loader2, 
   CheckCircle2, AlertCircle, LogIn, DollarSign, Clock, 
   Phone, ShieldCheck, Info, Star, Share2, FileText, 
-  Car, Utensils, Zap, HelpCircle, Medal, MessageCircle
+  Car, Utensils, Zap, HelpCircle, Medal, MessageCircle, Play
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +24,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function TournamentDetailPage() {
   const { id } = useParams();
@@ -36,7 +37,6 @@ export default function TournamentDetailPage() {
   const tournamentRef = useMemo(() => (db && id ? doc(db, "tournaments", id as string) : null), [db, id]);
   const { data: tournament, loading: loadingTournament } = useDoc(tournamentRef);
 
-  // Inscriptions existantes pour ce tournoi
   const registrationsQuery = useMemo(() => {
     if (!db || !id) return null;
     return query(collection(db, "registrations"), where("tournamentId", "==", id));
@@ -44,6 +44,7 @@ export default function TournamentDetailPage() {
   const { data: registrations } = useCollection(registrationsQuery);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [formData, setFormData] = useState({
     teamName: "",
     captainName: "",
@@ -116,6 +117,13 @@ export default function TournamentDetailPage() {
     }
   };
 
+  const getYoutubeEmbedUrl = (url: string) => {
+    if (!url) return "";
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : "";
+  };
+
   if (loadingTournament) return <div className="py-24 text-center"><Loader2 className="w-12 h-12 animate-spin mx-auto text-primary" /></div>;
   if (!tournament) return <div className="py-24 text-center">Tournoi introuvable</div>;
 
@@ -163,7 +171,7 @@ export default function TournamentDetailPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-muted-foreground uppercase">Dates</p>
-                <p className="font-bold">15 - 24 Juillet 2026</p>
+                <p className="font-bold">{tournament.startDate ? new Date(tournament.startDate).toLocaleDateString() : "Juillet 2026"}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -172,7 +180,7 @@ export default function TournamentDetailPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-muted-foreground uppercase">Lieu</p>
-                <p className="font-bold">OneCup Arena, Kinshasa</p>
+                <p className="font-bold">{tournament.locationStade || "OneCup Arena"}, {tournament.locationCommune || "Kinshasa"}</p>
               </div>
             </div>
           </div>
@@ -192,7 +200,7 @@ export default function TournamentDetailPage() {
               </h2>
               <div className="text-muted-foreground text-lg leading-relaxed bg-card p-8 rounded-[2rem] border border-white/5 shadow-sm">
                 <p className="italic mb-4 text-foreground font-medium">"ONE CUP est un tournoi interscolaire organisé pendant les vacances, réunissant différentes écoles autour du football, de la compétition et du divertissement."</p>
-                {tournament.description}
+                <div className="whitespace-pre-line">{tournament.description}</div>
               </div>
             </section>
 
@@ -229,8 +237,8 @@ export default function TournamentDetailPage() {
                     <span className="text-xs font-bold uppercase">Interscolaire</span>
                   </div>
                   <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-xs text-muted-foreground uppercase">Niveau</span>
-                    <span className="text-xs font-bold uppercase">Élèves uniquement</span>
+                    <span className="text-xs text-muted-foreground uppercase">Adresse précise</span>
+                    <span className="text-[10px] font-bold uppercase text-right">{tournament.locationAdresse || "OneCup Arena, RDC"}</span>
                   </div>
                   <div className="flex justify-between border-b border-white/5 pb-2">
                     <span className="text-xs text-muted-foreground uppercase">Durée Match</span>
@@ -325,12 +333,15 @@ export default function TournamentDetailPage() {
             {/* 8. Galerie média (Fallback) */}
             <section className="space-y-6">
                <h2 className="text-3xl font-headline font-bold uppercase">Teaser & Galerie</h2>
-               <div className="aspect-video bg-muted rounded-[2.5rem] flex items-center justify-center border border-white/10 group cursor-pointer overflow-hidden relative">
+               <div 
+                className="aspect-video bg-muted rounded-[2.5rem] flex items-center justify-center border border-white/10 group cursor-pointer overflow-hidden relative"
+                onClick={() => tournament.teaserVideoUrl && setIsVideoOpen(true)}
+               >
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-10" />
                   <Image src="https://picsum.photos/seed/teaser/1200/600" fill alt="Teaser" className="object-cover" />
                   <div className="relative z-20 flex flex-col items-center gap-4">
                     <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center glow-blue group-hover:scale-110 transition-transform">
-                      <Zap className="w-8 h-8 text-white fill-current" />
+                      <Play className="w-8 h-8 text-white fill-current" />
                     </div>
                     <p className="font-bold uppercase tracking-widest text-white text-sm">Visionner le Teaser Officiel</p>
                   </div>
@@ -434,6 +445,23 @@ export default function TournamentDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Video Dialog */}
+      <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
+        <DialogContent className="max-w-5xl p-0 overflow-hidden bg-black border-none ring-0">
+          <div className="aspect-video w-full">
+            {tournament.teaserVideoUrl && (
+              <iframe
+                src={getYoutubeEmbedUrl(tournament.teaserVideoUrl) + "?autoplay=1"}
+                title="Tournament Teaser"
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
