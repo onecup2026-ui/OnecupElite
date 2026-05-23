@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
@@ -22,9 +23,11 @@ export default function Home() {
 
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
+  const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
 
   const { data: siteConfig } = useDoc(configRef);
   const { data: tournaments } = useCollection(tournamentsRef);
+  const { data: sponsors } = useCollection(sponsorsRef);
 
   const heroImage = (siteConfig?.heroImageUrl && siteConfig.heroImageUrl.trim() !== "") 
     ? siteConfig.heroImageUrl 
@@ -35,14 +38,13 @@ export default function Home() {
 
   const featuredTournaments = tournaments?.slice(0, 2) || [];
 
-  // Configuration de la cagnotte basée sur les nouveaux paliers fournis
+  // Configuration de la cagnotte
   const currentPool = siteConfig?.currentPrizePool || 1350000;
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
-  // Calcul dynamique des paliers (on garde les proportions basées sur 1.35M si le pool change)
   const tiers = [
     { rank: "Gagnant Or", amount: Math.floor(currentPool * (1000000 / 1350000)), percentage: 74 },
-    { rank: "Finaliste", amount: Math.floor(currentPool * (2000000 / 13500000)), percentage: 15 }, // Correction proportionnelle ~14.8%
+    { rank: "Finaliste", amount: Math.floor(currentPool * (200000 / 1350000)), percentage: 15 },
     { rank: "Meilleur Joueur", amount: Math.floor(currentPool * (100000 / 1350000)), percentage: 7 },
     { rank: "Meilleur Gardien", amount: Math.floor(currentPool * (50000 / 1350000)), percentage: 4 },
   ];
@@ -79,7 +81,7 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap justify-center xl:justify-start gap-4 pt-4">
                 <Link href="/tournaments" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full h-14 px-8 bg-primary hover:bg-primary/90 glow-blue text-lg gap-2 uppercase font-bold">
+                  <Button size="lg" className="w-full h-14 px-8 bg-primary hover:bg-primary/90 glow-blue text-lg gap-2 uppercase font-bold text-white">
                     Participer <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
@@ -162,7 +164,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold h-12">S'inscrire</Button>
+                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold h-12 text-white">S'inscrire</Button>
                     <Link href={`/tournaments/${tournament.id}`} className="flex-1">
                       <Button variant="outline" className="w-full uppercase font-bold h-12">Détails</Button>
                     </Link>
@@ -170,6 +172,38 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Floating Sponsors Section */}
+      <section className="py-16 bg-muted/20 border-t overflow-hidden">
+        <div className="container mx-auto px-4 mb-8 text-center">
+          <Badge variant="ghost" className="text-primary font-bold uppercase tracking-[0.2em] text-[10px] mb-2">Ils nous font confiance</Badge>
+          <h2 className="text-2xl md:text-3xl font-headline font-bold uppercase">NOS PARTENAIRES ÉLITES</h2>
+        </div>
+        
+        <div className="relative flex overflow-x-hidden">
+          <div className="py-12 animate-marquee whitespace-nowrap flex items-center">
+            {sponsors && sponsors.length > 0 ? (
+              // On double les logos pour l'effet infini
+              [...sponsors, ...sponsors, ...sponsors].map((sponsor: any, idx) => (
+                <div key={`${sponsor.id}-${idx}`} className="mx-8 md:mx-16 animate-float" style={{ animationDelay: `${idx * 0.2}s` }}>
+                  <div className="h-12 md:h-20 w-auto flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-500 hover:scale-110">
+                    <img
+                      src={sponsor.logoUrl}
+                      alt={sponsor.name}
+                      className="max-h-full w-auto object-contain"
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              // Fallback placeholders si pas de sponsors
+              Array(8).fill(0).map((_, i) => (
+                <div key={i} className="mx-12 h-12 w-32 bg-muted/40 rounded-lg animate-pulse" />
+              ))
+            )}
           </div>
         </div>
       </section>

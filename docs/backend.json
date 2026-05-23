@@ -69,6 +69,17 @@
         "imageUrl": { "type": "string" }
       },
       "required": ["title", "externalUrl"]
+    },
+    "Sponsor": {
+      "title": "Sponsor",
+      "description": "Partenaire ou sponsor de la plateforme",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "websiteUrl": { "type": "string" }
+      },
+      "required": ["name", "logoUrl"]
     }
   },
   "auth": {
@@ -90,6 +101,10 @@
     "/tickets/{ticketId}": {
       "schema": "Ticket",
       "description": "Billets en vente"
+    },
+    "/sponsors/{sponsorId}": {
+      "schema": "Sponsor",
+      "description": "Liste des partenaires"
     }
   }
 }

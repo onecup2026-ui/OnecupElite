@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign } from "lucide-react";
+import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign, Heart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,11 +24,13 @@ export default function AdminDashboard() {
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
   const articlesRef = useMemo(() => (db ? collection(db, "articles") : null), [db]);
   const ticketsRef = useMemo(() => (db ? collection(db, "tickets") : null), [db]);
+  const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
 
   const { data: siteConfig } = useDoc(configRef);
   const { data: tournaments } = useCollection(tournamentsRef);
   const { data: articles } = useCollection(articlesRef);
   const { data: tickets } = useCollection(ticketsRef);
+  const { data: sponsors } = useCollection(sponsorsRef);
 
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
@@ -44,6 +47,10 @@ export default function AdminDashboard() {
 
   const [newTicket, setNewTicket] = useState({
     title: "", tournamentName: "", price: "", externalUrl: "", description: "", imageUrl: ""
+  });
+
+  const [newSponsor, setNewSponsor] = useState({
+    name: "", logoUrl: "", websiteUrl: ""
   });
 
   const [siteImages, setSiteImages] = useState({ heroImageUrl: "" });
@@ -158,6 +165,25 @@ export default function AdminDashboard() {
       });
   };
 
+  const handleAddSponsor = () => {
+    if (!db || !newSponsor.name || !newSponsor.logoUrl) {
+      toast({ variant: "destructive", title: "Erreur", description: "Le nom et le logo sont obligatoires." });
+      return;
+    }
+    addDoc(collection(db, "sponsors"), newSponsor)
+      .then(() => {
+        toast({ title: "Partenaire ajouté" });
+        setNewSponsor({ name: "", logoUrl: "", websiteUrl: "" });
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/sponsors',
+          operation: 'create',
+          requestResourceData: newSponsor
+        }));
+      });
+  };
+
   const handleDelete = (coll: string, id: string) => {
     if (!db) return;
     deleteDoc(doc(db, coll, id))
@@ -174,7 +200,7 @@ export default function AdminDashboard() {
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter">ADMINISTRATION</h1>
+          <h1 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter text-foreground">ADMINISTRATION</h1>
           <p className="text-muted-foreground text-sm">Pilotez votre plateforme OneCup Elite en temps réel.</p>
         </div>
         <Badge variant="outline" className="border-primary text-primary px-4 py-1">MODE ÉDITION ACTIF</Badge>
@@ -193,6 +219,9 @@ export default function AdminDashboard() {
           </TabsTrigger>
           <TabsTrigger value="tickets" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
             <TicketIcon className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Billets</span>
+          </TabsTrigger>
+          <TabsTrigger value="sponsors" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Heart className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Sponsors</span>
           </TabsTrigger>
         </TabsList>
 
@@ -245,7 +274,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-                <Button type="submit" disabled={isSaving} className="w-full bg-primary glow-blue h-12 font-bold uppercase">Enregistrer les modifications</Button>
+                <Button type="submit" disabled={isSaving} className="w-full bg-primary glow-blue h-12 font-bold uppercase text-white">Enregistrer les modifications</Button>
               </form>
             </CardContent>
           </Card>
@@ -328,7 +357,7 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
-              <Button onClick={handleAddTournament} className="w-full bg-primary glow-blue h-14 font-bold uppercase text-lg">Publier le tournoi</Button>
+              <Button onClick={handleAddTournament} className="w-full bg-primary glow-blue h-14 font-bold uppercase text-lg text-white">Publier le tournoi</Button>
             </CardContent>
           </Card>
 
@@ -379,7 +408,7 @@ export default function AdminDashboard() {
                   </Button>
                 </div>
               </div>
-              <Button onClick={handleAddArticle} className="w-full bg-primary glow-blue h-12 uppercase font-bold">Publier sur le flux</Button>
+              <Button onClick={handleAddArticle} className="w-full bg-primary glow-blue h-12 uppercase font-bold text-white">Publier sur le flux</Button>
             </CardContent>
           </Card>
           
@@ -426,7 +455,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <Textarea placeholder="Détails de l'offre et avantages..." value={newTicket.description} onChange={e => setNewTicket({...newTicket, description: e.target.value})} />
-              <Button onClick={handleAddTicket} className="w-full bg-primary glow-blue h-12 uppercase font-bold">Ajouter à la billetterie</Button>
+              <Button onClick={handleAddTicket} className="w-full bg-primary glow-blue h-12 uppercase font-bold text-white">Ajouter à la billetterie</Button>
             </CardContent>
           </Card>
 
@@ -443,6 +472,53 @@ export default function AdminDashboard() {
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="sponsors" className="space-y-6">
+          <Card>
+            <CardHeader><CardTitle className="text-xl">Gestion des Sponsors</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Nom du Sponsor</p>
+                  <Input placeholder="ex: Nike, Orange..." value={newSponsor.name} onChange={e => setNewSponsor({...newSponsor, name: e.target.value})} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Lien Site Web (Optionnel)</p>
+                  <Input placeholder="https://..." value={newSponsor.websiteUrl} onChange={e => setNewSponsor({...newSponsor, websiteUrl: e.target.value})} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Logo du Sponsor</p>
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <div className="w-full sm:w-32 h-16 rounded-xl border overflow-hidden bg-white flex items-center justify-center p-2 shrink-0">
+                    <img src={newSponsor.logoUrl || "https://placehold.co/200x100?text=LOGO"} className="max-w-full max-h-full object-contain" />
+                  </div>
+                  <label className="w-full">
+                    <Button variant="outline" className="w-full h-12" asChild>
+                      <span><Upload className="w-4 h-4 mr-2" /> Téléverser le Logo</span>
+                    </Button>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => setNewSponsor({...newSponsor, logoUrl: url}))} />
+                  </label>
+                </div>
+              </div>
+              <Button onClick={handleAddSponsor} className="w-full bg-primary glow-blue h-12 uppercase font-bold text-white">Ajouter le Sponsor</Button>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {sponsors?.map((s: any) => (
+              <Card key={s.id} className="relative group overflow-hidden border-white/5 p-4 flex flex-col items-center gap-2">
+                <div className="h-12 w-full flex items-center justify-center bg-white rounded-lg p-2">
+                  <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
+                </div>
+                <p className="text-[10px] font-bold uppercase truncate w-full text-center">{s.name}</p>
+                <Button size="icon" variant="destructive" className="absolute -top-1 -right-1 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity scale-75" onClick={() => handleDelete('sponsors', s.id)}>
+                  <Trash2 className="w-3 h-3" />
+                </Button>
               </Card>
             ))}
           </div>
