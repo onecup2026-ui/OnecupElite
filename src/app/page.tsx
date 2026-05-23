@@ -32,26 +32,26 @@ export default function Home() {
   const heroImage = siteConfig?.heroImageUrl || defaultHero;
   
   const heroTitle = siteConfig?.heroTitle || "DEVENEZ UNE LÉGENDE.\nLA GLOIRE VOUS APPELLE.";
-  const heroSubtitle = siteConfig?.heroSubtitle || "ONECUP 2026 : L'arène ultime où le talent brut des écoles rencontre l'excellence. Une compétition, deux disciplines, un seul trône. Football Élite & Challenge PlayStation.";
+  const heroSubtitle = siteConfig?.heroSubtitle || "ONECUP 2026 : L'événement unique où le talent rencontre l'excellence. Deux tournois officiels : OneCup Football & OneCup PlayStation.";
   const heroVideoUrl = siteConfig?.heroVideoUrl || "";
 
   const currentPool = siteConfig?.currentPrizePool || 1350000;
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
   const tiers = [
-    { rank: "Champion ONECUP", amount: 1000000, percentage: 74 },
+    { rank: "Champion OneCup", amount: 1000000, percentage: 74 },
     { rank: "Finaliste Argent", amount: 200000, percentage: 15 },
     { rank: "Soulier d'Élite", amount: 100000, percentage: 7 },
   ];
 
   return (
     <div className="flex flex-col bg-background">
-      {/* Hero Section - Optimized Background Zoom */}
+      {/* Hero Section */}
       <section className="relative min-h-[95vh] flex items-center overflow-hidden py-20">
         <div className="absolute inset-0 z-0">
           <Image
             src={heroImage}
-            alt="Intensité ONECUP"
+            alt="OneCup Action"
             fill
             className="object-cover opacity-60"
             priority
@@ -64,7 +64,7 @@ export default function Home() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-16 items-center">
             <div className="max-w-3xl space-y-10 text-center xl:text-left">
               <Badge variant="outline" className="border-primary/50 text-primary px-6 py-2 rounded-full bg-primary/5 font-bold uppercase tracking-[0.3em] text-xs animate-pulse">
-                <Trophy className="w-3 h-3 mr-2" /> ÉDITION OFFICIELLE 2026
+                <Trophy className="w-3 h-3 mr-2" /> ÉVÉNEMENT OFFICIEL 2026
               </Badge>
               <h1 className="text-6xl md:text-8xl lg:text-9xl font-headline font-bold leading-[0.85] tracking-tighter uppercase whitespace-pre-line">
                 {heroTitle}
@@ -80,7 +80,7 @@ export default function Home() {
                 </Link>
                 {heroVideoUrl && (
                   <Button size="lg" variant="outline" className="h-20 px-12 text-xl gap-3 backdrop-blur-md bg-white/5 uppercase font-bold border-white/20 hover:bg-white/10" onClick={() => setIsVideoOpen(true)}>
-                    <Play className="w-6 h-6" /> Teaser Officiel
+                    <Play className="w-6 h-6" /> Voir le Teaser
                   </Button>
                 )}
               </div>
@@ -116,13 +116,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Disciplines Section */}
+      {/* Tournaments Selection Section */}
       <section className="py-32 bg-background relative overflow-hidden">
         <div className="container mx-auto px-4 text-center space-y-12">
            <div className="space-y-4 max-w-3xl mx-auto">
-             <h2 className="text-5xl font-headline font-bold uppercase tracking-tighter">UNE COMPÉTITION, DEUX ARÈNES</h2>
+             <h2 className="text-5xl font-headline font-bold uppercase tracking-tighter">UNE EXPÉRIENCE, DEUX TOURNOIS</h2>
              <p className="text-muted-foreground text-xl">
-               La ONECUP est l'événement hybride par excellence. Choisissez votre terrain et défendez les couleurs de votre école.
+               La OneCup 2026 rassemble les meilleurs talents sur le terrain et devant la console.
              </p>
            </div>
            
@@ -132,9 +132,9 @@ export default function Home() {
                  <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition-all">
                    <Trophy className="w-10 h-10" />
                  </div>
-                 <h3 className="text-2xl font-headline font-bold uppercase">Football Élite</h3>
+                 <h3 className="text-2xl font-headline font-bold uppercase">OneCup Football</h3>
                  <p className="text-muted-foreground text-sm">Le tournoi interscolaire roi. Onze joueurs, un ballon, une seule gloire.</p>
-                 <span className="inline-flex items-center text-primary font-bold uppercase text-xs gap-2">Découvrir la discipline <ArrowRight className="w-4 h-4" /></span>
+                 <span className="inline-flex items-center text-primary font-bold uppercase text-xs gap-2">Découvrir le tournoi <ArrowRight className="w-4 h-4" /></span>
                </div>
              </Link>
 
@@ -143,9 +143,9 @@ export default function Home() {
                  <div className="w-20 h-20 bg-secondary/10 rounded-3xl flex items-center justify-center mx-auto group-hover:bg-secondary group-hover:text-white transition-all">
                    <Gamepad2 className="w-10 h-10" />
                  </div>
-                 <h3 className="text-2xl font-headline font-bold uppercase">Challenge PS5</h3>
-                 <p className="text-muted-foreground text-sm">L'élite numérique. Tactique, précision et manette en main.</p>
-                 <span className="inline-flex items-center text-secondary font-bold uppercase text-xs gap-2">Découvrir la discipline <ArrowRight className="w-4 h-4" /></span>
+                 <h3 className="text-2xl font-headline font-bold uppercase">OneCup PlayStation</h3>
+                 <p className="text-muted-foreground text-sm">Le challenge e-sport de haut niveau. Tactique, précision et manette en main.</p>
+                 <span className="inline-flex items-center text-secondary font-bold uppercase text-xs gap-2">Découvrir le tournoi <ArrowRight className="w-4 h-4" /></span>
                </div>
              </Link>
            </div>
