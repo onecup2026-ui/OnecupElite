@@ -4,8 +4,12 @@
 import Image from "next/image";
 import { Trophy, Users, Zap, Star, Shield, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function AboutPage() {
+  // Récupération de l'image du ballon avec les trophées
+  const trophyImage = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "https://picsum.photos/seed/ball-trophy-prestige/1920/1080";
+
   return (
     <div className="flex flex-col">
       {/* Hero */}
@@ -56,23 +60,23 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
               <Image 
-                src="https://picsum.photos/seed/vision/800/800" 
+                src={trophyImage} 
                 alt="Vision OneCup" 
                 fill 
                 className="object-cover"
-                data-ai-hint="stadium crowd"
+                data-ai-hint="soccer trophy"
               />
             </div>
             <div className="space-y-8">
               <div className="space-y-4">
                 <h2 className="text-4xl font-headline font-bold uppercase">UNE VISION PANAFRICAINE</h2>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  Ce qui a commencé comme un simple tournoi local est devenu une plateforme de référence. OneCup Elite ne se contente pas d'organiser des matchs ; nous créons des carrières. En mettant en lumière les talents bruts dans un environnement professionnel, nous ouvrons les portes des ligues internationales.
+                  Ce qui a commencé comme une ambition locale est devenu une plateforme de référence. OneCup Elite ne se contente pas d'organiser des matchs ; nous créons des carrières. En mettant en lumière les talents bruts dans un environnement professionnel, nous ouvrons les portes des ligues internationales.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="p-6 bg-background rounded-2xl border border-white/5">
-                  <p className="text-3xl font-headline font-bold text-primary">2023</p>
+                  <p className="text-3xl font-headline font-bold text-primary">2026</p>
                   <p className="text-xs uppercase font-bold text-muted-foreground">Année de Fondation</p>
                 </div>
                 <div className="p-6 bg-background rounded-2xl border border-white/5">
