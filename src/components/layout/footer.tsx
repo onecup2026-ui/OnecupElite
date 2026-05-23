@@ -17,7 +17,9 @@ export function Footer() {
             L'écosystème premium pour le sport compétitif et le divertissement numérique. Propulser les équipes et les athlètes vers l'excellence.
           </p>
           <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium pt-2">
-            <Mail className="w-3 h-3 text-primary" />
+            <div className="w-3 h-3 flex items-center justify-center">
+               <Mail className="w-3 h-3 text-primary" />
+            </div>
             <a href="mailto:onecup2026@gmail.com" className="hover:text-primary transition-colors">onecup2026@gmail.com</a>
           </div>
           <div className="flex gap-4 pt-2">
@@ -31,6 +33,25 @@ export function Footer() {
               className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white"
             >
               <Instagram className="w-4 h-4" />
+            </Link>
+            <Link 
+              href="https://www.tiktok.com/@one.cup16?_r=1&_t=ZS-96bXcJmCEVO" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white"
+            >
+              <svg 
+                viewBox="0 0 24 24" 
+                width="16" 
+                height="16" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                fill="none" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+              </svg>
             </Link>
             <Link href="#" className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white">
               <Youtube className="w-4 h-4" />
