@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Save, Edit2, Check, Video } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Save, Edit2, Check, Video, MessageCircle, DollarSign, Users, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,19 +75,38 @@ export default function AdminDashboard() {
   const [matchForm, setMatchForm] = useState(initialMatchState);
 
   const [isSavingConfig, setIsSavingConfig] = useState(false);
+  const [configForm, setConfigForm] = useState({
+    heroTitle: "",
+    heroSubtitle: "",
+    currentPrizePool: 0,
+    targetPrizePool: 0,
+    statSchools: "",
+    statMatches: "",
+    statTalents: ""
+  });
+
+  // Sync config form when siteConfig loads
+  useMemo(() => {
+    if (siteConfig) {
+      setConfigForm({
+        heroTitle: siteConfig.heroTitle || "DEVENEZ UNE LÉGENDE.\nLA GLOIRE VOUS APPELLE.",
+        heroSubtitle: siteConfig.heroSubtitle || "ONECUP 2026 : L'événement unique où le talent rencontre l'excellence.",
+        currentPrizePool: siteConfig.currentPrizePool || 0,
+        targetPrizePool: siteConfig.targetPrizePool || 5000000,
+        statSchools: siteConfig.statSchools || "128+",
+        statMatches: siteConfig.statMatches || "240+",
+        statTalents: siteConfig.statTalents || "500+"
+      });
+    }
+  }, [siteConfig]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'background' | 'aftercup') => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          variant: "destructive",
-          title: "Fichier trop volumineux",
-          description: "L'image doit faire moins de 5 Mo."
-        });
+        toast({ variant: "destructive", title: "Fichier trop volumineux" });
         return;
       }
-
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
@@ -114,7 +133,6 @@ export default function AdminDashboard() {
 
   const handleSaveTournament = () => {
     if (!db || !isAdmin || !user) return;
-    
     if (editingTournamentId) {
       updateDoc(doc(db, "tournaments", editingTournamentId), {
         ...tournamentForm,
@@ -125,87 +143,40 @@ export default function AdminDashboard() {
         setTournamentForm(initialTournamentState);
       });
     } else {
-      const data = { 
-        ...tournamentForm, 
-        organizerId: user.uid,
-        teamsRegistered: 0,
-        createdAt: serverTimestamp() 
-      };
-      
-      addDoc(collection(db, "tournaments"), data)
-        .then(() => {
-          toast({ title: "Tournoi publié !" });
-          setTournamentForm(initialTournamentState);
-        })
-        .catch(e => errorEmitter.emit('permission-error', new FirestorePermissionError({ 
-          path: '/tournaments', 
-          operation: 'create', 
-          requestResourceData: data 
-        })));
+      const data = { ...tournamentForm, organizerId: user.uid, teamsRegistered: 0, createdAt: serverTimestamp() };
+      addDoc(collection(db, "tournaments"), data).then(() => {
+        toast({ title: "Tournoi publié !" });
+        setTournamentForm(initialTournamentState);
+      });
     }
   };
 
   const handleSaveMatch = () => {
     if (!db || !isAdmin || !matchForm.tournamentId) return;
-    const tournamentName = tournaments?.find(t => t.id === matchForm.tournamentId)?.name || "Discipline";
-    
+    const tournamentName = tournaments?.find(t => t.id === matchForm.tournamentId)?.name || "Tournoi";
     if (editingMatchId) {
-      updateDoc(doc(db, "matches", editingMatchId), {
-        ...matchForm,
-        tournamentName,
-        updatedAt: serverTimestamp()
-      }).then(() => {
-        toast({ title: "Match mis à jour !" });
-        setEditingMatchId(null);
+      updateDoc(doc(db, "matches", editingMatchId), { ...matchForm, tournamentName, updatedAt: serverTimestamp() })
+        .then(() => {
+          toast({ title: "Match mis à jour !" });
+          setEditingMatchId(null);
+          setMatchForm(initialMatchState);
+        });
+    } else {
+      addDoc(collection(db, "matches"), { ...matchForm, tournamentName }).then(() => {
+        toast({ title: "Match programmé !" });
         setMatchForm(initialMatchState);
       });
-    } else {
-      const data = { ...matchForm, tournamentName };
-      addDoc(collection(db, "matches"), data)
-        .then(() => {
-          toast({ title: "Match programmé !" });
-          setMatchForm(initialMatchState);
-        })
-        .catch(e => errorEmitter.emit('permission-error', new FirestorePermissionError({ 
-          path: '/matches', 
-          operation: 'create', 
-          requestResourceData: data 
-        })));
     }
   };
 
   const startEditTournament = (t: any) => {
     setEditingTournamentId(t.id);
-    setTournamentForm({
-      name: t.name || "",
-      gameType: t.gameType || "Football",
-      startDate: t.startDate || "",
-      endDate: t.endDate || "",
-      registrationDeadline: t.registrationDeadline || "",
-      entryFee: t.entryFee || 0,
-      maxTeams: t.maxTeams || 16,
-      description: t.description || "",
-      imageUrl: t.imageUrl || "",
-      locationStade: t.locationStade || "",
-      locationCommune: t.locationCommune || "",
-      locationAdresse: t.locationAdresse || "",
-      teaserVideoUrl: t.teaserVideoUrl || ""
-    });
+    setTournamentForm({ ...t });
   };
 
   const startEditMatch = (m: any) => {
     setEditingMatchId(m.id);
-    setMatchForm({
-      tournamentId: m.tournamentId || "",
-      team1Id: m.team1Id || "",
-      team2Id: m.team2Id || "",
-      matchNumber: m.matchNumber || 1,
-      scheduledTime: m.scheduledTime || "",
-      status: m.status || "À Venir",
-      scoreTeam1: m.scoreTeam1 || 0,
-      scoreTeam2: m.scoreTeam2 || 0,
-      winnerId: m.winnerId || ""
-    });
+    setMatchForm({ ...m });
   };
 
   const handleDelete = (coll: string, id: string) => {
@@ -213,118 +184,66 @@ export default function AdminDashboard() {
     deleteDoc(doc(db, coll, id)).then(() => toast({ title: "Supprimé" }));
   };
 
+  const openWhatsApp = (phone: string) => {
+    const formattedPhone = phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${formattedPhone}`, '_blank');
+  };
+
   if (userLoading) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto" /></div>;
-  
-  if (!isAdmin) return (
-    <div className="p-20 text-center flex flex-col items-center gap-4">
-      <ShieldCheck className="w-12 h-12 text-destructive" />
-      <h2 className="text-2xl font-bold uppercase tracking-tighter">Accès Restreint</h2>
-      <p className="text-muted-foreground">Seul l'administrateur ({ADMIN_EMAIL}) peut accéder à cette interface.</p>
-    </div>
-  );
+  if (!isAdmin) return <div className="p-20 text-center flex flex-col items-center gap-4"><ShieldCheck className="w-12 h-12 text-destructive" /><h2 className="text-2xl font-bold uppercase">Accès Restreint</h2></div>;
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">Administration ONECUP</h1>
-        <div className="flex items-center gap-2">
-           <Badge className="bg-primary px-4 py-1">Mode: {user?.displayName}</Badge>
-        </div>
+        <Badge className="bg-primary px-4 py-1">Admin: {user?.displayName}</Badge>
       </div>
 
       <Tabs defaultValue="tournaments" className="w-full">
         <TabsList className="bg-muted p-1 rounded-xl mb-6 flex flex-wrap h-auto">
-          <TabsTrigger value="tournaments" className="uppercase font-bold text-xs">Disciplines</TabsTrigger>
-          <TabsTrigger value="matches" className="uppercase font-bold text-xs">Scores & Progression</TabsTrigger>
+          <TabsTrigger value="tournaments" className="uppercase font-bold text-xs">Tournois</TabsTrigger>
+          <TabsTrigger value="matches" className="uppercase font-bold text-xs">Scores & Matchs</TabsTrigger>
           <TabsTrigger value="registrations" className="uppercase font-bold text-xs">Inscriptions</TabsTrigger>
-          <TabsTrigger value="config" className="uppercase font-bold text-xs gap-2"><Settings className="w-3 h-3" /> Config Plateforme</TabsTrigger>
+          <TabsTrigger value="config" className="uppercase font-bold text-xs gap-2"><Settings className="w-3 h-3" /> Configuration</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tournaments" className="space-y-6">
           <Card className="border-primary/20">
-            <CardHeader>
-              <CardTitle className="text-lg uppercase flex items-center justify-between">
-                {editingTournamentId ? "Modifier la Discipline" : "Nouvelle Discipline"}
-                {editingTournamentId && <Button variant="ghost" size="sm" onClick={() => {setEditingTournamentId(null); setTournamentForm(initialTournamentState);}}><X className="w-4 h-4 mr-2" /> Annuler</Button>}
-              </CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle className="text-lg uppercase">{editingTournamentId ? "Modifier" : "Nouveau"} Tournoi</CardTitle></CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Nom</Label><Input value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} /></div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Nom officiel</Label>
-                  <Input placeholder="Ex: Ligue Football Élite" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Catégorie</Label>
+                  <Label className="text-[10px] font-bold uppercase">Type</Label>
                   <Select value={tournamentForm.gameType} onValueChange={(val) => setTournamentForm({...tournamentForm, gameType: val})}>
-                    <SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Football">Football</SelectItem>
-                      <SelectItem value="Esport">PlayStation (E-Sport)</SelectItem>
-                    </SelectContent>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent><SelectItem value="Football">Football</SelectItem><SelectItem value="Esport">PlayStation</SelectItem></SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Date de début</Label>
-                  <Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Lieu (Stade)</Label>
-                  <Input placeholder="Stade..." value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Commune</Label>
-                  <Input placeholder="Commune..." value={tournamentForm.locationCommune} onChange={e => setTournamentForm({...tournamentForm, locationCommune: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Équipes Max</Label>
-                  <Input type="number" value={tournamentForm.maxTeams} onChange={e => setTournamentForm({...tournamentForm, maxTeams: Number(e.target.value)})} />
-                </div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Date de début</Label><Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} /></div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Lieu (Stade)</Label><Input value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} /></div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Commune</Label><Input value={tournamentForm.locationCommune} onChange={e => setTournamentForm({...tournamentForm, locationCommune: e.target.value})} /></div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Places Max</Label><Input type="number" value={tournamentForm.maxTeams} onChange={e => setTournamentForm({...tournamentForm, maxTeams: Number(e.target.value)})} /></div>
               </div>
-              
               <div className="space-y-4">
-                <div className="flex flex-col gap-4">
-                  <Label className="text-[10px] uppercase font-bold">Affiche Officielle</Label>
-                  <div className="flex items-center gap-4">
-                    <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'tournament')} />
-                    <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2 uppercase font-bold text-xs">
-                      <Upload className="w-4 h-4" /> Sélectionner Image
-                    </Button>
-                  </div>
-                  {tournamentForm.imageUrl && (
-                    <div className="relative aspect-video w-full max-w-sm rounded-xl overflow-hidden border-2 border-primary/20">
-                      <img src={tournamentForm.imageUrl} alt="Aperçu" className="w-full h-full object-cover" />
-                      <Button size="icon" variant="destructive" className="absolute top-2 right-2 h-8 w-8" onClick={() => setTournamentForm(p => ({...p, imageUrl: ""}))}><X className="w-4 h-4" /></Button>
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">URL Vidéo Teaser (YouTube)</Label>
-                  <Input placeholder="https://youtube.com/watch?v=..." value={tournamentForm.teaserVideoUrl} onChange={e => setTournamentForm({...tournamentForm, teaserVideoUrl: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Description & Règlement</Label>
-                  <Textarea value={tournamentForm.description} onChange={e => setTournamentForm({...tournamentForm, description: e.target.value})} className="min-h-[120px]" />
-                </div>
+                <Label className="text-[10px] font-bold uppercase">Affiche</Label>
+                <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'tournament')} />
+                <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2 text-xs uppercase"><Upload className="w-4 h-4" /> Sélectionner Image</Button>
+                {tournamentForm.imageUrl && <img src={tournamentForm.imageUrl} alt="Aperçu" className="w-48 rounded-lg border" />}
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Description</Label><Textarea value={tournamentForm.description} onChange={e => setTournamentForm({...tournamentForm, description: e.target.value})} /></div>
               </div>
-              <Button onClick={handleSaveTournament} className="w-full h-12 uppercase font-bold bg-primary glow-blue">
-                {editingTournamentId ? "Enregistrer les modifications" : "Publier la Discipline"}
-              </Button>
+              <Button onClick={handleSaveTournament} className="w-full uppercase font-bold bg-primary">{editingTournamentId ? "Enregistrer" : "Publier"}</Button>
             </CardContent>
           </Card>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {tournaments?.map((t: any) => (
               <Card key={t.id} className="p-4 flex items-center justify-between border-white/5 bg-card/50">
                 <div className="flex items-center gap-4">
-                  {t.imageUrl ? <img src={t.imageUrl} className="w-12 h-12 rounded-lg object-cover" alt="" /> : <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center"><Trophy className="w-6 h-6 text-primary" /></div>}
-                  <div>
-                    <p className="font-bold text-xs uppercase">{t.name}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">{t.gameType} • {t.locationStade}</p>
-                  </div>
+                  <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center"><Trophy className="w-5 h-5 text-primary" /></div>
+                  <div><p className="font-bold text-xs uppercase">{t.name}</p><p className="text-[10px] text-muted-foreground">{t.gameType} • {t.locationStade}</p></div>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="icon" variant="ghost" onClick={() => startEditTournament(t)} className="hover:text-primary"><Edit2 className="w-4 h-4" /></Button>
+                  <Button size="icon" variant="ghost" onClick={() => startEditTournament(t)}><Edit2 className="w-4 h-4" /></Button>
                   <Button size="icon" variant="ghost" onClick={() => handleDelete('tournaments', t.id)} className="hover:text-destructive"><Trash2 className="w-4 h-4" /></Button>
                 </div>
               </Card>
@@ -332,127 +251,86 @@ export default function AdminDashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="matches">
-          <div className="space-y-6">
-             <Card className="border-primary/20">
-              <CardHeader>
-                <CardTitle className="text-lg uppercase flex items-center justify-between">
-                  {editingMatchId ? "Modifier le Match" : "Programmer une Rencontre"}
-                  {editingMatchId && <Button variant="ghost" size="sm" onClick={() => {setEditingMatchId(null); setMatchForm(initialMatchState);}}><X className="w-4 h-4 mr-2" /> Annuler</Button>}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Discipline</Label>
-                    <Select value={matchForm.tournamentId} onValueChange={(val) => setMatchForm({...matchForm, tournamentId: val})}>
-                      <SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
-                      <SelectContent>
-                        {tournaments?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">N° Match (Ordre)</Label>
-                    <Input type="number" value={matchForm.matchNumber} onChange={e => setMatchForm({...matchForm, matchNumber: Number(e.target.value)})} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Équipe 1</Label>
-                    <Input value={matchForm.team1Id} onChange={e => setMatchForm({...matchForm, team1Id: e.target.value})} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Équipe 2</Label>
-                    <Input value={matchForm.team2Id} onChange={e => setMatchForm({...matchForm, team2Id: e.target.value})} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Score E1</Label>
-                    <Input type="number" value={matchForm.scoreTeam1} onChange={e => setMatchForm({...matchForm, scoreTeam1: Number(e.target.value)})} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Score E2</Label>
-                    <Input type="number" value={matchForm.scoreTeam2} onChange={e => setMatchForm({...matchForm, scoreTeam2: Number(e.target.value)})} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Date & Heure</Label>
-                    <Input type="datetime-local" value={matchForm.scheduledTime} onChange={e => setMatchForm({...matchForm, scheduledTime: e.target.value})} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Statut</Label>
-                    <Select value={matchForm.status} onValueChange={(val) => setMatchForm({...matchForm, status: val})}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="À Venir">À Venir</SelectItem>
-                        <SelectItem value="En Cours">En Cours</SelectItem>
-                        <SelectItem value="Terminé">Terminé</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+        <TabsContent value="matches" className="space-y-6">
+          <Card className="border-primary/20">
+            <CardHeader><CardTitle className="text-lg uppercase">Programmation des Matchs</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase">Tournoi</Label>
+                  <Select value={matchForm.tournamentId} onValueChange={(val) => setMatchForm({...matchForm, tournamentId: val})}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{tournaments?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
+                  </Select>
                 </div>
-                <Button onClick={handleSaveMatch} className="w-full uppercase font-bold bg-primary glow-blue">
-                  {editingMatchId ? "Mettre à jour le score" : "Valider le Match"}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <div className="space-y-2">
-              <h3 className="uppercase font-bold text-sm tracking-widest text-muted-foreground">Progression des Matchs</h3>
-              {matches?.sort((a,b) => (a.matchNumber || 0) - (b.matchNumber || 0)).map((m: any) => (
-                <Card key={m.id} className="p-4 flex items-center justify-between border-white/5 bg-card/50">
-                  <div className="flex items-center gap-6">
-                    <Badge variant="outline" className="h-8 w-8 rounded-full p-0 flex items-center justify-center font-bold">#{m.matchNumber}</Badge>
-                    <div>
-                      <p className="font-bold text-sm">{m.team1Id} vs {m.team2Id}</p>
-                      <p className="text-[10px] text-primary uppercase font-bold">{m.scoreTeam1} - {m.scoreTeam2} • {m.status}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" onClick={() => startEditMatch(m)}><Edit2 className="w-4 h-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => handleDelete('matches', m.id)} className="hover:text-destructive"><Trash2 className="w-4 h-4" /></Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Équipe 1</Label><Input value={matchForm.team1Id} onChange={e => setMatchForm({...matchForm, team1Id: e.target.value})} /></div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Équipe 2</Label><Input value={matchForm.team2Id} onChange={e => setMatchForm({...matchForm, team2Id: e.target.value})} /></div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Status</Label><Select value={matchForm.status} onValueChange={(val) => setMatchForm({...matchForm, status: val})}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="À Venir">À Venir</SelectItem><SelectItem value="En Cours">En Cours</SelectItem><SelectItem value="Terminé">Terminé</SelectItem></SelectContent></Select></div>
+              </div>
+              <Button onClick={handleSaveMatch} className="w-full bg-primary uppercase font-bold">Valider le Match</Button>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="registrations">
-           <div className="space-y-4">
-             {registrations?.map((r: any) => (
+          <div className="space-y-4">
+            {registrations?.map((r: any) => (
               <Card key={r.id} className="p-4 border border-white/5">
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="space-y-1">
                     <p className="font-bold uppercase text-sm">{r.teamName}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">Contact: {r.captainName} • {r.contactPhone}</p>
-                    <p className="text-[10px] text-primary uppercase font-bold">Discipline: {r.tournamentName}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">{r.captainName} • {r.contactPhone}</p>
+                    <p className="text-[10px] text-primary font-bold uppercase">{r.tournamentName}</p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <Badge variant="secondary" className="uppercase text-[10px]">{r.status || "En attente"}</Badge>
+                  <div className="flex items-center gap-3">
+                    <Button variant="outline" size="sm" onClick={() => openWhatsApp(r.contactPhone)} className="gap-2 text-green-500 border-green-500/30 hover:bg-green-500/10">
+                      <MessageCircle className="w-4 h-4" /> WhatsApp
+                    </Button>
                     <Button size="icon" variant="ghost" onClick={() => handleDelete('registrations', r.id)} className="hover:text-destructive"><Trash2 className="w-4 h-4" /></Button>
                   </div>
                 </div>
               </Card>
             ))}
-           </div>
+          </div>
         </TabsContent>
 
-        <TabsContent value="config">
-           <Card className="border-primary/20">
-            <CardHeader>
-              <CardTitle className="text-lg uppercase">Design & Images Plateforme</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-8">
+        <TabsContent value="config" className="space-y-6">
+          <Card className="border-primary/20">
+            <CardHeader><CardTitle className="text-lg uppercase">Pilotage de la Plateforme</CardTitle></CardHeader>
+            <CardContent className="space-y-6">
               <div className="space-y-4">
-                <Label className="uppercase font-bold text-xs">Image de Fond (Accueil)</Label>
-                <input type="file" ref={bgInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'background')} />
-                <Button variant="outline" onClick={() => bgInputRef.current?.click()} className="w-full">Remplacer Fond Accueil</Button>
-                {siteConfig?.heroImageUrl && <img src={siteConfig.heroImageUrl} className="w-48 rounded-lg border mt-2" />}
+                <div className="grid gap-4">
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Titre Hero</Label><Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Sous-titre Hero</Label><Textarea value={configForm.heroSubtitle} onChange={e => setConfigForm({...configForm, heroSubtitle: e.target.value})} /></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Cagnotte Actuelle (FC)</Label><Input type="number" value={configForm.currentPrizePool} onChange={e => setConfigForm({...configForm, currentPrizePool: Number(e.target.value)})} /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Objectif Cagnotte (FC)</Label><Input type="number" value={configForm.targetPrizePool} onChange={e => setConfigForm({...configForm, targetPrizePool: Number(e.target.value)})} /></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-4">
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Écoles</Label><Input value={configForm.statSchools} onChange={e => setConfigForm({...configForm, statSchools: e.target.value})} /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Matchs</Label><Input value={configForm.statMatches} onChange={e => setConfigForm({...configForm, statMatches: e.target.value})} /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Talents</Label><Input value={configForm.statTalents} onChange={e => setConfigForm({...configForm, statTalents: e.target.value})} /></div>
+                </div>
               </div>
+              <Button onClick={() => updateSiteConfig(configForm)} className="w-full bg-primary uppercase font-bold" disabled={isSavingConfig}>
+                {isSavingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4 mr-2" /> Sauvegarder la Configuration</>}
+              </Button>
+            </CardContent>
+          </Card>
 
+          <Card className="border-primary/20">
+            <CardHeader><CardTitle className="text-lg uppercase">Visuels du Site</CardTitle></CardHeader>
+            <CardContent className="space-y-6">
               <div className="space-y-4">
-                <Label className="uppercase font-bold text-xs">Image Page After Cup</Label>
+                <Label className="uppercase font-bold text-xs">Fond d'accueil</Label>
+                <input type="file" ref={bgInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'background')} />
+                <Button variant="outline" onClick={() => bgInputRef.current?.click()} className="w-full uppercase text-xs">Changer l'image Hero</Button>
+              </div>
+              <div className="space-y-4">
+                <Label className="uppercase font-bold text-xs">Fond After Cup</Label>
                 <input type="file" ref={afterCupInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'aftercup')} />
-                <Button variant="outline" onClick={() => afterCupInputRef.current?.click()} className="w-full">Remplacer Fond After Cup</Button>
-                {siteConfig?.afterCupImageUrl && <img src={siteConfig.afterCupImageUrl} className="w-48 rounded-lg border mt-2" />}
+                <Button variant="outline" onClick={() => afterCupInputRef.current?.click()} className="w-full uppercase text-xs">Changer l'image After Cup</Button>
               </div>
             </CardContent>
           </Card>

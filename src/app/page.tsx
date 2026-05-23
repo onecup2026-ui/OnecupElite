@@ -14,19 +14,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 
-const stats = [
-  { label: "Écoles Élite", value: "128+", icon: Users, color: "text-blue-500" },
-  { label: "Matchs Épiques", value: "240+", icon: Trophy, color: "text-yellow-500" },
-  { label: "Cagnotte Record", value: "150M FC", icon: DollarSign, color: "text-green-500" },
-  { label: "Talents Révélés", value: "500+", icon: Star, color: "text-red-500" },
-];
-
 export default function Home() {
   const db = useFirestore();
   const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
-  const { data: siteConfig } = useDoc(configRef);
+  const { data: siteConfig, loading: configLoading } = useDoc(configRef);
 
   const defaultHero = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "https://picsum.photos/seed/onecup-match-action/1920/1080";
   const heroImage = siteConfig?.heroImageUrl || defaultHero;
@@ -35,13 +28,20 @@ export default function Home() {
   const heroSubtitle = siteConfig?.heroSubtitle || "ONECUP 2026 : L'événement unique où le talent rencontre l'excellence. Rejoignez la compétition officielle.";
   const heroVideoUrl = siteConfig?.heroVideoUrl || "";
 
-  const currentPool = siteConfig?.currentPrizePool || 1350000;
+  const currentPool = siteConfig?.currentPrizePool || 0;
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
+  const stats = [
+    { label: "Écoles Élite", value: siteConfig?.statSchools || "128+", icon: Users, color: "text-blue-500" },
+    { label: "Matchs Épiques", value: siteConfig?.statMatches || "240+", icon: Trophy, color: "text-yellow-500" },
+    { label: "Cagnotte Globale", value: `${(currentPool / 1000000).toFixed(1)}M FC`, icon: DollarSign, color: "text-green-500" },
+    { label: "Talents Révélés", value: siteConfig?.statTalents || "500+", icon: Star, color: "text-red-500" },
+  ];
+
   const tiers = [
-    { rank: "Champion OneCup", amount: 1000000, percentage: 74 },
-    { rank: "Finaliste Argent", amount: 200000, percentage: 15 },
-    { rank: "Soulier d'Élite", amount: 100000, percentage: 7 },
+    { rank: "Champion OneCup", amount: Math.floor(currentPool * 0.74), percentage: 74 },
+    { rank: "Finaliste Argent", amount: Math.floor(currentPool * 0.15), percentage: 15 },
+    { rank: "Soulier d'Élite", amount: Math.floor(currentPool * 0.07), percentage: 7 },
   ];
 
   return (
