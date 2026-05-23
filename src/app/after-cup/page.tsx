@@ -1,18 +1,24 @@
-
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Music, Ticket, Star, MapPin, Calendar, ArrowRight, Sparkles, PartyPopper, Trophy, Camera, Users, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useDoc, useFirestore } from "@/firebase";
+import { doc } from "firebase/firestore";
 
 const OFFICIAL_TICKET_URL = "https://digitaleventcd.vercel.app/";
 
 export default function AfterCupPage() {
-  const afterCupImage = PlaceHolderImages.find(img => img.id === 'after-cup')?.imageUrl || "https://picsum.photos/seed/onecup-after/1600/900";
+  const db = useFirestore();
+  const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
+  const { data: siteConfig } = useDoc(configRef);
+
+  const defaultAfterCup = PlaceHolderImages.find(img => img.id === 'after-cup')?.imageUrl || "https://picsum.photos/seed/onecup-after/1600/900";
+  const afterCupImage = siteConfig?.afterCupImageUrl || defaultAfterCup;
 
   return (
     <div className="flex flex-col">
@@ -25,6 +31,7 @@ export default function AfterCupPage() {
             fill
             className="object-cover opacity-70"
             priority
+            data-ai-hint="festival lights"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>

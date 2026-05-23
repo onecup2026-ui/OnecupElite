@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Image as ImageIcon, Save, Video } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Image as ImageIcon, Save, Video, PartyPopper } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +24,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
+  const afterCupInputRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
 
   const [isSavingConfig, setIsSavingConfig] = useState(false);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'background') => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'background' | 'aftercup') => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
@@ -84,19 +84,21 @@ export default function AdminDashboard() {
         const base64 = reader.result as string;
         if (type === 'tournament') {
           setNewTournament(prev => ({ ...prev, imageUrl: base64 }));
-        } else {
-          updateBackground(base64);
+        } else if (type === 'background') {
+          updateSiteConfig({ heroImageUrl: base64 });
+        } else if (type === 'aftercup') {
+          updateSiteConfig({ afterCupImageUrl: base64 });
         }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const updateBackground = (url: string) => {
+  const updateSiteConfig = (data: any) => {
     if (!db || !isAdmin) return;
     setIsSavingConfig(true);
-    setDoc(doc(db, "settings", "config"), { heroImageUrl: url }, { merge: true })
-      .then(() => toast({ title: "Fond d'écran mis à jour !" }))
+    setDoc(doc(db, "settings", "config"), data, { merge: true })
+      .then(() => toast({ title: "Configuration mise à jour !" }))
       .catch(e => console.error(e))
       .finally(() => setIsSavingConfig(false));
   };
@@ -272,38 +274,54 @@ export default function AdminDashboard() {
         <TabsContent value="config" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
            <Card className="border-primary/20">
             <CardHeader>
-              <CardTitle className="text-lg uppercase flex items-center gap-2"><ImageIcon className="w-5 h-5 text-primary" /> Design du site</CardTitle>
-              <CardDescription>Modifiez le fond d'écran principal de la plateforme OneCup.</CardDescription>
+              <CardTitle className="text-lg uppercase flex items-center gap-2"><ImageIcon className="w-5 h-5 text-primary" /> Design de la plateforme</CardTitle>
+              <CardDescription>Modifiez les visuels officiels de l'événement.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="space-y-12">
+              {/* Hero Image Section */}
               <div className="space-y-4">
-                <Label className="uppercase font-bold text-xs tracking-widest text-muted-foreground">Image de Fond (Hero Section)</Label>
+                <Label className="uppercase font-bold text-xs tracking-widest text-muted-foreground">Image de Fond (Accueil)</Label>
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-4">
                     <input type="file" accept="image/*" ref={bgInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'background')} />
                     <Button variant="outline" onClick={() => bgInputRef.current?.click()} disabled={isSavingConfig} className="gap-2 h-12 border-primary/30 text-primary uppercase font-bold text-xs px-8">
                       {isSavingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                      Changer l'image de fond (Max 5Mo)
+                      Changer l'image Accueil
                     </Button>
                   </div>
                   
                   {siteConfig?.heroImageUrl && (
-                    <div className="space-y-4">
-                      <p className="text-xs text-muted-foreground">Aperçu du fond actuel :</p>
-                      <div className="relative aspect-video w-full max-w-2xl rounded-2xl overflow-hidden border-4 border-primary/10 shadow-2xl">
-                        <img src={siteConfig.heroImageUrl} alt="Fond actuel" className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-4 left-4">
-                          <Badge className="bg-primary uppercase font-bold">Image Active</Badge>
-                        </div>
-                      </div>
+                    <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden border-2 border-primary/10">
+                      <img src={siteConfig.heroImageUrl} alt="Accueil actuel" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* After Cup Image Section */}
+              <div className="space-y-4">
+                <Label className="uppercase font-bold text-xs tracking-widest text-muted-foreground flex items-center gap-2">
+                  <PartyPopper className="w-4 h-4" /> Image de Fond (After Cup)
+                </Label>
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center gap-4">
+                    <input type="file" accept="image/*" ref={afterCupInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'aftercup')} />
+                    <Button variant="outline" onClick={() => afterCupInputRef.current?.click()} disabled={isSavingConfig} className="gap-2 h-12 border-secondary/30 text-secondary hover:bg-secondary/5 uppercase font-bold text-xs px-8">
+                      {isSavingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                      Changer l'image After Cup
+                    </Button>
+                  </div>
+                  
+                  {siteConfig?.afterCupImageUrl && (
+                    <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden border-2 border-secondary/10">
+                      <img src={siteConfig.afterCupImageUrl} alt="After Cup actuel" className="w-full h-full object-cover" />
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
-                <h3 className="font-bold uppercase text-sm">Paramètres Avancés</h3>
+                <h3 className="font-bold uppercase text-sm">Finances de l'événement</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-bold">Cagnotte Actuelle (FC)</Label>
