@@ -147,7 +147,7 @@ export default function AdminDashboard() {
         ...tournamentForm,
         updatedAt: serverTimestamp()
       }).then(() => {
-        toast({ title: "Tournoi mis à jour définitivement !" });
+        toast({ title: "Tournoi mis à jour !" });
         setEditingTournamentId(null);
         setTournamentForm(initialTournamentState);
       });
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
         updatedAt: serverTimestamp() 
       };
       addDoc(collection(db, "tournaments"), data).then(() => {
-        toast({ title: "Nouveau tournoi publié et sauvegardé !" });
+        toast({ title: "Nouveau tournoi publié !" });
         setTournamentForm(initialTournamentState);
       });
     }
@@ -233,8 +233,8 @@ export default function AdminDashboard() {
 
   const handleDelete = (coll: string, id: string) => {
     if (!db || !isAdmin) return;
-    if (confirm("Voulez-vous vraiment supprimer cet élément définitivement ?")) {
-      deleteDoc(doc(db, coll, id)).then(() => toast({ title: "Suppression confirmée" }));
+    if (confirm("Voulez-vous vraiment supprimer cet élément ?")) {
+      deleteDoc(doc(db, coll, id)).then(() => toast({ title: "Élément supprimé" }));
     }
   };
 
