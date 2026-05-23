@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Search, Calendar, MapPin, Users, ArrowRight } from "lucide-react";
+import { Trophy, Search, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,16 +14,19 @@ import { collection } from "firebase/firestore";
 
 export default function TournamentsPage() {
   const db = useFirestore();
-  const { data: tournaments, loading } = useCollection(db ? collection(db, "tournaments") : null);
+  const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
+  const { data: tournaments, loading } = useCollection(tournamentsRef);
   
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
 
-  const filtered = tournaments?.filter((t: any) => {
-    const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = category === "all" || t.sport.toLowerCase() === category.toLowerCase();
-    return matchesSearch && matchesCategory;
-  }) || [];
+  const filtered = useMemo(() => {
+    return tournaments?.filter((t: any) => {
+      const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = category === "all" || t.sport.toLowerCase() === category.toLowerCase();
+      return matchesSearch && matchesCategory;
+    }) || [];
+  }, [tournaments, search, category]);
 
   return (
     <div className="container mx-auto px-4 py-12 space-y-12">

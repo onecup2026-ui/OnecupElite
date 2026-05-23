@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play } from "lucide-react";
@@ -18,8 +20,12 @@ const stats = [
 
 export default function Home() {
   const db = useFirestore();
-  const { data: siteConfig } = useDoc(db ? doc(db, "settings", "config") : null);
-  const { data: tournaments } = useCollection(db ? collection(db, "tournaments") : null);
+
+  const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
+  const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
+
+  const { data: siteConfig } = useDoc(configRef);
+  const { data: tournaments } = useCollection(tournamentsRef);
 
   const heroImage = (siteConfig?.heroImageUrl && siteConfig.heroImageUrl.trim() !== "") 
     ? siteConfig.heroImageUrl 

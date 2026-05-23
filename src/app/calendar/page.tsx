@@ -14,7 +14,9 @@ import { fr } from "date-fns/locale";
 
 export default function CalendarPage() {
   const db = useFirestore();
-  const { data: tournaments, loading } = useCollection(db ? collection(db, "tournaments") : null);
+
+  const tournamentsQuery = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
+  const { data: tournaments, loading } = useCollection(tournamentsQuery);
 
   // Helper to parse date strings safely
   const parseTournamentDate = (dateStr: string) => {

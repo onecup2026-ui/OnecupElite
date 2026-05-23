@@ -1,9 +1,10 @@
 
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, User, ArrowRight, Share2, Bookmark } from "lucide-react";
+import { Calendar, User, ArrowRight, Share2, Bookmark, Newspaper } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +13,8 @@ import { collection } from "firebase/firestore";
 
 export default function NewsPage() {
   const db = useFirestore();
-  const { data: articles, loading } = useCollection(db ? collection(db, "articles") : null);
+  const articlesRef = useMemo(() => (db ? collection(db, "articles") : null), [db]);
+  const { data: articles, loading } = useCollection(articlesRef);
 
   const featuredArticle = articles?.[0] || null;
   const otherArticles = articles?.slice(1) || [];

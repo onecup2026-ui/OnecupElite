@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,16 @@ import { Badge } from "@/components/ui/badge";
 export default function AdminDashboard() {
   const db = useFirestore();
   const { toast } = useToast();
-  const { data: siteConfig } = useDoc(db ? doc(db, "settings", "config") : null);
-  const { data: tournaments } = useCollection(db ? collection(db, "tournaments") : null);
-  const { data: articles } = useCollection(db ? collection(db, "articles") : null);
-  const { data: tickets } = useCollection(db ? collection(db, "tickets") : null);
+
+  const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
+  const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
+  const articlesRef = useMemo(() => (db ? collection(db, "articles") : null), [db]);
+  const ticketsRef = useMemo(() => (db ? collection(db, "tickets") : null), [db]);
+
+  const { data: siteConfig } = useDoc(configRef);
+  const { data: tournaments } = useCollection(tournamentsRef);
+  const { data: articles } = useCollection(articlesRef);
+  const { data: tickets } = useCollection(ticketsRef);
 
   const [isSaving, setIsSaving] = useState(false);
 

@@ -1,17 +1,18 @@
 
 "use client";
 
-import { Ticket as TicketIcon, ExternalLink, ShieldCheck, Zap, Info } from "lucide-react";
+import { useMemo } from "react";
+import { Ticket as TicketIcon, ExternalLink, ShieldCheck, Zap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection } from "firebase/firestore";
-import Image from "next/image";
 
 export default function TicketsPage() {
   const db = useFirestore();
-  const { data: tickets, loading } = useCollection(db ? collection(db, "tickets") : null);
+  const ticketsRef = useMemo(() => (db ? collection(db, "tickets") : null), [db]);
+  const { data: tickets, loading } = useCollection(ticketsRef);
 
   return (
     <div className="container mx-auto px-4 py-12 space-y-12">
