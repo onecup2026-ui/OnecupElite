@@ -13,7 +13,8 @@
         "bio": { "type": "string" },
         "gameIDs": { "type": "array", "items": { "type": "string" } },
         "createdAt": { "type": "string", "format": "date-time" }
-      }
+      },
+      "required": ["username", "email", "createdAt"]
     },
     "Tournament": {
       "title": "Tournament",
@@ -25,7 +26,7 @@
         "startDate": { "type": "string", "format": "date-time" },
         "endDate": { "type": "string", "format": "date-time" },
         "registrationDeadline": { "type": "string", "format": "date-time" },
-        "organizer": { "type": "string", "description": "UID de l'organisateur" },
+        "organizerId": { "type": "string", "description": "UID de l'organisateur" },
         "description": { "type": "string" },
         "rules": { "type": "string" },
         "entryFee": { "type": "number", "default": 0 },
@@ -45,7 +46,8 @@
         "tagline": { "type": "string" },
         "logoUrl": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" }
-      }
+      },
+      "required": ["name", "captainId", "createdAt"]
     },
     "TournamentRegistration": {
       "title": "Tournament Registration",
@@ -57,7 +59,8 @@
         "userId": { "type": "string" },
         "registrationDate": { "type": "string", "format": "date-time" },
         "status": { "type": "string", "default": "En attente" }
-      }
+      },
+      "required": ["tournamentId", "registrationDate", "status"]
     },
     "Match": {
       "title": "Match",
@@ -67,8 +70,6 @@
         "tournamentId": { "type": "string" },
         "team1Id": { "type": "string" },
         "team2Id": { "type": "string" },
-        "team1Name": { "type": "string" },
-        "team2Name": { "type": "string" },
         "matchNumber": { "type": "number" },
         "scheduledTime": { "type": "string", "format": "date-time" },
         "status": { "type": "string", "enum": ["À Venir", "En Cours", "Terminé"] },
@@ -76,7 +77,8 @@
         "scoreTeam2": { "type": "number", "default": 0 },
         "winnerId": { "type": "string" },
         "resultDetails": { "type": "string" }
-      }
+      },
+      "required": ["tournamentId", "team1Id", "team2Id", "matchNumber", "scheduledTime", "status"]
     },
     "TeamMembership": {
       "title": "Team Membership",
@@ -87,7 +89,8 @@
         "teamId": { "type": "string" },
         "joinedAt": { "type": "string", "format": "date-time" },
         "role": { "type": "string", "enum": ["Capitaine", "Membre"] }
-      }
+      },
+      "required": ["userId", "teamId", "joinedAt", "role"]
     }
   },
   "auth": {
