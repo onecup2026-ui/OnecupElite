@@ -50,17 +50,17 @@ export default function Home() {
               src={heroImage}
               alt="OneCup Hero"
               fill
-              className="object-cover opacity-40 scale-105"
+              className="object-cover opacity-50 scale-105"
               priority
               data-ai-hint={heroHint}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl space-y-6">
-            <Badge variant="outline" className="border-primary text-primary px-4 py-1 rounded-full animate-pulse">
+            <Badge variant="outline" className="border-primary text-primary px-4 py-1 rounded-full animate-pulse bg-primary/10">
               VERSION 1.0 DISPONIBLE
             </Badge>
             <h1 className="text-6xl md:text-8xl font-headline font-bold leading-none tracking-tighter">
@@ -76,7 +76,7 @@ export default function Home() {
                   Participer <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg gap-2">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg gap-2 backdrop-blur-sm">
                 <Play className="w-5 h-5 fill-current" /> Voir la Promo
               </Button>
             </div>
@@ -86,12 +86,12 @@ export default function Home() {
         {/* Floating Prize Pool Widget */}
         <div className="hidden xl:block absolute right-24 top-1/2 -translate-y-1/2 w-[400px] animate-float">
           <PrizePoolTracker
-            currentPool={5000}
-            targetPool={15000}
+            currentPool={52400}
+            targetPool={150000}
             tiers={[
-              { rank: "Champion Or", amount: 2500, percentage: 50 },
-              { rank: "Finaliste Argent", amount: 1500, percentage: 30 },
-              { rank: "3ème Place Bronze", amount: 1000, percentage: 20 },
+              { rank: "Champion Or", amount: 25000, percentage: 50 },
+              { rank: "Finaliste Argent", amount: 15000, percentage: 30 },
+              { rank: "3ème Place Bronze", amount: 10000, percentage: 20 },
             ]}
           />
         </div>
@@ -176,7 +176,7 @@ export default function Home() {
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-10 w-32 relative">
                 <Image
-                  src={`https://picsum.photos/seed/sponsor-${i}/200/60`}
+                  src={`https://picsum.photos/seed/sponsor-logo-${i}/200/60`}
                   alt="Sponsor"
                   fill
                   className="object-contain"
