@@ -53,7 +53,7 @@ export function Navbar() {
       if (error.code === 'auth/popup-blocked') {
         toast({ variant: "destructive", title: "Action Recommandée", description: "Veuillez autoriser les popups pour vous connecter." });
       } else {
-        toast({ variant: "destructive", title: "Échec de connexion", description: "Impossible de s'authentifier." });
+        toast({ variant: "destructive", title: "Échec de connexion", description: "Impossible de s'authentifier. Vérifiez votre configuration Firebase." });
       }
     }
   };
