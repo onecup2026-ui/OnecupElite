@@ -1,3 +1,4 @@
+
 # ONECUP Elite Platform 2026
 
 Une plateforme événementielle dynamique et premium pour la gestion des tournois **ONECUP**, alliant le prestige du football et l'innovation de l'e-sport (PlayStation).
@@ -5,11 +6,10 @@ Une plateforme événementielle dynamique et premium pour la gestion des tournoi
 ## 🚀 Caractéristiques principales
 
 - **Architecture 100% Dynamique** : Tout le contenu (tournois, matchs, sponsors, statistiques) est piloté via un panneau d'administration sécurisé.
-- **Gestion des Inscriptions** : Système d'inscription rapide pour les capitaines d'équipes avec contact WhatsApp direct pour les organisateurs.
-- **Suivi des Scores en Live** : Mise à jour en temps réel des résultats des matchs de football et PlayStation.
-- **Cagnotte Progressive (Prize Pool)** : Visualisation dynamique de l'objectif financier et de la répartition des gains.
-- **Hub Communautaire** : Espace d'échange pour les participants et fans.
-- **Assistant IA** : Chatbot intelligent pour répondre aux questions fréquentes des participants.
+- **Gestion des Inscriptions** : Système d'inscription ultra-rapide pour les capitaines avec contact WhatsApp direct depuis l'administration.
+- **Suivi des Scores en Live** : Mise à jour en temps réel des résultats.
+- **Cagnotte Progressive (Prize Pool)** : Visualisation dynamique de l'objectif financier.
+- **Assistant IA** : Chatbot intelligent pour répondre aux questions des participants.
 
 ## 🛠 Stack Technique
 
@@ -20,42 +20,44 @@ Une plateforme événementielle dynamique et premium pour la gestion des tournoi
 
 ## 📦 Comment envoyer ce projet sur GitHub ?
 
-Si vous souhaitez héberger ce code sur votre propre GitHub, suivez ces commandes dans votre terminal :
+Pour sauvegarder votre projet sur votre propre compte GitHub, suivez ces étapes concrètes dans votre terminal :
 
-1. **Initialisation du dépôt local** :
+1. **Initialisez le dépôt local** :
    ```bash
    git init
    ```
 
-2. **Ajout des fichiers** :
+2. **Ajoutez tous les fichiers** :
    ```bash
    git add .
    ```
 
-3. **Premier commit** :
+3. **Créez votre premier commit** :
    ```bash
    git commit -m "Initial commit - ONECUP Elite Platform"
    ```
 
-4. **Renommer la branche principale** :
+4. **Renommez la branche principale** :
    ```bash
    git branch -M main
    ```
 
-5. **Lier à votre dépôt GitHub distant** :
-   *(Remplacez l'URL par la vôtre)*
+5. **Liez à votre dépôt GitHub distant** :
+   *(Allez sur GitHub, créez un dépôt vide et copiez son URL)*
    ```bash
-   git remote add origin https://github.com/VOTRE_NOM_UTILISATEUR/VOTRE_NOM_DE_DEPOT.git
+   git remote add origin https://github.com/VOTRE_UTILISATEUR/VOTRE_DEPOT.git
    ```
 
-6. **Pousser sur GitHub** :
+6. **Poussez votre code** :
    ```bash
    git push -u origin main
    ```
 
 ## 🔑 Configuration requise
 
-Assurez-vous d'avoir configuré vos variables d'environnement pour Firebase et Genkit (API Key Gemini) avant le déploiement.
+Assurez-vous d'avoir configuré vos variables d'environnement dans un fichier `.env` :
+- `NEXT_PUBLIC_FIREBASE_API_KEY`
+- `GEMINI_API_KEY` (pour l'Assistant IA)
 
 ---
 © 2026 ONE CUP Platform. Tous droits réservés.

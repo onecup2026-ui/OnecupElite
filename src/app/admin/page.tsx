@@ -27,13 +27,11 @@ export default function AdminDashboard() {
   const isAdmin = user?.email === ADMIN_EMAIL;
 
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
-  const matchesRef = useMemo(() => (db ? collection(db, "matches") : null), [db]);
   const registrationsRef = useMemo(() => (db ? collection(db, "registrations") : null), [db]);
   const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
 
   const { data: tournaments } = useCollection(tournamentsRef);
-  const { data: matches } = useCollection(matchesRef);
   const { data: registrations } = useCollection(registrationsRef);
   const { data: sponsors } = useCollection(sponsorsRef);
   const { data: siteConfig } = useDoc(configRef);
@@ -222,7 +220,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Nom</Label><Input value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} className="h-12 rounded-xl" placeholder="Ex: OneCup Football" /></div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase">Discipline</Label>
+                  <Label className="text-[10px] font-bold uppercase">Type</Label>
                   <Select value={tournamentForm.gameType} onValueChange={(val) => setTournamentForm({...tournamentForm, gameType: val})}>
                     <SelectTrigger className="h-12 rounded-xl"><SelectValue /></SelectTrigger>
                     <SelectContent><SelectItem value="Football">Football</SelectItem><SelectItem value="PlayStation">PlayStation</SelectItem></SelectContent>
