@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play, Zap, Gamepad2 } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Zap, Gamepad2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
@@ -15,8 +15,8 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 
 const stats = [
-  { label: "Équipes Élite", value: "128+", icon: Users, color: "text-blue-500" },
-  { label: "Championnats", value: "24", icon: Trophy, color: "text-yellow-500" },
+  { label: "Écoles Élite", value: "128+", icon: Users, color: "text-blue-500" },
+  { label: "Matchs Épiques", value: "240+", icon: Trophy, color: "text-yellow-500" },
   { label: "Cagnotte Record", value: "150M FC", icon: DollarSign, color: "text-green-500" },
   { label: "Talents Révélés", value: "500+", icon: Star, color: "text-red-500" },
 ];
@@ -31,32 +31,33 @@ export default function Home() {
   const defaultHero = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "https://picsum.photos/seed/onecup-match-action/1920/1080";
   const heroImage = siteConfig?.heroImageUrl || defaultHero;
   
-  const heroTitle = siteConfig?.heroTitle || "DEVENEZ UNE LÉGENDE.\nLE TERRAIN VOUS ATTEND.";
-  const heroSubtitle = siteConfig?.heroSubtitle || "OneCup Elite 2026 : L'arène ultime où le talent brut rencontre l'excellence professionnelle. Football interscolaire et Challenge PlayStation 5.";
+  const heroTitle = siteConfig?.heroTitle || "DEVENEZ UNE LÉGENDE.\nLA GLOIRE VOUS APPELLE.";
+  const heroSubtitle = siteConfig?.heroSubtitle || "ONECUP 2026 : L'arène ultime où le talent brut des écoles rencontre l'excellence. Une compétition, deux disciplines, un seul trône. Football Élite & Challenge PlayStation.";
   const heroVideoUrl = siteConfig?.heroVideoUrl || "";
 
   const currentPool = siteConfig?.currentPrizePool || 1350000;
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
   const tiers = [
-    { rank: "Champion Or", amount: 1000000, percentage: 74 },
+    { rank: "Champion ONECUP", amount: 1000000, percentage: 74 },
     { rank: "Finaliste Argent", amount: 200000, percentage: 15 },
     { rank: "Soulier d'Élite", amount: 100000, percentage: 7 },
   ];
 
   return (
     <div className="flex flex-col bg-background">
-      {/* Hero Section */}
+      {/* Hero Section - Optimized Background Zoom */}
       <section className="relative min-h-[95vh] flex items-center overflow-hidden py-20">
         <div className="absolute inset-0 z-0">
           <Image
             src={heroImage}
-            alt="Intensité Football OneCup"
+            alt="Intensité ONECUP"
             fill
             className="object-cover opacity-60"
             priority
+            style={{ objectPosition: 'center 30%' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
@@ -74,12 +75,12 @@ export default function Home() {
               <div className="flex flex-wrap justify-center xl:justify-start gap-5 pt-6">
                 <Link href="/tournaments">
                   <Button size="lg" className="h-20 px-12 bg-primary hover:bg-primary/90 glow-blue text-xl gap-3 uppercase font-black rounded-2xl transition-all hover:scale-105">
-                    Entrer dans la Compétition <ArrowRight className="w-6 h-6" />
+                    Entrer dans l'Arène <ArrowRight className="w-6 h-6" />
                   </Button>
                 </Link>
                 {heroVideoUrl && (
                   <Button size="lg" variant="outline" className="h-20 px-12 text-xl gap-3 backdrop-blur-md bg-white/5 uppercase font-bold border-white/20 hover:bg-white/10" onClick={() => setIsVideoOpen(true)}>
-                    <Play className="w-6 h-6" /> Voir l'Action
+                    <Play className="w-6 h-6" /> Teaser Officiel
                   </Button>
                 )}
               </div>
@@ -100,7 +101,7 @@ export default function Home() {
 
       {/* Stats Section */}
       <section className="relative z-20 -mt-16 container mx-auto px-4">
-        <div className="bg-card/80 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 shadow-2xl">
+        <div className="bg-card/90 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 shadow-2xl">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
             {stats.map((stat, idx) => (
               <div key={idx} className="flex flex-col items-center text-center space-y-3 group">
@@ -115,19 +116,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Discover Disciplines */}
-      <section className="py-32 bg-background">
+      {/* Disciplines Section */}
+      <section className="py-32 bg-background relative overflow-hidden">
         <div className="container mx-auto px-4 text-center space-y-12">
-           <h2 className="text-5xl font-headline font-bold uppercase tracking-tighter">VOTRE TERRAIN DE GLOIRE</h2>
-           <p className="text-muted-foreground text-xl max-w-3xl mx-auto">
-             La ONECUP réunit les meilleurs athlètes des écoles dans deux disciplines majeures. 
-             Choisissez votre arène et préparez-vous à l'excellence.
-           </p>
-           <Link href="/tournaments">
-             <Button size="lg" variant="outline" className="h-16 px-12 rounded-2xl uppercase font-bold border-primary text-primary hover:bg-primary hover:text-white transition-all">
-                Découvrir les Disciplines 2026
-             </Button>
-           </Link>
+           <div className="space-y-4 max-w-3xl mx-auto">
+             <h2 className="text-5xl font-headline font-bold uppercase tracking-tighter">UNE COMPÉTITION, DEUX ARÈNES</h2>
+             <p className="text-muted-foreground text-xl">
+               La ONECUP est l'événement hybride par excellence. Choisissez votre terrain et défendez les couleurs de votre école.
+             </p>
+           </div>
+           
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+             <Link href="/tournaments" className="group">
+               <div className="bg-card border border-white/5 p-8 rounded-[2.5rem] space-y-6 transition-all group-hover:border-primary group-hover:-translate-y-2">
+                 <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition-all">
+                   <Trophy className="w-10 h-10" />
+                 </div>
+                 <h3 className="text-2xl font-headline font-bold uppercase">Football Élite</h3>
+                 <p className="text-muted-foreground text-sm">Le tournoi interscolaire roi. Onze joueurs, un ballon, une seule gloire.</p>
+                 <span className="inline-flex items-center text-primary font-bold uppercase text-xs gap-2">Découvrir la discipline <ArrowRight className="w-4 h-4" /></span>
+               </div>
+             </Link>
+
+             <Link href="/tournaments" className="group">
+               <div className="bg-card border border-white/5 p-8 rounded-[2.5rem] space-y-6 transition-all group-hover:border-secondary group-hover:-translate-y-2">
+                 <div className="w-20 h-20 bg-secondary/10 rounded-3xl flex items-center justify-center mx-auto group-hover:bg-secondary group-hover:text-white transition-all">
+                   <Gamepad2 className="w-10 h-10" />
+                 </div>
+                 <h3 className="text-2xl font-headline font-bold uppercase">Challenge PS5</h3>
+                 <p className="text-muted-foreground text-sm">L'élite numérique. Tactique, précision et manette en main.</p>
+                 <span className="inline-flex items-center text-secondary font-bold uppercase text-xs gap-2">Découvrir la discipline <ArrowRight className="w-4 h-4" /></span>
+               </div>
+             </Link>
+           </div>
         </div>
       </section>
 

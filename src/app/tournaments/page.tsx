@@ -42,7 +42,7 @@ export default function TournamentsPage() {
 
       {/* Main Categories Highlights */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-        <Card className="group relative overflow-hidden rounded-[2.5rem] border-white/5 bg-gradient-to-br from-card to-muted/20 hover:border-primary/40 transition-all duration-500">
+        <div className="group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-card to-muted/20 hover:border-primary/40 transition-all duration-500 shadow-xl">
            <div className="aspect-[21/9] relative overflow-hidden">
              <Image src="https://picsum.photos/seed/foot-pro/1200/600" fill alt="Football" className="object-cover transition-transform duration-700 group-hover:scale-110" />
              <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
@@ -51,13 +51,13 @@ export default function TournamentsPage() {
                <h2 className="text-3xl font-headline font-bold uppercase">Ligue Football Élite</h2>
              </div>
            </div>
-           <CardContent className="p-8 space-y-4">
+           <div className="p-8 space-y-4">
               <p className="text-muted-foreground font-medium">Le pilier de la ONECUP. 11 contre 11, intensité maximale, arbitrage professionnel et reconnaissance nationale.</p>
-              <Button onClick={() => setCategory("football")} className="gap-2 bg-primary uppercase font-bold text-xs h-10 rounded-xl">Voir les Épreuves Football</Button>
-           </CardContent>
-        </Card>
+              <Button onClick={() => setCategory("football")} className="gap-2 bg-primary uppercase font-bold text-xs h-10 rounded-xl">Voir l'épreuve Football</Button>
+           </div>
+        </div>
 
-        <Card className="group relative overflow-hidden rounded-[2.5rem] border-white/5 bg-gradient-to-br from-card to-muted/20 hover:border-secondary/40 transition-all duration-500">
+        <div className="group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-card to-muted/20 hover:border-secondary/40 transition-all duration-500 shadow-xl">
            <div className="aspect-[21/9] relative overflow-hidden">
              <Image src="https://picsum.photos/seed/ps5-pro/1200/600" fill alt="E-sport" className="object-cover transition-transform duration-700 group-hover:scale-110" />
              <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
@@ -66,11 +66,11 @@ export default function TournamentsPage() {
                <h2 className="text-3xl font-headline font-bold uppercase">Challenge PS5 Élite</h2>
              </div>
            </div>
-           <CardContent className="p-8 space-y-4">
+           <div className="p-8 space-y-4">
               <p className="text-muted-foreground font-medium">L'arène technologique. Précision, tactique numérique et ambiance électrique pour les virtuoses de la manette.</p>
-              <Button onClick={() => setCategory("esport")} className="gap-2 bg-secondary uppercase font-bold text-xs h-10 rounded-xl">Voir les Épreuves E-Sport</Button>
-           </CardContent>
-        </Card>
+              <Button onClick={() => setCategory("esport")} className="gap-2 bg-secondary uppercase font-bold text-xs h-10 rounded-xl">Voir l'épreuve E-Sport</Button>
+           </div>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between sticky top-16 z-40 bg-background/80 backdrop-blur py-6 border-b border-white/5">
@@ -86,9 +86,9 @@ export default function TournamentsPage() {
         
         <Tabs value={category} onValueChange={setCategory} className="w-full md:w-auto">
           <TabsList className="bg-muted p-1 h-12">
-            <TabsTrigger value="all" className="uppercase font-bold text-xs">Toutes les épreuves</TabsTrigger>
+            <TabsTrigger value="all" className="uppercase font-bold text-xs">Toutes</TabsTrigger>
             <TabsTrigger value="football" className="uppercase font-bold text-xs">Football</TabsTrigger>
-            <TabsTrigger value="esport" className="uppercase font-bold text-xs">E-Sport</TabsTrigger>
+            <TabsTrigger value="esport" className="uppercase font-bold text-xs">PlayStation</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -113,18 +113,18 @@ export default function TournamentsPage() {
               <div className="grid grid-cols-1 gap-4 text-sm text-muted-foreground font-medium">
                 <div className="flex items-center gap-3">
                   <Calendar className="w-4 h-4 text-primary" />
-                  {t.startDate}
+                  {t.startDate ? new Date(t.startDate).toLocaleDateString() : "Juillet 2026"}
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="w-4 h-4 text-primary" />
-                  {t.locationStade || "Kinshasa"}
+                  {t.locationStade || "OneCup Arena"}
                 </div>
               </div>
 
               <div className="pt-4 mt-auto">
                 <Link href={`/tournaments/${t.id}`}>
                   <Button className="w-full h-12 gap-2 bg-primary glow-blue transition-all uppercase font-bold text-xs rounded-xl">
-                    S'inscrire à l'épreuve <ArrowRight className="w-4 h-4" />
+                    Accéder aux détails <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </div>
@@ -142,15 +142,3 @@ export default function TournamentsPage() {
     </div>
   );
 }
-
-const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)}>
-    {children}
-  </div>
-);
-
-const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={cn("p-6 pt-0", className)}>
-    {children}
-  </div>
-);

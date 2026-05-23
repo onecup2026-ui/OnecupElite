@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Image as ImageIcon, Save, Video, PartyPopper, Edit2, Check } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Save, Edit2, Check, Video } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
 
   const handleSaveMatch = () => {
     if (!db || !isAdmin || !matchForm.tournamentId) return;
-    const tournamentName = tournaments?.find(t => t.id === matchForm.tournamentId)?.name || "Tournoi";
+    const tournamentName = tournaments?.find(t => t.id === matchForm.tournamentId)?.name || "Discipline";
     
     if (editingMatchId) {
       updateDoc(doc(db, "matches", editingMatchId), {
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">Administration Elite</h1>
+        <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">Administration ONECUP</h1>
         <div className="flex items-center gap-2">
            <Badge className="bg-primary px-4 py-1">Mode: {user?.displayName}</Badge>
         </div>
@@ -234,33 +234,33 @@ export default function AdminDashboard() {
 
       <Tabs defaultValue="tournaments" className="w-full">
         <TabsList className="bg-muted p-1 rounded-xl mb-6 flex flex-wrap h-auto">
-          <TabsTrigger value="tournaments" className="uppercase font-bold text-xs">Tournois</TabsTrigger>
-          <TabsTrigger value="matches" className="uppercase font-bold text-xs">Matchs & Progression</TabsTrigger>
+          <TabsTrigger value="tournaments" className="uppercase font-bold text-xs">Disciplines</TabsTrigger>
+          <TabsTrigger value="matches" className="uppercase font-bold text-xs">Scores & Progression</TabsTrigger>
           <TabsTrigger value="registrations" className="uppercase font-bold text-xs">Inscriptions</TabsTrigger>
-          <TabsTrigger value="config" className="uppercase font-bold text-xs gap-2"><Settings className="w-3 h-3" /> Configuration</TabsTrigger>
+          <TabsTrigger value="config" className="uppercase font-bold text-xs gap-2"><Settings className="w-3 h-3" /> Config Plateforme</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tournaments" className="space-y-6">
           <Card className="border-primary/20">
             <CardHeader>
               <CardTitle className="text-lg uppercase flex items-center justify-between">
-                {editingTournamentId ? "Modifier le Tournoi" : "Nouveau Tournoi"}
+                {editingTournamentId ? "Modifier la Discipline" : "Nouvelle Discipline"}
                 {editingTournamentId && <Button variant="ghost" size="sm" onClick={() => {setEditingTournamentId(null); setTournamentForm(initialTournamentState);}}><X className="w-4 h-4 mr-2" /> Annuler</Button>}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Nom du tournoi</Label>
-                  <Input placeholder="Nom du tournoi" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} />
+                  <Label className="text-[10px] uppercase font-bold">Nom officiel</Label>
+                  <Input placeholder="Ex: Ligue Football Élite" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Sport / Jeu</Label>
+                  <Label className="text-[10px] uppercase font-bold">Catégorie</Label>
                   <Select value={tournamentForm.gameType} onValueChange={(val) => setTournamentForm({...tournamentForm, gameType: val})}>
-                    <SelectTrigger><SelectValue placeholder="Sport/Jeu" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Football">Football</SelectItem>
-                      <SelectItem value="Esport">Esport (PlayStation)</SelectItem>
+                      <SelectItem value="Esport">PlayStation (E-Sport)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -269,12 +269,12 @@ export default function AdminDashboard() {
                   <Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Date de fin</Label>
-                  <Input type="date" value={tournamentForm.endDate} onChange={e => setTournamentForm({...tournamentForm, endDate: e.target.value})} />
+                  <Label className="text-[10px] uppercase font-bold">Lieu (Stade)</Label>
+                  <Input placeholder="Stade..." value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Clôture Inscriptions</Label>
-                  <Input type="date" value={tournamentForm.registrationDeadline} onChange={e => setTournamentForm({...tournamentForm, registrationDeadline: e.target.value})} />
+                  <Label className="text-[10px] uppercase font-bold">Commune</Label>
+                  <Input placeholder="Commune..." value={tournamentForm.locationCommune} onChange={e => setTournamentForm({...tournamentForm, locationCommune: e.target.value})} />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase font-bold">Équipes Max</Label>
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
               
               <div className="space-y-4">
                 <div className="flex flex-col gap-4">
-                  <Label className="text-[10px] uppercase font-bold">Affiche</Label>
+                  <Label className="text-[10px] uppercase font-bold">Affiche Officielle</Label>
                   <div className="flex items-center gap-4">
                     <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'tournament')} />
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2 uppercase font-bold text-xs">
@@ -299,12 +299,16 @@ export default function AdminDashboard() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold">Description / Règlement</Label>
+                  <Label className="text-[10px] uppercase font-bold">URL Vidéo Teaser (YouTube)</Label>
+                  <Input placeholder="https://youtube.com/watch?v=..." value={tournamentForm.teaserVideoUrl} onChange={e => setTournamentForm({...tournamentForm, teaserVideoUrl: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold">Description & Règlement</Label>
                   <Textarea value={tournamentForm.description} onChange={e => setTournamentForm({...tournamentForm, description: e.target.value})} className="min-h-[120px]" />
                 </div>
               </div>
-              <Button onClick={handleSaveTournament} className="w-full h-12 uppercase font-bold bg-primary">
-                {editingTournamentId ? "Enregistrer les modifications" : "Publier le Tournoi"}
+              <Button onClick={handleSaveTournament} className="w-full h-12 uppercase font-bold bg-primary glow-blue">
+                {editingTournamentId ? "Enregistrer les modifications" : "Publier la Discipline"}
               </Button>
             </CardContent>
           </Card>
@@ -316,7 +320,7 @@ export default function AdminDashboard() {
                   {t.imageUrl ? <img src={t.imageUrl} className="w-12 h-12 rounded-lg object-cover" alt="" /> : <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center"><Trophy className="w-6 h-6 text-primary" /></div>}
                   <div>
                     <p className="font-bold text-xs uppercase">{t.name}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">{t.gameType} • {t.startDate}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">{t.gameType} • {t.locationStade}</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -333,14 +337,14 @@ export default function AdminDashboard() {
              <Card className="border-primary/20">
               <CardHeader>
                 <CardTitle className="text-lg uppercase flex items-center justify-between">
-                  {editingMatchId ? "Modifier le Match" : "Programmer un Match"}
+                  {editingMatchId ? "Modifier le Match" : "Programmer une Rencontre"}
                   {editingMatchId && <Button variant="ghost" size="sm" onClick={() => {setEditingMatchId(null); setMatchForm(initialMatchState);}}><X className="w-4 h-4 mr-2" /> Annuler</Button>}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Tournoi</Label>
+                    <Label className="text-[10px] uppercase font-bold">Discipline</Label>
                     <Select value={matchForm.tournamentId} onValueChange={(val) => setMatchForm({...matchForm, tournamentId: val})}>
                       <SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
                       <SelectContent>
@@ -349,7 +353,7 @@ export default function AdminDashboard() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Numéro de match (Logique)</Label>
+                    <Label className="text-[10px] uppercase font-bold">N° Match (Ordre)</Label>
                     <Input type="number" value={matchForm.matchNumber} onChange={e => setMatchForm({...matchForm, matchNumber: Number(e.target.value)})} />
                   </div>
                   <div className="space-y-2">
@@ -384,7 +388,7 @@ export default function AdminDashboard() {
                     </Select>
                   </div>
                 </div>
-                <Button onClick={handleSaveMatch} className="w-full uppercase font-bold bg-primary">
+                <Button onClick={handleSaveMatch} className="w-full uppercase font-bold bg-primary glow-blue">
                   {editingMatchId ? "Mettre à jour le score" : "Valider le Match"}
                 </Button>
               </CardContent>
@@ -418,8 +422,8 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-bold uppercase text-sm">{r.teamName}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">Capitaine: {r.captainName} • Tél: {r.contactPhone}</p>
-                    <p className="text-[10px] text-primary uppercase font-bold">Tournoi: {r.tournamentName}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">Contact: {r.captainName} • {r.contactPhone}</p>
+                    <p className="text-[10px] text-primary uppercase font-bold">Discipline: {r.tournamentName}</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <Badge variant="secondary" className="uppercase text-[10px]">{r.status || "En attente"}</Badge>
@@ -434,21 +438,21 @@ export default function AdminDashboard() {
         <TabsContent value="config">
            <Card className="border-primary/20">
             <CardHeader>
-              <CardTitle className="text-lg uppercase">Design de la plateforme</CardTitle>
+              <CardTitle className="text-lg uppercase">Design & Images Plateforme</CardTitle>
             </CardHeader>
             <CardContent className="space-y-8">
               <div className="space-y-4">
                 <Label className="uppercase font-bold text-xs">Image de Fond (Accueil)</Label>
                 <input type="file" ref={bgInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'background')} />
-                <Button variant="outline" onClick={() => bgInputRef.current?.click()} className="w-full">Changer Accueil</Button>
-                {siteConfig?.heroImageUrl && <img src={siteConfig.heroImageUrl} className="w-48 rounded-lg border" />}
+                <Button variant="outline" onClick={() => bgInputRef.current?.click()} className="w-full">Remplacer Fond Accueil</Button>
+                {siteConfig?.heroImageUrl && <img src={siteConfig.heroImageUrl} className="w-48 rounded-lg border mt-2" />}
               </div>
 
               <div className="space-y-4">
-                <Label className="uppercase font-bold text-xs">Image After Cup</Label>
+                <Label className="uppercase font-bold text-xs">Image Page After Cup</Label>
                 <input type="file" ref={afterCupInputRef} className="hidden" onChange={(e) => handleFileUpload(e, 'aftercup')} />
-                <Button variant="outline" onClick={() => afterCupInputRef.current?.click()} className="w-full">Changer After Cup</Button>
-                {siteConfig?.afterCupImageUrl && <img src={siteConfig.afterCupImageUrl} className="w-48 rounded-lg border" />}
+                <Button variant="outline" onClick={() => afterCupInputRef.current?.click()} className="w-full">Remplacer Fond After Cup</Button>
+                {siteConfig?.afterCupImageUrl && <img src={siteConfig.afterCupImageUrl} className="w-48 rounded-lg border mt-2" />}
               </div>
             </CardContent>
           </Card>
