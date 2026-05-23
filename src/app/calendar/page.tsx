@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const schedule = [
   {
@@ -66,6 +67,23 @@ const schedule = [
 ];
 
 export default function CalendarPage() {
+  const { toast } = useToast();
+
+  const handleShare = () => {
+    const shareData = {
+      title: 'ONECUP 2026 - Chronologie Officielle',
+      text: 'Découvrez le calendrier officiel de la ONECUP 2026. Ne manquez aucun match !',
+      url: window.location.href,
+    };
+
+    if (navigator.share && navigator.canShare(shareData)) {
+      navigator.share(shareData).catch((err) => console.log('Erreur de partage:', err));
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({ title: "Lien copié !", description: "L'URL de l'agenda a été copiée." });
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-12 space-y-16">
       <header className="space-y-6 text-center max-w-4xl mx-auto">
@@ -80,7 +98,7 @@ export default function CalendarPage() {
           Des coulisses du tirage au sort jusqu'à l'extase de la finale.
         </p>
         <div className="flex justify-center gap-4">
-           <Button variant="ghost" className="gap-2 uppercase font-bold text-xs"><Share2 className="w-4 h-4" /> Partager l'agenda</Button>
+           <Button variant="ghost" onClick={handleShare} className="gap-2 uppercase font-bold text-xs"><Share2 className="w-4 h-4" /> Partager l'agenda</Button>
         </div>
       </header>
 

@@ -118,14 +118,17 @@ export default function TournamentDetailPage() {
   };
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `ONECUP 2026 - ${tournament?.name}`,
-        url: window.location.href,
-      }).catch(console.error);
+    const shareData = {
+      title: `ONECUP 2026 - ${tournament?.name}`,
+      text: `Rejoignez-moi pour le tournoi ${tournament?.name} ! Inscriptions ouvertes sur la plateforme officielle OneCup.`,
+      url: window.location.href,
+    };
+
+    if (navigator.share && navigator.canShare(shareData)) {
+      navigator.share(shareData).catch((err) => console.log('Erreur de partage:', err));
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Lien copié !" });
+      toast({ title: "Lien copié !", description: "Vous pouvez maintenant le partager manuellement." });
     }
   };
 
@@ -202,15 +205,18 @@ export default function TournamentDetailPage() {
                </Card>
                
                <Card className="rounded-3xl border-white/5">
-                 <CardHeader><CardTitle className="text-sm font-bold uppercase tracking-widest">Informations</CardTitle></CardHeader>
+                 <CardHeader><CardTitle className="text-sm font-bold uppercase tracking-widest">Informations & Lieu</CardTitle></CardHeader>
                  <CardContent className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <MapPin className="w-5 h-5 text-primary" />
-                      <span className="text-xs font-bold uppercase">{tournament.locationStade || "OneCup Arena"}</span>
+                    <div className="flex items-start gap-4">
+                      <MapPin className="w-5 h-5 text-primary shrink-0 mt-1" />
+                      <div className="space-y-1">
+                        <span className="text-xs font-bold uppercase block">{tournament.locationStade || "OneCup Arena"}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase block">{tournament.locationCommune} {tournament.locationCommune && "•"} {tournament.locationAdresse}</span>
+                      </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <Calendar className="w-5 h-5 text-primary" />
-                      <span className="text-xs font-bold uppercase">{tournament.startDate ? new Date(tournament.startDate).toLocaleDateString() : "Juillet 2026"}</span>
+                      <span className="text-xs font-bold uppercase">{tournament.startDate ? new Date(tournament.startDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : "Juillet 2026"}</span>
                     </div>
                  </CardContent>
                </Card>
