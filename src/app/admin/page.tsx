@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign, Heart } from "lucide-react";
+import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign, Heart, Video } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,6 +97,7 @@ export default function AdminDashboard() {
     const data = {
       heroTitle: formData.get("heroTitle"),
       heroSubtitle: formData.get("heroSubtitle"),
+      heroVideoUrl: formData.get("heroVideoUrl"),
       heroImageUrl: siteImages.heroImageUrl || siteConfig?.heroImageUrl || "",
       currentPrizePool: Number(formData.get("currentPrizePool")),
       targetPrizePool: Number(formData.get("targetPrizePool")),
@@ -227,7 +228,7 @@ export default function AdminDashboard() {
 
         <TabsContent value="site" className="space-y-6">
           <Card className="shadow-lg border-white/5">
-            <CardHeader><CardTitle className="text-xl">Configuration Accueil & Cagnotte</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-xl">Configuration Accueil & Teaser</CardTitle></CardHeader>
             <CardContent>
               <form onSubmit={handleUpdateConfig} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -236,16 +237,22 @@ export default function AdminDashboard() {
                     <Input name="heroTitle" placeholder="Titre principal" defaultValue={siteConfig?.heroTitle} />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-xs font-bold uppercase text-muted-foreground">Cagnotte Actuelle (FC)</p>
-                    <Input name="currentPrizePool" type="number" defaultValue={siteConfig?.currentPrizePool || 0} />
+                    <p className="text-xs font-bold uppercase text-muted-foreground">URL Vidéo Teaser (YouTube)</p>
+                    <Input name="heroVideoUrl" placeholder="https://youtube.com/watch?v=..." defaultValue={siteConfig?.heroVideoUrl} />
                   </div>
                   <div className="space-y-2">
                     <p className="text-xs font-bold uppercase text-muted-foreground">Sous-titre</p>
                     <Textarea name="heroSubtitle" placeholder="Description courte" defaultValue={siteConfig?.heroSubtitle} className="min-h-[100px]" />
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-bold uppercase text-muted-foreground">Objectif Cagnotte (FC)</p>
-                    <Input name="targetPrizePool" type="number" defaultValue={siteConfig?.targetPrizePool || 250000000} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">Cagnotte (FC)</p>
+                      <Input name="currentPrizePool" type="number" defaultValue={siteConfig?.currentPrizePool || 0} />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">Objectif (FC)</p>
+                      <Input name="targetPrizePool" type="number" defaultValue={siteConfig?.targetPrizePool || 0} />
+                    </div>
                   </div>
                 </div>
                 

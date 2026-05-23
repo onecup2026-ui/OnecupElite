@@ -3,12 +3,13 @@
   "entities": {
     "SiteSettings": {
       "title": "Site Settings",
-      "description": "Configuration globale du site (image héro, textes d'accueil, cagnotte)",
+      "description": "Configuration globale du site (image héro, textes d'accueil, cagnotte, vidéo teaser)",
       "type": "object",
       "properties": {
         "heroImageUrl": { "type": "string", "description": "URL de l'image de fond principale" },
         "heroTitle": { "type": "string", "description": "Titre principal de l'accueil" },
         "heroSubtitle": { "type": "string", "description": "Sous-titre de l'accueil" },
+        "heroVideoUrl": { "type": "string", "description": "Lien YouTube ou URL vidéo pour le teaser" },
         "currentPrizePool": { "type": "number", "description": "Montant actuel de la cagnotte globale" },
         "targetPrizePool": { "type": "number", "description": "Objectif de la cagnotte globale" }
       }

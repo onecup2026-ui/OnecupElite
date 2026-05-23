@@ -1,15 +1,16 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play, Heart } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play, Heart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
 import { useDoc, useCollection, useFirestore } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const stats = [
   { label: "Équipes Actives", value: "128+", icon: Users },
@@ -20,6 +21,7 @@ const stats = [
 
 export default function Home() {
   const db = useFirestore();
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
@@ -35,8 +37,18 @@ export default function Home() {
   
   const heroTitle = siteConfig?.heroTitle || "LA VICTOIRE EST UNE PASSION.";
   const heroSubtitle = siteConfig?.heroSubtitle || "Dominez le terrain avec l'écosystème OneCup. La plateforme numéro 1 pour les compétitions de football et d'e-sport de haut niveau.";
+  const heroVideoUrl = siteConfig?.heroVideoUrl || "";
 
-  // On filtre ou on prend les deux premiers tournois, en s'assurant qu'ils mentionnent la capacité
+  // Helper to extract YouTube ID
+  const getEmbedUrl = (url: string) => {
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return match && match[2].length === 11 ? `https://www.youtube.com/embed/${match[2]}` : url;
+    }
+    return url;
+  };
+
   const featuredTournaments = tournaments?.slice(0, 2) || [];
 
   // Configuration de la cagnotte
@@ -86,9 +98,11 @@ export default function Home() {
                     Participer <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg gap-2 backdrop-blur-sm uppercase font-bold">
-                  <Play className="w-5 h-5 fill-current" /> Teaser
-                </Button>
+                {heroVideoUrl && (
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg gap-2 backdrop-blur-sm uppercase font-bold" onClick={() => setIsVideoOpen(true)}>
+                    <Play className="w-5 h-5 fill-current" /> Teaser
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -105,6 +119,21 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Video Modal */}
+      <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-none">
+          <div className="aspect-video w-full">
+            <iframe
+              src={`${getEmbedUrl(heroVideoUrl)}?autoplay=1`}
+              title="OneCup Teaser"
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Stats Section */}
       <section className="py-12 md:py-20 border-y bg-card/30 backdrop-blur-sm">
