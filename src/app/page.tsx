@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -22,7 +21,10 @@ export default function Home() {
   const { data: siteConfig } = useDoc(db ? doc(db, "settings", "config") : null);
   const { data: tournaments } = useCollection(db ? collection(db, "tournaments") : null);
 
-  const heroImage = siteConfig?.heroImageUrl || "https://picsum.photos/seed/ball-trophy-prestige/1920/1080";
+  const heroImage = (siteConfig?.heroImageUrl && siteConfig.heroImageUrl.trim() !== "") 
+    ? siteConfig.heroImageUrl 
+    : "https://picsum.photos/seed/ball-trophy-prestige/1920/1080";
+  
   const heroTitle = siteConfig?.heroTitle || "LA VICTOIRE EST UNE PASSION.";
   const heroSubtitle = siteConfig?.heroSubtitle || "Dominez le terrain avec l'écosystème OneCup. La plateforme numéro 1 pour les compétitions de football et d'e-sport de haut niveau.";
 
@@ -39,6 +41,7 @@ export default function Home() {
             fill
             className="object-cover opacity-60 scale-100"
             priority
+            unoptimized={heroImage.startsWith('data:')}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
@@ -122,6 +125,7 @@ export default function Home() {
                     alt={tournament.name}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    unoptimized={tournament.imageUrl?.startsWith('data:')}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />
                   <Badge className="absolute top-6 left-6 bg-primary/90 text-white font-bold">{tournament.sport}</Badge>
@@ -140,7 +144,9 @@ export default function Home() {
                   </div>
                   <div className="pt-4 flex gap-4">
                     <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold">S'inscrire</Button>
-                    <Button variant="outline" className="flex-1 uppercase font-bold">Détails</Button>
+                    <Link href={`/tournaments/${tournament.id}`} className="flex-1">
+                      <Button variant="outline" className="w-full uppercase font-bold">Détails</Button>
+                    </Link>
                   </div>
                 </div>
               </div>
