@@ -14,33 +14,72 @@
         "targetPrizePool": { "type": "number", "description": "Objectif de la cagnotte globale" }
       }
     },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Données utilisateur étendues",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "bio": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
     "Tournament": {
       "title": "Tournament",
-      "description": "Détails d'un tournoi",
+      "description": "Détails d'un tournoi élite",
       "type": "object",
       "properties": {
         "name": { "type": "string" },
         "sport": { "type": "string" },
         "date": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "registrationDeadline": { "type": "string" },
         "location": { "type": "string" },
         "prize": { "type": "string" },
+        "entryFee": { "type": "number", "default": 0 },
         "imageUrl": { "type": "string" },
-        "status": { "type": "string", "enum": ["Inscriptions Ouvertes", "À Venir", "Terminé"] },
+        "status": { "type": "string", "enum": ["Inscriptions Ouvertes", "En Cours", "Terminé"] },
         "teamsRegistered": { "type": "number", "default": 0 },
         "teamsMax": { "type": "number", "default": 16 },
         "description": { "type": "string" },
-        "schedule": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "label": { "type": "string" },
-              "date": { "type": "string" }
-            }
-          }
-        }
+        "rules": { "type": "string" }
       },
       "required": ["name", "sport", "date", "imageUrl"]
+    },
+    "Team": {
+      "title": "Team",
+      "description": "Équipe de tournoi",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "captainId": { "type": "string" },
+        "captainName": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "tagline": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Match": {
+      "title": "Match",
+      "description": "Détails d'une rencontre",
+      "type": "object",
+      "properties": {
+        "tournamentId": { "type": "string" },
+        "tournamentName": { "type": "string" },
+        "team1": { "type": "string" },
+        "team2": { "type": "string" },
+        "matchNumber": { "type": "number" },
+        "scheduledTime": { "type": "string" },
+        "status": { "type": "string", "enum": ["À Venir", "En Cours", "Terminé"] },
+        "scoreTeam1": { "type": "number", "default": 0 },
+        "scoreTeam2": { "type": "number", "default": 0 },
+        "winner": { "type": "string" },
+        "resultDetails": { "type": "string" }
+      }
     },
     "Registration": {
       "title": "Registration",
@@ -121,9 +160,21 @@
       "schema": "SiteSettings",
       "description": "Paramètres globaux"
     },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Profils utilisateurs"
+    },
     "/tournaments/{tournamentId}": {
       "schema": "Tournament",
       "description": "Liste des tournois"
+    },
+    "/teams/{teamId}": {
+      "schema": "Team",
+      "description": "Équipes créées"
+    },
+    "/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Rencontres sportives"
     },
     "/registrations/{registrationId}": {
       "schema": "Registration",
