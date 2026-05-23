@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDoc, useCollection, useFirestore, useUser, useAuth } from "@/firebase";
-import { doc, setDoc, addDoc, deleteDoc, collection, query, orderBy } from "firebase/firestore";
+import { doc, setDoc, addDoc, deleteDoc, collection, query, orderBy, updateDoc, increment } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
@@ -46,7 +46,6 @@ export default function AdminDashboard() {
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
 
-  // Form states
   const [newTournament, setNewTournament] = useState({
     name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", teamsMax: 16, teamsRegistered: 0, description: "", schedule: [] as { label: string; date: string }[]
   });
@@ -211,6 +210,24 @@ export default function AdminDashboard() {
       });
   };
 
+  const handleDeleteRegistration = async (reg: any) => {
+    if (!db || !isAdmin) return;
+    try {
+      await deleteDoc(doc(db, "registrations", reg.id));
+      if (reg.tournamentId) {
+        await updateDoc(doc(db, "tournaments", reg.tournamentId), {
+          teamsRegistered: increment(-1)
+        });
+      }
+      toast({ title: "Inscription annulée" });
+    } catch (err) {
+      errorEmitter.emit('permission-error', new FirestorePermissionError({
+        path: `/registrations/${reg.id}`,
+        operation: 'delete'
+      }));
+    }
+  };
+
   if (userLoading) {
     return (
       <div className="container mx-auto py-24 flex items-center justify-center">
@@ -304,7 +321,7 @@ export default function AdminDashboard() {
                           <p className="text-[10px] text-muted-foreground">{reg.contactPhone}</p>
                         </td>
                         <td className="p-3 text-right">
-                          <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDelete('registrations', reg.id)}>
+                          <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDeleteRegistration(reg)}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </td>

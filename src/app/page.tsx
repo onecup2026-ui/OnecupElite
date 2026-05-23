@@ -39,7 +39,6 @@ export default function Home() {
   const heroSubtitle = siteConfig?.heroSubtitle || "Dominez le terrain avec l'écosystème OneCup. La plateforme numéro 1 pour les compétitions de football et d'e-sport de haut niveau.";
   const heroVideoUrl = siteConfig?.heroVideoUrl || "";
 
-  // Helper to extract YouTube ID
   const getEmbedUrl = (url: string) => {
     if (url.includes("youtube.com") || url.includes("youtu.be")) {
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -51,7 +50,6 @@ export default function Home() {
 
   const featuredTournaments = tournaments?.slice(0, 2) || [];
 
-  // Configuration de la cagnotte
   const currentPool = siteConfig?.currentPrizePool || 1350000;
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
@@ -64,7 +62,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden py-12 md:py-20">
         <div className="absolute inset-0 z-0">
           <Image
@@ -106,7 +103,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Dynamic Prize Pool Widget */}
             <div className="flex justify-center xl:justify-end animate-float">
               <div className="w-full max-w-[400px]">
                 <PrizePoolTracker
@@ -120,7 +116,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Video Modal */}
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-none">
           <div className="aspect-video w-full">
@@ -135,7 +130,6 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
-      {/* Stats Section */}
       <section className="py-12 md:py-20 border-y bg-card/30 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
@@ -152,7 +146,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Tournaments */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-12 gap-6">
@@ -199,7 +192,9 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue uppercase font-bold h-12 text-white">S'inscrire</Button>
+                    <Link href={`/tournaments/${tournament.id}`} className="flex-1">
+                      <Button className="w-full bg-primary hover:bg-primary/90 glow-blue uppercase font-bold h-12 text-white">S'inscrire</Button>
+                    </Link>
                     <Link href={`/tournaments/${tournament.id}`} className="flex-1">
                       <Button variant="outline" className="w-full uppercase font-bold h-12">Détails</Button>
                     </Link>
@@ -211,7 +206,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Floating Sponsors Section */}
       <section className="py-16 bg-muted/20 border-t overflow-hidden">
         <div className="container mx-auto px-4 mb-8 text-center">
           <Badge variant="ghost" className="text-primary font-bold uppercase tracking-[0.2em] text-[10px] mb-2">Ils nous font confiance</Badge>
@@ -221,7 +215,6 @@ export default function Home() {
         <div className="relative flex overflow-x-hidden">
           <div className="py-12 animate-marquee whitespace-nowrap flex items-center">
             {sponsors && sponsors.length > 0 ? (
-              // On double les logos pour l'effet infini
               [...sponsors, ...sponsors, ...sponsors].map((sponsor: any, idx) => (
                 <div key={`${sponsor.id}-${idx}`} className="mx-8 md:mx-16 animate-float" style={{ animationDelay: `${idx * 0.2}s` }}>
                   <div className="h-12 md:h-20 w-auto flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-500 hover:scale-110">
@@ -234,7 +227,6 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              // Fallback placeholders si pas de sponsors
               Array(8).fill(0).map((_, i) => (
                 <div key={i} className="mx-12 h-12 w-32 bg-muted/40 rounded-lg animate-pulse" />
               ))
