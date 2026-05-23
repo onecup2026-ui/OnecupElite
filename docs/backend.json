@@ -24,7 +24,18 @@
         "imageUrl": { "type": "string" },
         "status": { "type": "string", "enum": ["Inscriptions Ouvertes", "À Venir", "Terminé"] },
         "teamsRegistered": { "type": "number" },
-        "teamsMax": { "type": "number" }
+        "teamsMax": { "type": "number" },
+        "schedule": {
+          "type": "array",
+          "description": "Phases clés du tournoi (éliminatoires, finales, etc.)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "date": { "type": "string" }
+            }
+          }
+        }
       },
       "required": ["name", "sport", "date", "imageUrl"]
     },

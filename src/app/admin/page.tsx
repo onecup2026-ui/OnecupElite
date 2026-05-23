@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon } from "lucide-react";
+import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,20 +10,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDoc, useCollection, useFirestore } from "@/firebase";
 import { doc, setDoc, addDoc, deleteDoc, collection } from "firebase/firestore";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminDashboard() {
   const db = useFirestore();
+  const { toast } = useToast();
   const { data: siteConfig } = useDoc(db ? doc(db, "settings", "config") : null);
   const { data: tournaments } = useCollection(db ? collection(db, "tournaments") : null);
   const { data: articles } = useCollection(db ? collection(db, "articles") : null);
 
   const [isSaving, setIsSaving] = useState(false);
 
-  // Form states for new items
+  // Form states for new tournament
   const [newTournament, setNewTournament] = useState({
-    name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes"
+    name: "", 
+    sport: "Football", 
+    date: "", 
+    location: "", 
+    prize: "", 
+    imageUrl: "", 
+    status: "Inscriptions Ouvertes",
+    schedule: [] as { label: string; date: string }[]
   });
+
+  const [scheduleItem, setScheduleItem] = useState({ label: "", date: "" });
+
   const [newArticle, setNewArticle] = useState({
     title: "", excerpt: "", category: "Tournois", date: new Date().toLocaleDateString(), author: "Admin", imageUrl: ""
   });
@@ -43,18 +55,40 @@ export default function AdminDashboard() {
       .finally(() => setIsSaving(false));
   };
 
+  const addScheduleItem = () => {
+    if (scheduleItem.label && scheduleItem.date) {
+      setNewTournament({
+        ...newTournament,
+        schedule: [...newTournament.schedule, scheduleItem]
+      });
+      setScheduleItem({ label: "", date: "" });
+    }
+  };
+
+  const removeScheduleItem = (index: number) => {
+    const updated = [...newTournament.schedule];
+    updated.splice(index, 1);
+    setNewTournament({ ...newTournament, schedule: updated });
+  };
+
   const handleAddTournament = () => {
-    if (!db) return;
+    if (!db || !newTournament.name || !newTournament.date) {
+      toast({ variant: "destructive", title: "Erreur", description: "Veuillez remplir au moins le nom et la date du tournoi." });
+      return;
+    }
     addDoc(collection(db, "tournaments"), newTournament)
       .then(() => {
-        toast({ title: "Tournoi ajouté" });
-        setNewTournament({ name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes" });
+        toast({ title: "Tournoi ajouté avec succès" });
+        setNewTournament({ 
+          name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", schedule: [] 
+        });
       });
   };
 
   const handleDeleteTournament = (id: string) => {
     if (!db) return;
-    deleteDoc(doc(db, "tournaments", id));
+    deleteDoc(doc(db, "tournaments", id))
+      .then(() => toast({ title: "Tournoi supprimé" }));
   };
 
   const handleAddArticle = () => {
@@ -121,15 +155,36 @@ export default function AdminDashboard() {
           <Card className="bg-card/50 border-white/5">
             <CardHeader>
               <CardTitle>Nouveau Tournoi</CardTitle>
+              <CardDescription>Ajoutez un tournoi et ses phases de compétition (Eliminatoires, Finales, etc.)</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
-              <Input placeholder="Sport" value={newTournament.sport} onChange={e => setNewTournament({...newTournament, sport: e.target.value})} />
-              <Input placeholder="Date" value={newTournament.date} onChange={e => setNewTournament({...newTournament, date: e.target.value})} />
-              <Input placeholder="Lieu" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
-              <Input placeholder="Prix / Cashprize" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
-              <Input placeholder="URL de l'image" value={newTournament.imageUrl} onChange={e => setNewTournament({...newTournament, imageUrl: e.target.value})} />
-              <Button onClick={handleAddTournament} className="md:col-span-2 bg-primary glow-blue"><Plus className="w-4 h-4 mr-2" /> Ajouter le tournoi</Button>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
+                <Input placeholder="Sport" value={newTournament.sport} onChange={e => setNewTournament({...newTournament, sport: e.target.value})} />
+                <Input placeholder="Date principale (YYYY-MM-DD)" value={newTournament.date} onChange={e => setNewTournament({...newTournament, date: e.target.value})} />
+                <Input placeholder="Lieu" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
+                <Input placeholder="Prix / Cashprize" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
+                <Input placeholder="URL de l'image" value={newTournament.imageUrl} onChange={e => setNewTournament({...newTournament, imageUrl: e.target.value})} />
+              </div>
+
+              <div className="border-t border-white/5 pt-4 space-y-4">
+                <h4 className="text-sm font-bold uppercase flex items-center gap-2"><ListPlus className="w-4 h-4" /> Programme du tournoi</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <Input placeholder="Libellé (ex: Quart de finale)" value={scheduleItem.label} onChange={e => setScheduleItem({...scheduleItem, label: e.target.value})} />
+                  <Input placeholder="Date (YYYY-MM-DD)" value={scheduleItem.date} onChange={e => setScheduleItem({...scheduleItem, date: e.target.value})} />
+                  <Button variant="secondary" onClick={addScheduleItem}>Ajouter au programme</Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {newTournament.schedule.map((item, idx) => (
+                    <Badge key={idx} variant="outline" className="gap-2 px-3 py-1 bg-primary/5">
+                      {item.label} : {item.date}
+                      <Trash2 className="w-3 h-3 text-destructive cursor-pointer" onClick={() => removeScheduleItem(idx)} />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <Button onClick={handleAddTournament} className="w-full bg-primary glow-blue"><Plus className="w-4 h-4 mr-2" /> Publier le tournoi</Button>
             </CardContent>
           </Card>
 
@@ -142,6 +197,11 @@ export default function AdminDashboard() {
                 <CardContent className="pt-4">
                   <h3 className="font-bold">{t.name}</h3>
                   <p className="text-xs text-muted-foreground">{t.sport} • {t.date}</p>
+                  <div className="mt-2 space-y-1">
+                     {t.schedule?.map((s: any, i: number) => (
+                       <p key={i} className="text-[10px] text-primary/70">• {s.label} ({s.date})</p>
+                     ))}
+                  </div>
                   <Button variant="destructive" size="sm" onClick={() => handleDeleteTournament(t.id)} className="mt-4 w-full gap-2">
                     <Trash2 className="w-4 h-4" /> Supprimer
                   </Button>

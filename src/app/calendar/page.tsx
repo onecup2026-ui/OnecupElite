@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Calendar as CalendarIcon, Trophy, MapPin, Clock, ArrowRight } from "lucide-react";
+import { Calendar as CalendarIcon, Trophy, MapPin, Clock, ArrowRight, ListChecks } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
@@ -20,34 +20,74 @@ export default function CalendarPage() {
 
   // Helper to parse date strings safely
   const parseTournamentDate = (dateStr: string) => {
+    if (!dateStr) return null;
     const d = new Date(dateStr);
     return isValid(d) ? d : null;
   };
 
-  // Filter tournaments for the selected date
-  const selectedTournaments = useMemo(() => {
+  // Extract all event details (main tournament or specific phases) for a given date
+  const eventsForSelectedDate = useMemo(() => {
     if (!date || !tournaments) return [];
-    return tournaments.filter((t: any) => {
-      const tDate = parseTournamentDate(t.date);
-      return tDate && isSameDay(tDate, date);
+    const results: any[] = [];
+
+    tournaments.forEach((t: any) => {
+      // Check main date
+      const tMainDate = parseTournamentDate(t.date);
+      if (tMainDate && isSameDay(tMainDate, date)) {
+        results.push({
+          type: 'tournament',
+          tournament: t,
+          label: "Début du tournoi",
+          time: "09:00"
+        });
+      }
+
+      // Check schedule phases
+      if (t.schedule && Array.isArray(t.schedule)) {
+        t.schedule.forEach((phase: any) => {
+          const pDate = parseTournamentDate(phase.date);
+          if (pDate && isSameDay(pDate, date)) {
+            results.push({
+              type: 'phase',
+              tournament: t,
+              label: phase.label,
+              time: "TBA"
+            });
+          }
+        });
+      }
     });
+
+    return results;
   }, [date, tournaments]);
 
-  // Identify all dates that have tournaments for the calendar indicators
-  const tournamentDates = useMemo(() => {
+  // Identify all dates that have either a tournament or a phase for calendar indicators
+  const allEventDates = useMemo(() => {
     if (!tournaments) return [];
-    return tournaments
-      .map((t: any) => parseTournamentDate(t.date))
-      .filter((d): d is Date => d !== null);
+    const dates: Date[] = [];
+    
+    tournaments.forEach((t: any) => {
+      const d = parseTournamentDate(t.date);
+      if (d) dates.push(d);
+      
+      if (t.schedule && Array.isArray(t.schedule)) {
+        t.schedule.forEach((phase: any) => {
+          const pd = parseTournamentDate(phase.date);
+          if (pd) dates.push(pd);
+        });
+      }
+    });
+    
+    return dates;
   }, [tournaments]);
 
   return (
     <div className="container mx-auto px-4 py-12 space-y-12">
-      <header className="space-y-4">
+      <header className="space-y-4 text-center md:text-left">
         <Badge variant="outline" className="border-primary text-primary px-3 py-1 font-bold">AGENDA ONECUP</Badge>
-        <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter uppercase">CALENDRIER DES ÉVÉNEMENTS</h1>
+        <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter uppercase">PROGRAMME ET PHASES ÉLITE</h1>
         <p className="text-muted-foreground max-w-2xl text-lg">
-          Planifiez vos prochaines compétitions. Retrouvez toutes les dates clés de la saison OneCup Elite.
+          Suivez chaque étape du tournoi. Des phases éliminatoires jusqu'à la grande finale, ne manquez aucun temps fort.
         </p>
       </header>
 
@@ -55,7 +95,7 @@ export default function CalendarPage() {
         {/* Calendar Picker */}
         <Card className="bg-card/50 border-white/5 shadow-2xl h-fit">
           <CardHeader>
-            <CardTitle className="text-sm uppercase tracking-widest text-primary font-bold">Sélectionner une date</CardTitle>
+            <CardTitle className="text-sm uppercase tracking-widest text-primary font-bold">Calendrier interactif</CardTitle>
           </CardHeader>
           <CardContent>
             <Calendar
@@ -65,19 +105,19 @@ export default function CalendarPage() {
               locale={fr}
               className="rounded-md border border-white/5 bg-background/50"
               modifiers={{
-                hasEvent: tournamentDates,
+                hasEvent: allEventDates,
               }}
               modifiersStyles={{
                 hasEvent: { 
                   fontWeight: 'bold', 
                   color: 'hsl(var(--primary))',
-                  textDecoration: 'underline'
+                  background: 'hsla(var(--primary), 0.1)'
                 }
               }}
             />
             <div className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/10 flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <p className="text-xs text-muted-foreground">Les dates soulignées indiquent un événement programmé.</p>
+              <p className="text-xs text-muted-foreground">Sélectionnez une date en bleu pour voir le programme détaillé.</p>
             </div>
           </CardContent>
         </Card>
@@ -86,44 +126,58 @@ export default function CalendarPage() {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between border-b border-white/5 pb-4">
             <h2 className="text-2xl font-headline font-bold uppercase">
-              {date ? format(date, "EEEE d MMMM", { locale: fr }) : "Sélectionnez une date"}
+              {date ? format(date, "EEEE d MMMM", { locale: fr }) : "Choisissez une date"}
             </h2>
             <Badge variant="secondary" className="font-bold">
-              {selectedTournaments.length} Événement(s)
+              {eventsForSelectedDate.length} Événement(s)
             </Badge>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {loading ? (
-              <div className="text-center py-12 opacity-50 italic">Chargement des tournois...</div>
-            ) : selectedTournaments.length > 0 ? (
-              selectedTournaments.map((tournament: any) => (
-                <Card key={tournament.id} className="bg-card border-white/5 hover:border-primary/30 transition-all duration-300 group overflow-hidden">
+              <div className="text-center py-12 opacity-50 italic">Synchronisation avec Firestore...</div>
+            ) : eventsForSelectedDate.length > 0 ? (
+              eventsForSelectedDate.map((event: any, idx: number) => (
+                <Card key={`${event.tournament.id}-${idx}`} className="bg-card border-white/5 hover:border-primary/30 transition-all duration-300 group overflow-hidden">
                   <div className="flex flex-col md:flex-row">
-                    <div className="w-full md:w-48 h-32 relative">
+                    <div className="w-full md:w-56 h-40 relative">
                       <img 
-                        src={tournament.imageUrl || "https://picsum.photos/seed/calendar-event/400/300"} 
-                        alt={tournament.name}
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        src={event.tournament.imageUrl || "https://picsum.photos/seed/event/500/400"} 
+                        alt={event.tournament.name}
+                        className="w-full h-full object-cover"
                       />
+                      <div className="absolute top-2 left-2">
+                        <Badge className={event.type === 'phase' ? 'bg-secondary glow-blue' : 'bg-primary'}>
+                          {event.type === 'phase' ? 'PHASE CLÉ' : 'TOURNOI'}
+                        </Badge>
+                      </div>
                     </div>
                     <CardContent className="p-6 flex-1 flex flex-col justify-between">
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div className="flex items-center gap-2">
-                          <Badge className="bg-primary/20 text-primary border-none text-[10px] uppercase font-bold">{tournament.sport}</Badge>
-                          <span className="text-xs text-muted-foreground uppercase flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> 09:00 - 18:00
-                          </span>
+                          <Trophy className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-bold uppercase tracking-widest">{event.tournament.name}</span>
                         </div>
-                        <h3 className="text-xl font-bold uppercase group-hover:text-primary transition-colors">{tournament.name}</h3>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <MapPin className="w-4 h-4 text-primary" /> {tournament.location}
-                        </p>
+                        
+                        <div className="flex flex-col gap-1">
+                          <h3 className="text-2xl font-headline font-bold text-primary uppercase leading-none">
+                            {event.label}
+                          </h3>
+                          <p className="text-sm text-muted-foreground flex items-center gap-2">
+                            <Clock className="w-4 h-4" /> {event.time} • <MapPin className="w-4 h-4" /> {event.tournament.location}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-2">
+                           <Badge variant="outline" className="text-[10px] uppercase">{event.tournament.sport}</Badge>
+                           <span className="text-xs font-bold text-muted-foreground">CASH PRIZE : {event.tournament.prize}</span>
+                        </div>
                       </div>
-                      <div className="pt-4 flex justify-end">
-                        <Link href={`/tournaments/${tournament.id}`}>
+                      
+                      <div className="pt-6 flex justify-end">
+                        <Link href={`/tournaments/${event.tournament.id}`}>
                           <Button variant="ghost" className="text-primary font-bold gap-2 uppercase text-xs p-0 h-auto hover:bg-transparent group/btn">
-                            DÉTAILS DU TOURNOI <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                            PAGE DU TOURNOI <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                           </Button>
                         </Link>
                       </div>
@@ -132,38 +186,17 @@ export default function CalendarPage() {
                 </Card>
               ))
             ) : (
-              <div className="text-center py-20 bg-muted/10 rounded-3xl border border-dashed border-white/10 flex flex-col items-center gap-4">
-                <CalendarIcon className="w-12 h-12 text-muted-foreground opacity-20" />
+              <div className="text-center py-24 bg-muted/5 rounded-3xl border border-dashed border-white/10 flex flex-col items-center gap-4">
+                <ListChecks className="w-16 h-16 text-muted-foreground opacity-10" />
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold uppercase">Aucun tournoi ce jour</h3>
-                  <p className="text-muted-foreground text-sm">Parcourez le calendrier pour trouver d'autres dates.</p>
+                  <h3 className="text-xl font-bold uppercase">Repos Guerrier</h3>
+                  <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+                    Aucune phase de compétition n'est prévue pour cette date précise. Profitez-en pour vous entraîner !
+                  </p>
                 </div>
               </div>
             )}
           </div>
-
-          {/* Upcomming list summary */}
-          {date && selectedTournaments.length === 0 && tournaments && tournaments.length > 0 && (
-            <div className="pt-8 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Prochains rendez-vous importants</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {tournaments.slice(0, 4).map((t: any) => (
-                  <Link href={`/tournaments/${t.id}`} key={t.id}>
-                    <div className="p-4 rounded-xl border border-white/5 bg-card/30 hover:bg-card/50 transition-colors flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex flex-col items-center justify-center text-primary">
-                        <span className="text-xs font-bold leading-none">{t.date.split(' ')[0]}</span>
-                        <Trophy className="w-4 h-4 mt-1" />
-                      </div>
-                      <div className="flex-1 overflow-hidden">
-                        <p className="font-bold text-sm truncate uppercase">{t.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{t.sport} • {t.prize}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
