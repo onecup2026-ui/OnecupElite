@@ -3,39 +3,39 @@
   "placeholderImages": [
     {
       "id": "hero-bg",
-      "description": "Un ballon de football entouré de trophées dorés prestigieux",
-      "imageUrl": "https://picsum.photos/seed/ball-trophy-prestige/1920/1080",
-      "imageHint": "soccer trophy"
-    },
-    {
-      "id": "football-tournament",
-      "description": "Action intense lors d'un match de football professionnel",
-      "imageUrl": "https://picsum.photos/seed/onecup-pro-soccer/800/600",
+      "description": "Action de football intense, gros plan sur le ballon et les jambes des joueurs en mouvement",
+      "imageUrl": "https://picsum.photos/seed/onecup-match-action/1920/1080",
       "imageHint": "soccer match"
     },
     {
+      "id": "football-tournament",
+      "description": "Match de football en action",
+      "imageUrl": "https://picsum.photos/seed/onecup-foot/800/600",
+      "imageHint": "soccer game"
+    },
+    {
       "id": "gaming-tournament",
-      "description": "Arène d'e-sport moderne avec éclairage néon",
-      "imageUrl": "https://picsum.photos/seed/onecup-gaming-arena/800/600",
-      "imageHint": "gaming esports"
+      "description": "Configuration pro gaming",
+      "imageUrl": "https://picsum.photos/seed/onecup-game/800/600",
+      "imageHint": "esports arena"
     },
     {
       "id": "after-cup",
-      "description": "Célébration festive avec confettis et lumières de scène",
-      "imageUrl": "https://picsum.photos/seed/onecup-victory-party/800/600",
-      "imageHint": "celebration party"
+      "description": "Fête de concert avec lumières",
+      "imageUrl": "https://picsum.photos/seed/onecup-after/800/600",
+      "imageHint": "music festival"
     },
     {
       "id": "sponsor-tech",
-      "description": "Interface technologique futuriste",
-      "imageUrl": "https://picsum.photos/seed/onecup-tech-partner/300/150",
-      "imageHint": "technology"
+      "description": "Logo entreprise tech",
+      "imageUrl": "https://picsum.photos/seed/onecup-tech/300/150",
+      "imageHint": "tech logo"
     },
     {
       "id": "sponsor-energy",
-      "description": "Boisson énergisante rafraîchissante",
-      "imageUrl": "https://picsum.photos/seed/onecup-energy-boost/300/150",
-      "imageHint": "energy drink"
+      "description": "Boisson énergisante",
+      "imageUrl": "https://picsum.photos/seed/onecup-energy/300/150",
+      "imageHint": "beverage logo"
     }
   ]
 }
