@@ -94,7 +94,9 @@ export default function RulesPage() {
             </CardHeader>
             <CardContent>
               <p className="text-xs text-muted-foreground mb-4">Une question sur un point spécifique du règlement ? Contactez nos arbitres.</p>
-              <Button variant="outline" className="w-full uppercase font-bold text-xs h-10">Contacter un Officiel</Button>
+              <Button variant="outline" className="w-full uppercase font-bold text-xs h-10" asChild>
+                <a href="mailto:onecup2026@gmail.com">Contacter un Officiel</a>
+              </Button>
             </CardContent>
           </Card>
         </div>

@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { Trophy, Instagram, Twitter, Youtube, Facebook, ArrowUpRight } from "lucide-react";
+import { Trophy, Instagram, Twitter, Youtube, Facebook, ArrowUpRight, Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -16,7 +16,11 @@ export function Footer() {
           <p className="text-muted-foreground text-sm leading-relaxed">
             L'écosystème premium pour le sport compétitif et le divertissement numérique. Propulser les équipes et les athlètes vers l'excellence.
           </p>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium pt-2">
+            <Mail className="w-3 h-3 text-primary" />
+            <a href="mailto:onecup2026@gmail.com" className="hover:text-primary transition-colors">onecup2026@gmail.com</a>
+          </div>
+          <div className="flex gap-4 pt-2">
             <Link href="#" className="p-2 bg-muted rounded-full hover:bg-primary transition-colors hover:text-white">
               <Twitter className="w-4 h-4" />
             </Link>

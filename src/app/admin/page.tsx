@@ -2,14 +2,15 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign, Heart, Video, Users } from "lucide-react";
+import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign, Heart, Video, Users, Lock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDoc, useCollection, useFirestore } from "@/firebase";
+import { useDoc, useCollection, useFirestore, useUser, useAuth } from "@/firebase";
 import { doc, setDoc, addDoc, deleteDoc, collection, query, orderBy } from "firebase/firestore";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { generateTournamentImage } from "@/ai/flows/ai-image-generator";
@@ -18,9 +19,15 @@ import { FirestorePermissionError } from "@/firebase/errors";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
+const ADMIN_EMAIL = "onecup2026@gmail.com";
+
 export default function AdminDashboard() {
   const db = useFirestore();
+  const auth = useAuth();
+  const { user, loading: userLoading } = useUser();
   const { toast } = useToast();
+
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
@@ -57,6 +64,16 @@ export default function AdminDashboard() {
   });
 
   const [siteImages, setSiteImages] = useState({ heroImageUrl: "" });
+
+  const handleLogin = async () => {
+    if (!auth) return;
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      toast({ variant: "destructive", title: "Erreur de connexion" });
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
@@ -95,7 +112,7 @@ export default function AdminDashboard() {
 
   const handleUpdateConfig = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!db) return;
+    if (!db || !isAdmin) return;
     const formData = new FormData(e.currentTarget);
     const data = {
       heroTitle: formData.get("heroTitle"),
@@ -119,7 +136,7 @@ export default function AdminDashboard() {
   };
 
   const handleAddTournament = () => {
-    if (!db || !newTournament.name) return;
+    if (!db || !isAdmin || !newTournament.name) return;
     addDoc(collection(db, "tournaments"), newTournament)
       .then(() => {
         toast({ title: "Tournoi ajouté" });
@@ -135,7 +152,7 @@ export default function AdminDashboard() {
   };
 
   const handleAddArticle = () => {
-    if (!db || !newArticle.title) return;
+    if (!db || !isAdmin || !newArticle.title) return;
     addDoc(collection(db, "articles"), newArticle)
       .then(() => {
         toast({ title: "Article publié" });
@@ -151,7 +168,7 @@ export default function AdminDashboard() {
   };
 
   const handleAddTicket = () => {
-    if (!db || !newTicket.title) return;
+    if (!db || !isAdmin || !newTicket.title) return;
     addDoc(collection(db, "tickets"), newTicket)
       .then(() => {
         toast({ title: "Billet ajouté" });
@@ -167,7 +184,7 @@ export default function AdminDashboard() {
   };
 
   const handleAddSponsor = () => {
-    if (!db || !newSponsor.name) return;
+    if (!db || !isAdmin || !newSponsor.name) return;
     addDoc(collection(db, "sponsors"), newSponsor)
       .then(() => {
         toast({ title: "Sponsor ajouté" });
@@ -183,7 +200,7 @@ export default function AdminDashboard() {
   };
 
   const handleDelete = (coll: string, id: string) => {
-    if (!db) return;
+    if (!db || !isAdmin) return;
     deleteDoc(doc(db, coll, id))
       .then(() => toast({ title: "Élément supprimé" }))
       .catch((err) => {
@@ -194,6 +211,37 @@ export default function AdminDashboard() {
       });
   };
 
+  if (userLoading) {
+    return (
+      <div className="container mx-auto py-24 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="container mx-auto py-24 flex flex-col items-center justify-center space-y-6 text-center">
+        <div className="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center">
+          <Lock className="w-10 h-10 text-destructive" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-headline font-bold uppercase">Accès Réservé</h1>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Cette zone est strictement réservée à l'administration OneCup Elite ({ADMIN_EMAIL}).
+          </p>
+        </div>
+        {!user ? (
+          <Button onClick={handleLogin} className="bg-primary glow-blue uppercase font-bold px-8 h-12">
+            Se connecter pour s'identifier
+          </Button>
+        ) : (
+          <Badge variant="destructive" className="px-6 py-2 uppercase font-bold">Session non autorisée</Badge>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6">
@@ -201,7 +249,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter text-foreground">ADMINISTRATION</h1>
           <p className="text-muted-foreground text-sm">Pilotez votre plateforme OneCup Elite en temps réel.</p>
         </div>
-        <Badge variant="outline" className="border-primary text-primary px-4 py-1">MODE ÉDITION ACTIF</Badge>
+        <Badge variant="outline" className="border-primary text-primary px-4 py-1 font-bold">MODE ÉDITEUR : {user?.email}</Badge>
       </div>
 
       <Tabs defaultValue="site" className="w-full">
