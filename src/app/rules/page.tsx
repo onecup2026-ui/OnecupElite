@@ -5,6 +5,7 @@ import { ShieldCheck, Info, Users, Trophy, AlertTriangle, FileText } from "lucid
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 
 export default function RulesPage() {
   return (

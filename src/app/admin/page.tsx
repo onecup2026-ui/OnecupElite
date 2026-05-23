@@ -43,7 +43,6 @@ export default function AdminDashboard() {
   const [newTournament, setNewTournament] = useState({
     name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", teamsMax: 16, teamsRegistered: 0, description: "", schedule: [] as { label: string; date: string }[]
   });
-  const [scheduleItem, setScheduleItem] = useState({ label: "", date: "" });
 
   const [newArticle, setNewArticle] = useState({
     title: "", excerpt: "", category: "Tournois", date: new Date().toLocaleDateString(), author: "Admin", imageUrl: ""
@@ -131,6 +130,54 @@ export default function AdminDashboard() {
           path: '/tournaments',
           operation: 'create',
           requestResourceData: newTournament
+        }));
+      });
+  };
+
+  const handleAddArticle = () => {
+    if (!db || !newArticle.title) return;
+    addDoc(collection(db, "articles"), newArticle)
+      .then(() => {
+        toast({ title: "Article publié" });
+        setNewArticle({ title: "", excerpt: "", category: "Tournois", date: new Date().toLocaleDateString(), author: "Admin", imageUrl: "" });
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/articles',
+          operation: 'create',
+          requestResourceData: newArticle
+        }));
+      });
+  };
+
+  const handleAddTicket = () => {
+    if (!db || !newTicket.title) return;
+    addDoc(collection(db, "tickets"), newTicket)
+      .then(() => {
+        toast({ title: "Billet ajouté" });
+        setNewTicket({ title: "", tournamentName: "", price: "", externalUrl: "", description: "", imageUrl: "" });
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/tickets',
+          operation: 'create',
+          requestResourceData: newTicket
+        }));
+      });
+  };
+
+  const handleAddSponsor = () => {
+    if (!db || !newSponsor.name) return;
+    addDoc(collection(db, "sponsors"), newSponsor)
+      .then(() => {
+        toast({ title: "Sponsor ajouté" });
+        setNewSponsor({ name: "", logoUrl: "", websiteUrl: "" });
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/sponsors',
+          operation: 'create',
+          requestResourceData: newSponsor
         }));
       });
   };
