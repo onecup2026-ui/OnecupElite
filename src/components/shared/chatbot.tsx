@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { aiParticipantFaqChatbot } from "@/ai/flows/ai-participant-faq-chatbot";
+import { cn } from "@/lib/utils";
 
 type Message = {
   id: string;
@@ -19,7 +20,7 @@ export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { id: "1", role: "bot", content: "Hello! I'm your ONE CUP Assistant. How can I help you today regarding rules, schedules, or registrations?" }
+    { id: "1", role: "bot", content: "Bonjour ! Je suis l'Assistant ONE CUP. Comment puis-je vous aider concernant les règles, le planning ou les inscriptions ?" }
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,7 @@ export function SupportChat() {
       const botMsg: Message = { id: (Date.now() + 1).toString(), role: "bot", content: response.answer };
       setMessages(prev => [...prev, botMsg]);
     } catch (error) {
-      const errorMsg: Message = { id: (Date.now() + 1).toString(), role: "bot", content: "Sorry, I'm having trouble connecting right now. Please try again later." };
+      const errorMsg: Message = { id: (Date.now() + 1).toString(), role: "bot", content: "Désolé, j'ai des difficultés à me connecter. Veuillez réessayer plus tard." };
       setMessages(prev => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
@@ -115,7 +116,7 @@ export function SupportChat() {
               className="flex w-full gap-2"
             >
               <Input
-                placeholder="Ask about rules, schedule..."
+                placeholder="Posez votre question ici..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="bg-background"
@@ -130,5 +131,3 @@ export function SupportChat() {
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";

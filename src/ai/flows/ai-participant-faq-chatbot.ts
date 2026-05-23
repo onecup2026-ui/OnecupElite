@@ -1,22 +1,23 @@
+
 'use server';
 /**
- * @fileOverview An AI chatbot that answers common questions about tournament rules, schedules, registration processes, and payment details for participants.
+ * @fileOverview Un chatbot IA qui répond aux questions courantes sur les règles des tournois, les horaires, les processus d'inscription et les détails de paiement pour les participants.
  *
- * - aiParticipantFaqChatbot - A function that handles participant FAQ queries.
- * - AiParticipantFaqChatbotInput - The input type for the aiParticipantFaqChatbot function.
- * - AiParticipantFaqChatbotOutput - The return type for the aiParticipantFaqChatbot function.
+ * - aiParticipantFaqChatbot - Une fonction qui gère les requêtes FAQ des participants.
+ * - AiParticipantFaqChatbotInput - Le type d'entrée pour la fonction aiParticipantFaqChatbot.
+ * - AiParticipantFaqChatbotOutput - Le type de sortie pour la fonction aiParticipantFaqChatbot.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AiParticipantFaqChatbotInputSchema = z.object({
-  question: z.string().describe("The participant's question about tournament details.")
+  question: z.string().describe("La question du participant sur les détails du tournoi.")
 });
 export type AiParticipantFaqChatbotInput = z.infer<typeof AiParticipantFaqChatbotInputSchema>;
 
 const AiParticipantFaqChatbotOutputSchema = z.object({
-  answer: z.string().describe("The chatbot's answer to the participant's question.")
+  answer: z.string().describe("La réponse du chatbot à la question du participant.")
 });
 export type AiParticipantFaqChatbotOutput = z.infer<typeof AiParticipantFaqChatbotOutputSchema>;
 
@@ -30,13 +31,13 @@ const prompt = ai.definePrompt({
   name: 'aiParticipantFaqChatbotPrompt',
   input: {schema: AiParticipantFaqChatbotInputSchema},
   output: {schema: AiParticipantFaqChatbotOutputSchema},
-  prompt: `You are a helpful and knowledgeable AI assistant for the ONE CUP tournament platform.
-Your role is to answer participant questions accurately and concisely about tournament rules, schedules, registration processes, and payment details.
-Provide direct and clear answers based on common knowledge about such events.
+  prompt: `Tu es un assistant IA serviable et compétent pour la plateforme de tournois ONE CUP.
+Ton rôle est de répondre aux questions des participants avec précision et concision concernant les règles des tournois, les horaires, les processus d'inscription et les détails de paiement.
+Fournis des réponses directes et claires. Réponds toujours en FRANÇAIS.
 
-Participant's question: {{{question}}}
+Question du participant : {{{question}}}
 
-Please provide a clear and concise answer.`
+Veuillez fournir une réponse claire et concise.`
 });
 
 const aiParticipantFaqChatbotFlow = ai.defineFlow(

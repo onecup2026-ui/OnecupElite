@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const navItems = [
-  { name: "Tournaments", href: "/tournaments", icon: Trophy },
-  { name: "Community", href: "/community", icon: Users },
-  { name: "Calendar", href: "/calendar", icon: Calendar },
-  { name: "News", href: "/news", icon: Newspaper },
-  { name: "Ticketing", href: "/tickets", icon: Ticket },
+  { name: "Tournois", href: "/tournaments", icon: Trophy },
+  { name: "Communauté", href: "/community", icon: Users },
+  { name: "Calendrier", href: "/calendar", icon: Calendar },
+  { name: "Actualités", href: "/news", icon: Newspaper },
+  { name: "Billetterie", href: "/tickets", icon: Ticket },
   { name: "After Cup", href: "/after-cup", icon: PartyPopper },
 ];
 
@@ -56,13 +56,13 @@ export function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          <Link href="/dashboard">
+          <Link href="/admin">
             <Button variant="outline" className="gap-2">
               <LayoutDashboard className="w-4 h-4" />
-              Dashboard
+              Admin
             </Button>
           </Link>
-          <Button className="bg-primary hover:bg-primary/90">Join Tournament</Button>
+          <Button className="bg-primary hover:bg-primary/90">S'inscrire</Button>
         </div>
 
         {/* Mobile Toggle */}
@@ -84,13 +84,13 @@ export function Navbar() {
               </Link>
             ))}
             <div className="h-px bg-border my-2" />
-            <Link href="/dashboard" onClick={() => setIsOpen(false)}>
+            <Link href="/admin" onClick={() => setIsOpen(false)}>
               <Button variant="outline" className="w-full justify-start gap-3 h-12">
                 <LayoutDashboard className="w-5 h-5" />
-                Dashboard
+                Admin
               </Button>
             </Link>
-            <Button className="w-full bg-primary h-12">Join Tournament</Button>
+            <Button className="w-full bg-primary h-12">S'inscrire</Button>
           </div>
         </div>
       )}

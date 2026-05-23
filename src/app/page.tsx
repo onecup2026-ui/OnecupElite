@@ -8,10 +8,10 @@ import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const stats = [
-  { label: "Active Teams", value: "128+", icon: Users },
-  { label: "Tournaments", value: "24", icon: Trophy },
-  { label: "Total Prize Pool", value: "$50K", icon: DollarSign },
-  { label: "Global Partners", value: "15", icon: Star },
+  { label: "Équipes Actives", value: "128+", icon: Users },
+  { label: "Tournois", value: "24", icon: Trophy },
+  { label: "Cagnotte Totale", value: "50K€", icon: DollarSign },
+  { label: "Partenaires Globaux", value: "15", icon: Star },
 ];
 
 const upcomingTournaments = [
@@ -19,16 +19,16 @@ const upcomingTournaments = [
     id: "t1",
     name: "Summer Pro Football Cup",
     category: "Football",
-    date: "June 15, 2026",
-    prize: "$10,000",
+    date: "15 Juin 2026",
+    prize: "10 000€",
     image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || ""
   },
   {
     id: "t2",
     name: "Elite Gaming Series: Warzone",
     category: "Esports",
-    date: "July 02, 2026",
-    prize: "$15,000",
+    date: "02 Juillet 2026",
+    prize: "15 000€",
     image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || ""
   }
 ];
@@ -54,23 +54,23 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl space-y-6">
             <Badge variant="outline" className="border-primary text-primary px-4 py-1 rounded-full animate-pulse">
-              VERSION 1.0 NOW LIVE
+              VERSION 1.0 DISPONIBLE
             </Badge>
             <h1 className="text-6xl md:text-8xl font-headline font-bold leading-none tracking-tighter">
-              BEYOND THE <span className="text-primary italic">CUP.</span><br />
-              ENTER THE <span className="text-primary">ELITE.</span>
+              AU-DELÀ DE LA <span className="text-primary italic">COUPE.</span><br />
+              REJOIGNEZ <span className="text-primary">L'ÉLITE.</span>
             </h1>
             <p className="text-xl text-muted-foreground font-body max-w-xl">
-              The premier ecosystem for tournament management, community interaction, and professional sports events.
+              Le premier écosystème pour la gestion de tournois, l'interaction communautaire et les événements sportifs professionnels.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <Link href="/tournaments">
                 <Button size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90 glow-blue text-lg gap-2">
-                  Register Now <ArrowRight className="w-5 h-5" />
+                  Participer <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               <Button size="lg" variant="outline" className="h-14 px-8 text-lg gap-2">
-                <Play className="w-5 h-5 fill-current" /> Watch Promo
+                <Play className="w-5 h-5 fill-current" /> Voir la Promo
               </Button>
             </div>
           </div>
@@ -82,9 +82,9 @@ export default function Home() {
             currentPool={5000}
             targetPool={15000}
             tiers={[
-              { rank: "Gold Champion", amount: 2500, percentage: 50 },
-              { rank: "Silver Runner-up", amount: 1500, percentage: 30 },
-              { rank: "Bronze Finalist", amount: 1000, percentage: 20 },
+              { rank: "Champion Or", amount: 2500, percentage: 50 },
+              { rank: "Finaliste Argent", amount: 1500, percentage: 30 },
+              { rank: "3ème Place Bronze", amount: 1000, percentage: 20 },
             ]}
           />
         </div>
@@ -112,12 +112,12 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-12">
             <div className="space-y-2">
-              <h2 className="text-4xl font-headline font-bold">UPCOMING BATTLES</h2>
-              <p className="text-muted-foreground">The next chapter of competition starts here.</p>
+              <h2 className="text-4xl font-headline font-bold">BATAILLES À VENIR</h2>
+              <p className="text-muted-foreground">Le prochain chapitre de la compétition commence ici.</p>
             </div>
             <Link href="/tournaments">
               <Button variant="ghost" className="gap-2 group">
-                View All Events <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Tous les événements <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>
@@ -144,12 +144,12 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Trophy className="w-4 h-4 text-primary" />
-                      {tournament.prize} Prize
+                      {tournament.prize} de Cashprize
                     </div>
                   </div>
                   <div className="pt-4 flex gap-4">
-                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue">Join Now</Button>
-                    <Button variant="outline" className="flex-1">Details</Button>
+                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue">Rejoindre</Button>
+                    <Button variant="outline" className="flex-1">Détails</Button>
                   </div>
                 </div>
               </div>
@@ -161,9 +161,8 @@ export default function Home() {
       {/* Sponsor Marquee */}
       <section className="py-16 bg-muted/20 border-y">
         <div className="container mx-auto px-4">
-          <p className="text-center text-xs text-muted-foreground uppercase tracking-widest mb-10 font-bold">Trusted by World-Class Partners</p>
+          <p className="text-center text-xs text-muted-foreground uppercase tracking-widest mb-10 font-bold">Ils nous font confiance</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-            {/* Placeholder Sponsor Logos */}
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-10 w-32 relative">
                 <Image

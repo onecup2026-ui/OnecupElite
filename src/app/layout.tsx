@@ -7,8 +7,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { SupportChat } from '@/components/shared/chatbot';
 
 export const metadata: Metadata = {
-  title: 'OneCup Elite | Tournament & Event Management',
-  description: 'The ultimate platform for managing sports, gaming tournaments and community events.',
+  title: 'OneCup Elite | Gestion de Tournois et Événements',
+  description: 'La plateforme ultime pour la gestion de tournois sportifs, gaming et événements communautaires.',
 };
 
 export default function RootLayout({
@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="fr" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

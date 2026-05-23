@@ -16,21 +16,21 @@ const tournaments = [
     id: "1",
     name: "Golden Goal League",
     sport: "Football",
-    status: "Registration Open",
-    date: "June 20, 2026",
-    location: "National Stadium",
-    prize: "$5,000",
+    status: "Inscriptions Ouvertes",
+    date: "20 Juin 2026",
+    location: "Stade National",
+    prize: "5 000€",
     teams: "16/32",
     image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || ""
   },
   {
     id: "2",
     name: "Cyber Strike Open",
-    sport: "Video Games",
-    status: "Registration Open",
-    date: "July 05, 2026",
-    location: "Digital Arena",
-    prize: "$10,000",
+    sport: "Jeux Vidéo",
+    status: "Inscriptions Ouvertes",
+    date: "05 Juillet 2026",
+    location: "Arène Digitale",
+    prize: "10 000€",
     teams: "8/16",
     image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || ""
   },
@@ -38,10 +38,10 @@ const tournaments = [
     id: "3",
     name: "Beach Spike Pro",
     sport: "Volleyball",
-    status: "Upcoming",
-    date: "August 12, 2026",
-    location: "Azure Coast",
-    prize: "$3,000",
+    status: "À Venir",
+    date: "12 Août 2026",
+    location: "Côte d'Azur",
+    prize: "3 000€",
     teams: "0/12",
     image: "https://picsum.photos/seed/onecup-volley/800/600"
   }
@@ -60,9 +60,9 @@ export default function TournamentsPage() {
   return (
     <div className="container mx-auto px-4 py-12 space-y-12">
       <header className="space-y-4">
-        <h1 className="text-4xl md:text-5xl font-headline font-bold">ALL TOURNAMENTS</h1>
+        <h1 className="text-4xl md:text-5xl font-headline font-bold">TOUS LES TOURNOIS</h1>
         <p className="text-muted-foreground max-w-2xl">
-          Browse our catalog of competitive events. From professional leagues to community cups, find your next challenge here.
+          Parcourez notre catalogue de compétitions. Des ligues professionnelles aux coupes communautaires, trouvez votre prochain défi ici.
         </p>
       </header>
 
@@ -70,7 +70,7 @@ export default function TournamentsPage() {
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search tournament name..."
+            placeholder="Rechercher un tournoi..."
             className="pl-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -79,9 +79,9 @@ export default function TournamentsPage() {
         
         <Tabs value={category} onValueChange={setCategory} className="w-full md:w-auto">
           <TabsList className="bg-card border w-full md:w-auto">
-            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="all">Tous</TabsTrigger>
             <TabsTrigger value="football">Football</TabsTrigger>
-            <TabsTrigger value="video games">Esports</TabsTrigger>
+            <TabsTrigger value="jeux vidéo">Esports</TabsTrigger>
             <TabsTrigger value="volleyball">Volleyball</TabsTrigger>
           </TabsList>
         </Tabs>
@@ -116,18 +116,18 @@ export default function TournamentsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Trophy className="w-4 h-4 text-primary" />
-                  {t.prize} Pool
+                  Cashprize: {t.prize}
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-primary" />
-                  {t.teams} Teams
+                  {t.teams} Équipes
                 </div>
               </div>
 
               <div className="pt-4 mt-auto">
                 <Link href={`/tournaments/${t.id}`}>
                   <Button className="w-full gap-2 group-hover:bg-primary glow-blue transition-all">
-                    View Details <ArrowRight className="w-4 h-4" />
+                    Voir les Détails <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </div>
@@ -139,8 +139,8 @@ export default function TournamentsPage() {
       {filtered.length === 0 && (
         <div className="text-center py-20 bg-muted/10 rounded-3xl border border-dashed">
           <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
-          <h3 className="text-xl font-bold">No tournaments found</h3>
-          <p className="text-muted-foreground">Try adjusting your search or category filters.</p>
+          <h3 className="text-xl font-bold">Aucun tournoi trouvé</h3>
+          <p className="text-muted-foreground">Essayez d'ajuster votre recherche ou les filtres de catégorie.</p>
         </div>
       )}
     </div>
