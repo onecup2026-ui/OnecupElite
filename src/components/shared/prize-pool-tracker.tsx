@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,9 +23,9 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
       <CardContent className="px-6 pb-6">
         <div className="flex items-baseline gap-2 mb-3">
           <span className="text-3xl md:text-4xl font-headline font-bold text-primary tabular-nums">
-            {currentPool.toLocaleString()}€
+            {currentPool.toLocaleString()} FC
           </span>
-          <span className="text-muted-foreground text-[10px] md:text-xs font-bold uppercase tracking-wider">/ Obj. {targetPool.toLocaleString()}€</span>
+          <span className="text-muted-foreground text-[10px] md:text-xs font-bold uppercase tracking-wider">/ Obj. {targetPool.toLocaleString()} FC</span>
         </div>
         
         <Progress value={progressValue} className="h-2 mb-6 bg-muted border border-white/5" />
@@ -47,7 +46,7 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
                   <p className="text-[10px] text-muted-foreground">{tier.percentage}% de la pool</p>
                 </div>
               </div>
-              <p className="font-headline font-bold text-primary text-sm">{tier.amount.toLocaleString()}€</p>
+              <p className="font-headline font-bold text-primary text-sm">{tier.amount.toLocaleString()} FC</p>
             </div>
           ))}
         </div>

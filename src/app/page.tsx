@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo } from "react";
@@ -14,7 +13,7 @@ import { doc, collection } from "firebase/firestore";
 const stats = [
   { label: "Équipes Actives", value: "128+", icon: Users },
   { label: "Tournois", value: "24", icon: Trophy },
-  { label: "Cagnotte Totale", value: "50K€", icon: DollarSign },
+  { label: "Cagnotte Totale", value: "150M FC", icon: DollarSign },
   { label: "Partenaires Globaux", value: "15", icon: Star },
 ];
 
@@ -82,12 +81,12 @@ export default function Home() {
             <div className="flex justify-center xl:justify-end animate-float">
               <div className="w-full max-w-[400px]">
                 <PrizePoolTracker
-                  currentPool={siteConfig?.currentPrizePool || 52400}
-                  targetPool={siteConfig?.targetPrizePool || 150000}
+                  currentPool={siteConfig?.currentPrizePool || 125000000}
+                  targetPool={siteConfig?.targetPrizePool || 250000000}
                   tiers={[
-                    { rank: "Champion Or", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.5), percentage: 50 },
-                    { rank: "Finaliste Argent", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.3), percentage: 30 },
-                    { rank: "3ème Place Bronze", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.2), percentage: 20 },
+                    { rank: "Champion Or", amount: Math.floor((siteConfig?.currentPrizePool || 125000000) * 0.5), percentage: 50 },
+                    { rank: "Finaliste Argent", amount: Math.floor((siteConfig?.currentPrizePool || 125000000) * 0.3), percentage: 30 },
+                    { rank: "3ème Place Bronze", amount: Math.floor((siteConfig?.currentPrizePool || 125000000) * 0.2), percentage: 20 },
                   ]}
                 />
               </div>

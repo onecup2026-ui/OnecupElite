@@ -207,7 +207,7 @@ export default function AdminDashboard() {
                     <Input name="heroTitle" placeholder="Titre principal" defaultValue={siteConfig?.heroTitle} />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-xs font-bold uppercase text-muted-foreground">Cagnotte Actuelle (€)</p>
+                    <p className="text-xs font-bold uppercase text-muted-foreground">Cagnotte Actuelle (FC)</p>
                     <Input name="currentPrizePool" type="number" defaultValue={siteConfig?.currentPrizePool || 0} />
                   </div>
                   <div className="space-y-2">
@@ -215,8 +215,8 @@ export default function AdminDashboard() {
                     <Textarea name="heroSubtitle" placeholder="Description courte" defaultValue={siteConfig?.heroSubtitle} className="min-h-[100px]" />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-xs font-bold uppercase text-muted-foreground">Objectif Cagnotte (€)</p>
-                    <Input name="targetPrizePool" type="number" defaultValue={siteConfig?.targetPrizePool || 100000} />
+                    <p className="text-xs font-bold uppercase text-muted-foreground">Objectif Cagnotte (FC)</p>
+                    <Input name="targetPrizePool" type="number" defaultValue={siteConfig?.targetPrizePool || 250000000} />
                   </div>
                 </div>
                 
@@ -273,8 +273,8 @@ export default function AdminDashboard() {
                   <Input placeholder="Ville ou en ligne" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Cashprize</p>
-                  <Input placeholder="ex: 5000 €" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Cashprize (FC)</p>
+                  <Input placeholder="ex: 5.000.000 FC" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
                 </div>
               </div>
 
@@ -408,7 +408,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input placeholder="Nom du pass" value={newTicket.title} onChange={e => setNewTicket({...newTicket, title: e.target.value})} />
                 <Input placeholder="Tournoi lié" value={newTicket.tournamentName} onChange={e => setNewTicket({...newTicket, tournamentName: e.target.value})} />
-                <Input placeholder="Prix (ex: 15€)" value={newTicket.price} onChange={e => setNewTicket({...newTicket, price: e.target.value})} />
+                <Input placeholder="Prix (ex: 25.000 FC)" value={newTicket.price} onChange={e => setNewTicket({...newTicket, price: e.target.value})} />
                 <Input placeholder="Lien Billetterie Externe" value={newTicket.externalUrl} onChange={e => setNewTicket({...newTicket, externalUrl: e.target.value})} />
               </div>
               <div className="space-y-2">
