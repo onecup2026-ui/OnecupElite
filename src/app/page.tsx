@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Zap, Gamepad2 } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
@@ -32,7 +32,7 @@ export default function Home() {
   const heroImage = siteConfig?.heroImageUrl || defaultHero;
   
   const heroTitle = siteConfig?.heroTitle || "DEVENEZ UNE LÉGENDE.\nLA GLOIRE VOUS APPELLE.";
-  const heroSubtitle = siteConfig?.heroSubtitle || "ONECUP 2026 : L'événement unique où le talent rencontre l'excellence. Deux tournois officiels : OneCup Football & OneCup PlayStation.";
+  const heroSubtitle = siteConfig?.heroSubtitle || "ONECUP 2026 : L'événement unique où le talent rencontre l'excellence. Rejoignez la compétition officielle.";
   const heroVideoUrl = siteConfig?.heroVideoUrl || "";
 
   const currentPool = siteConfig?.currentPrizePool || 1350000;
@@ -100,7 +100,7 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="relative z-20 -mt-16 container mx-auto px-4">
+      <section className="relative z-20 -mt-16 container mx-auto px-4 mb-20">
         <div className="bg-card/90 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 shadow-2xl">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
             {stats.map((stat, idx) => (
@@ -113,42 +113,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Tournaments Selection Section */}
-      <section className="py-32 bg-background relative overflow-hidden">
-        <div className="container mx-auto px-4 text-center space-y-12">
-           <div className="space-y-4 max-w-3xl mx-auto">
-             <h2 className="text-5xl font-headline font-bold uppercase tracking-tighter">UNE EXPÉRIENCE, DEUX TOURNOIS</h2>
-             <p className="text-muted-foreground text-xl">
-               La OneCup 2026 rassemble les meilleurs talents sur le terrain et devant la console.
-             </p>
-           </div>
-           
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-             <Link href="/tournaments" className="group">
-               <div className="bg-card border border-white/5 p-8 rounded-[2.5rem] space-y-6 transition-all group-hover:border-primary group-hover:-translate-y-2">
-                 <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-white transition-all">
-                   <Trophy className="w-10 h-10" />
-                 </div>
-                 <h3 className="text-2xl font-headline font-bold uppercase">OneCup Football</h3>
-                 <p className="text-muted-foreground text-sm">Le tournoi interscolaire roi. Onze joueurs, un ballon, une seule gloire.</p>
-                 <span className="inline-flex items-center text-primary font-bold uppercase text-xs gap-2">Voir le tournoi <ArrowRight className="w-4 h-4" /></span>
-               </div>
-             </Link>
-
-             <Link href="/tournaments" className="group">
-               <div className="bg-card border border-white/5 p-8 rounded-[2.5rem] space-y-6 transition-all group-hover:border-secondary group-hover:-translate-y-2">
-                 <div className="w-20 h-20 bg-secondary/10 rounded-3xl flex items-center justify-center mx-auto group-hover:bg-secondary group-hover:text-white transition-all">
-                   <Gamepad2 className="w-10 h-10" />
-                 </div>
-                 <h3 className="text-2xl font-headline font-bold uppercase">OneCup PlayStation</h3>
-                 <p className="text-muted-foreground text-sm">Le challenge e-sport de haut niveau. Tactique, précision et maîtrise de la manette.</p>
-                 <span className="inline-flex items-center text-secondary font-bold uppercase text-xs gap-2">Voir le tournoi <ArrowRight className="w-4 h-4" /></span>
-               </div>
-             </Link>
-           </div>
         </div>
       </section>
 

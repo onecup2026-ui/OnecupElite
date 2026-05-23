@@ -4,7 +4,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Search, Calendar, MapPin, ArrowRight, Gamepad2, Zap } from "lucide-react";
+import { Trophy, Search, Calendar, MapPin, ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -33,44 +33,11 @@ export default function TournamentsPage() {
     <div className="container mx-auto px-4 py-12 space-y-12">
       <header className="space-y-4 text-center max-w-4xl mx-auto">
         <Badge variant="outline" className="border-primary text-primary font-bold uppercase tracking-widest">ÉDITION ONECUP 2026</Badge>
-        <h1 className="text-5xl md:text-7xl font-headline font-bold uppercase tracking-tighter">LES TOURNOIS <span className="text-primary">OFFICIELS</span></h1>
+        <h1 className="text-5xl md:text-7xl font-headline font-bold uppercase tracking-tighter">TOURNNOIS <span className="text-primary">OFFICIELS</span></h1>
         <p className="text-muted-foreground text-xl">
-          Deux tournois majeurs, deux chemins vers la gloire. Choisissez votre arène et défendez vos couleurs.
+          Découvrez toutes les compétitions de la saison OneCup. Choisissez votre tournoi et rejoignez l'élite.
         </p>
       </header>
-
-      {/* Main Tournaments Highlights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-        <div className="group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-card to-muted/20 hover:border-primary/40 transition-all duration-500 shadow-xl">
-           <div className="aspect-[21/9] relative overflow-hidden">
-             <Image src="https://picsum.photos/seed/foot-pro/1200/600" fill alt="OneCup Football" className="object-cover transition-transform duration-700 group-hover:scale-110" />
-             <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-             <div className="absolute bottom-6 left-8 flex items-center gap-3">
-               <Trophy className="w-8 h-8 text-primary" />
-               <h2 className="text-3xl font-headline font-bold uppercase">OneCup Football</h2>
-             </div>
-           </div>
-           <div className="p-8 space-y-4">
-              <p className="text-muted-foreground font-medium">La compétition reine sur gazon. Le tournoi interscolaire ultime où le talent rencontre l'élite.</p>
-              <Button onClick={() => setCategory("football")} className="gap-2 bg-primary uppercase font-bold text-xs h-10 rounded-xl">Voir OneCup Football</Button>
-           </div>
-        </div>
-
-        <div className="group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-card to-muted/20 hover:border-secondary/40 transition-all duration-500 shadow-xl">
-           <div className="aspect-[21/9] relative overflow-hidden">
-             <Image src="https://picsum.photos/seed/ps5-pro/1200/600" fill alt="OneCup PlayStation" className="object-cover transition-transform duration-700 group-hover:scale-110" />
-             <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-             <div className="absolute bottom-6 left-8 flex items-center gap-3">
-               <Gamepad2 className="w-8 h-8 text-secondary" />
-               <h2 className="text-3xl font-headline font-bold uppercase">OneCup PlayStation</h2>
-             </div>
-           </div>
-           <div className="p-8 space-y-4">
-              <p className="text-muted-foreground font-medium">L'excellence numérique. Tactique, réflexes et maîtrise pour le sacre e-sport ultime.</p>
-              <Button onClick={() => setCategory("esport")} className="gap-2 bg-secondary uppercase font-bold text-xs h-10 rounded-xl">Voir OneCup PlayStation</Button>
-           </div>
-        </div>
-      </div>
 
       <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between sticky top-16 z-40 bg-background/80 backdrop-blur py-6 border-b border-white/5">
         <div className="relative w-full md:w-96">
@@ -126,7 +93,7 @@ export default function TournamentsPage() {
               <div className="pt-4 mt-auto">
                 <Link href={`/tournaments/${t.id}`}>
                   <Button className="w-full h-12 gap-2 bg-primary glow-blue transition-all uppercase font-bold text-xs rounded-xl">
-                    Détails <ArrowRight className="w-4 h-4" />
+                    Voir les détails <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </div>
@@ -138,7 +105,7 @@ export default function TournamentsPage() {
       {!loading && filtered.length === 0 && (
         <div className="text-center py-24 border border-dashed border-white/10 rounded-[2.5rem]">
           <Zap className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-10" />
-          <p className="text-muted-foreground font-bold uppercase tracking-widest">Aucun tournoi trouvé</p>
+          <p className="text-muted-foreground font-bold uppercase tracking-widest">Aucun tournoi publié pour le moment</p>
         </div>
       )}
     </div>
