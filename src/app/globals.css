@@ -5,6 +5,29 @@
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 228 24% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 228 24% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 228 24% 10%;
+    --primary: 227 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 199 100% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 228 24% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 227 100% 60%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
     --background: 228 24% 8%;
     --foreground: 210 20% 98%;
     --card: 228 24% 10%;
@@ -24,7 +47,6 @@
     --border: 228 24% 18%;
     --input: 228 24% 18%;
     --ring: 227 100% 60%;
-    --radius: 0.75rem;
   }
 }
 
@@ -41,11 +63,11 @@
 }
 
 .glow-orange {
-  box-shadow: 0 0 20px -5px rgba(255, 120, 0, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(255, 120, 0, 0.3);
 }
 
 .glow-blue {
-  box-shadow: 0 0 20px -5px rgba(51, 85, 255, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(51, 85, 255, 0.4);
 }
 
 ::-webkit-scrollbar {
