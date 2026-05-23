@@ -3,10 +3,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Calendar, Users, Newspaper, Ticket, PartyPopper, LayoutDashboard, Menu, X } from "lucide-react";
+import { Trophy, Calendar, Users, Newspaper, Ticket, PartyPopper, LayoutDashboard, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { useAuth, useUser } from "@/firebase";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { name: "Tournois", href: "/tournaments", icon: Trophy },
@@ -20,11 +25,34 @@ const navItems = [
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const auth = useAuth();
+  const { user, loading } = useUser();
+  const { toast } = useToast();
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
+  const handleLogin = async () => {
+    if (!auth) return;
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      toast({ title: "Connexion réussie", description: "Bon retour parmi l'élite !" });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Erreur", description: "La connexion a échoué." });
+    }
+  };
+
+  const handleLogout = async () => {
+    if (!auth) return;
+    try {
+      await signOut(auth);
+      toast({ title: "Déconnexion", description: "À bientôt sur OneCup Elite." });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Erreur", description: "Déconnexion impossible." });
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl">
@@ -67,7 +95,37 @@ export function Navbar() {
               Admin
             </Button>
           </Link>
-          <Button className="bg-primary hover:bg-primary/90 glow-blue h-9 text-xs font-bold uppercase px-6">S'inscrire</Button>
+
+          {!loading && (
+            user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                    <Avatar className="h-9 w-9 border border-primary/20">
+                      <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
+                      <AvatarFallback>{user.displayName?.[0] || "U"}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.displayName}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </div>
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Déconnexion</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={handleLogin} className="bg-primary hover:bg-primary/90 glow-blue h-9 text-xs font-bold uppercase px-6">
+                S'inscrire
+              </Button>
+            )
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -98,13 +156,23 @@ export function Navbar() {
             </Link>
           ))}
           <div className="h-px bg-border my-2" />
+          
+          {user ? (
+            <Button onClick={handleLogout} variant="destructive" className="w-full justify-start gap-4 h-12 text-sm font-bold uppercase">
+              <LogOut className="w-5 h-5" /> Déconnexion
+            </Button>
+          ) : (
+            <Button onClick={handleLogin} className="w-full bg-primary h-12 text-sm font-bold uppercase glow-blue mt-2">
+              S'inscrire Maintenant
+            </Button>
+          )}
+
           <Link href="/admin">
-            <Button variant="outline" className="w-full justify-start gap-4 h-12 text-sm font-bold uppercase border-white/10">
+            <Button variant="outline" className="w-full justify-start gap-4 h-12 text-sm font-bold uppercase border-white/10 mt-2">
               <LayoutDashboard className="w-5 h-5" />
               Admin Dashboard
             </Button>
           </Link>
-          <Button className="w-full bg-primary h-12 text-sm font-bold uppercase glow-blue mt-2">S'inscrire Maintenant</Button>
         </div>
       </div>
     </nav>

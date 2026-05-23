@@ -80,6 +80,20 @@
         "websiteUrl": { "type": "string" }
       },
       "required": ["name", "logoUrl"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "Message publié par un membre de la communauté",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorPhoto": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "likes": { "type": "number", "default": 0 }
+      },
+      "required": ["userId", "content", "createdAt"]
     }
   },
   "auth": {
@@ -105,6 +119,10 @@
     "/sponsors/{sponsorId}": {
       "schema": "Sponsor",
       "description": "Liste des partenaires"
+    },
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Flux communautaire"
     }
   }
 }
