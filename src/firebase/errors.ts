@@ -9,7 +9,7 @@ export type SecurityRuleContext = {
 export class FirestorePermissionError extends Error {
   context: SecurityRuleContext;
   constructor(context: SecurityRuleContext) {
-    super(`Permission denied: ${context.operation} on ${context.path}`);
+    super(`Permission refusée : tentative de ${context.operation} sur ${context.path}`);
     this.name = 'FirestorePermissionError';
     this.context = context;
   }

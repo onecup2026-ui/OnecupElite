@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo } from "react";
@@ -13,6 +12,8 @@ import { doc, setDoc, addDoc, deleteDoc, collection } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { generateTournamentImage } from "@/ai/flows/ai-image-generator";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 export default function AdminDashboard() {
   const db = useFirestore();
@@ -96,14 +97,14 @@ export default function AdminDashboard() {
     setIsSaving(true);
     setDoc(doc(db, "settings", "config"), data, { merge: true })
       .then(() => toast({ title: "Configuration mise à jour" }))
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/settings/config',
+          operation: 'write',
+          requestResourceData: data
+        }));
+      })
       .finally(() => setIsSaving(false));
-  };
-
-  const addScheduleItem = () => {
-    if (scheduleItem.label && scheduleItem.date) {
-      setNewTournament({ ...newTournament, schedule: [...newTournament.schedule, scheduleItem] });
-      setScheduleItem({ label: "", date: "" });
-    }
   };
 
   const handleAddTournament = () => {
@@ -112,6 +113,13 @@ export default function AdminDashboard() {
       .then(() => {
         toast({ title: "Tournoi ajouté" });
         setNewTournament({ name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", schedule: [] });
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/tournaments',
+          operation: 'create',
+          requestResourceData: newTournament
+        }));
       });
   };
 
@@ -121,6 +129,13 @@ export default function AdminDashboard() {
       .then(() => {
         toast({ title: "Article publié" });
         setNewArticle({ title: "", excerpt: "", category: "Tournois", date: new Date().toLocaleDateString(), author: "Admin", imageUrl: "" });
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/articles',
+          operation: 'create',
+          requestResourceData: newArticle
+        }));
       });
   };
 
@@ -133,13 +148,26 @@ export default function AdminDashboard() {
       .then(() => {
         toast({ title: "Billet ajouté" });
         setNewTicket({ title: "", tournamentName: "", price: "", externalUrl: "", description: "", imageUrl: "" });
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/tickets',
+          operation: 'create',
+          requestResourceData: newTicket
+        }));
       });
   };
 
   const handleDelete = (coll: string, id: string) => {
     if (!db) return;
     deleteDoc(doc(db, coll, id))
-      .then(() => toast({ title: "Élément supprimé" }));
+      .then(() => toast({ title: "Élément supprimé" }))
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: `/${coll}/${id}`,
+          operation: 'delete'
+        }));
+      });
   };
 
   return (
@@ -196,7 +224,7 @@ export default function AdminDashboard() {
                   <p className="text-xs font-bold uppercase text-muted-foreground">Image de fond (Héro)</p>
                   <div className="flex flex-col sm:flex-row gap-4 items-center">
                     <div className="w-full sm:w-48 aspect-video rounded-xl border overflow-hidden bg-muted shadow-inner shrink-0">
-                      <img src={siteImages.heroImageUrl || siteConfig?.heroImageUrl} className="w-full h-full object-cover" />
+                      <img src={siteImages.heroImageUrl || siteConfig?.heroImageUrl || "https://picsum.photos/seed/placeholder/400/225"} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 w-full grid grid-cols-2 gap-2">
                       <label className="flex-1">
@@ -254,7 +282,7 @@ export default function AdminDashboard() {
                 <p className="text-xs font-bold uppercase text-muted-foreground">Illustration</p>
                 <div className="flex flex-col sm:flex-row gap-4 items-center">
                   <div className="w-full sm:w-32 aspect-square rounded-xl border overflow-hidden bg-muted shrink-0">
-                    <img src={newTournament.imageUrl} className="w-full h-full object-cover" />
+                    <img src={newTournament.imageUrl || "https://picsum.photos/seed/placeholder/300/300"} className="w-full h-full object-cover" />
                   </div>
                   <div className="w-full grid grid-cols-2 gap-2">
                     <label className="flex-1">
@@ -280,7 +308,12 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <Input className="sm:col-span-1" placeholder="Phase (ex: Finale)" value={scheduleItem.label} onChange={e => setScheduleItem({...scheduleItem, label: e.target.value})} />
                   <Input className="sm:col-span-1" placeholder="Date" value={scheduleItem.date} onChange={e => setScheduleItem({...scheduleItem, date: e.target.value})} />
-                  <Button variant="secondary" onClick={addScheduleItem} className="w-full">Ajouter</Button>
+                  <Button variant="secondary" onClick={() => {
+                    if (scheduleItem.label && scheduleItem.date) {
+                      setNewTournament({ ...newTournament, schedule: [...newTournament.schedule, scheduleItem] });
+                      setScheduleItem({ label: "", date: "" });
+                    }
+                  }} className="w-full">Ajouter</Button>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
                   {newTournament.schedule.map((s, i) => (
@@ -303,7 +336,7 @@ export default function AdminDashboard() {
             {tournaments?.map((t: any) => (
               <Card key={t.id} className="relative group overflow-hidden border-white/5 shadow hover:shadow-lg transition-all">
                 <div className="aspect-video relative overflow-hidden">
-                  <img src={t.imageUrl} className="w-full h-full object-cover" />
+                  <img src={t.imageUrl || "https://picsum.photos/seed/placeholder/400/225"} className="w-full h-full object-cover" />
                   <div className="absolute top-2 right-2">
                     <Button size="icon" variant="destructive" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleDelete('tournaments', t.id)}>
                       <Trash2 className="w-4 h-4" />
@@ -327,7 +360,7 @@ export default function AdminDashboard() {
               <Textarea placeholder="Résumé accrocheur..." value={newArticle.excerpt} onChange={e => setNewArticle({...newArticle, excerpt: e.target.value})} className="min-h-[80px]" />
               <div className="flex flex-col sm:flex-row gap-4 items-center pt-2">
                 <div className="w-full sm:w-24 aspect-square rounded-xl border overflow-hidden shrink-0">
-                  <img src={newArticle.imageUrl} className="w-full h-full object-cover" />
+                  <img src={newArticle.imageUrl || "https://picsum.photos/seed/placeholder/100/100"} className="w-full h-full object-cover" />
                 </div>
                 <div className="w-full grid grid-cols-2 gap-2">
                   <label className="flex-1">
@@ -354,7 +387,7 @@ export default function AdminDashboard() {
             {articles?.map((a: any) => (
               <Card key={a.id} className="flex gap-4 p-4 items-center group relative overflow-hidden border-white/5">
                 <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
-                  <img src={a.imageUrl} className="w-full h-full object-cover" />
+                  <img src={a.imageUrl || "https://picsum.photos/seed/placeholder/100/100"} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="font-bold uppercase truncate">{a.title}</h4>
@@ -382,7 +415,7 @@ export default function AdminDashboard() {
                 <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Image du billet</p>
                 <div className="flex flex-col sm:flex-row gap-4 items-center">
                   <div className="w-full sm:w-32 aspect-video rounded-xl border overflow-hidden shrink-0">
-                    <img src={newTicket.imageUrl} className="w-full h-full object-cover" />
+                    <img src={newTicket.imageUrl || "https://picsum.photos/seed/placeholder/300/150"} className="w-full h-full object-cover" />
                   </div>
                   <label className="w-full">
                     <Button variant="outline" className="w-full h-12" asChild>
