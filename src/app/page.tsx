@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Zap, ShieldCheck } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
@@ -21,10 +21,10 @@ export default function Home() {
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
   const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
   
-  const { data: siteConfig, loading: configLoading } = useDoc(configRef);
+  const { data: siteConfig } = useDoc(configRef);
   const { data: sponsors } = useCollection(sponsorsRef);
 
-  const defaultHero = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "https://picsum.photos/seed/onecup-match-action/1920/1080";
+  const defaultHero = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "https://picsum.photos/seed/onecup-hero/1920/1080";
   const heroImage = siteConfig?.heroImageUrl || defaultHero;
   
   const heroTitle = siteConfig?.heroTitle || "DEVENEZ UNE LÉGENDE.\nLA GLOIRE VOUS APPELLE.";
@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <div className="flex flex-col bg-background">
       {/* Hero Section */}
-      <section className="relative min-h-[95vh] flex items-center overflow-hidden py-20">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden py-20">
         <div className="absolute inset-0 z-0">
           <Image
             src={heroImage}
@@ -78,7 +78,7 @@ export default function Home() {
               <div className="flex flex-wrap justify-center xl:justify-start gap-5 pt-6">
                 <Link href="/tournaments">
                   <Button size="lg" className="h-20 px-12 bg-primary hover:bg-primary/90 glow-blue text-xl gap-3 uppercase font-black rounded-2xl transition-all hover:scale-105">
-                    Entrer dans l'Arène <ArrowRight className="w-6 h-6" />
+                    Participer maintenant <ArrowRight className="w-6 h-6" />
                   </Button>
                 </Link>
                 {heroVideoUrl && (
@@ -123,19 +123,19 @@ export default function Home() {
       {sponsors && sponsors.length > 0 && (
         <section className="py-20 bg-muted/30 border-y border-white/5 overflow-hidden">
           <div className="container mx-auto px-4 mb-10 flex items-center justify-between">
-            <h2 className="text-xs font-bold uppercase tracking-[0.4em] text-muted-foreground">ILS NOUS FONT CONFIANCE</h2>
-            <Link href="/sponsors" className="text-[10px] font-black uppercase text-primary hover:underline tracking-widest">Voir tous les partenaires</Link>
+            <h2 className="text-xs font-bold uppercase tracking-[0.4em] text-muted-foreground">PARTENAIRES OFFICIELS</h2>
+            <Link href="/sponsors" className="text-[10px] font-black uppercase text-primary hover:underline tracking-widest">Voir tous les sponsors</Link>
           </div>
           <div className="relative flex overflow-x-hidden">
             <div className="animate-marquee flex whitespace-nowrap gap-20 items-center py-4">
               {sponsors.map((s: any) => (
-                <div key={s.id} className="w-40 h-20 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all">
+                <div key={s.id} className="w-44 h-24 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all p-4">
                   <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
                 </div>
               ))}
               {/* Duplicate for seamless scrolling */}
               {sponsors.map((s: any) => (
-                <div key={`${s.id}-dup`} className="w-40 h-20 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all">
+                <div key={`${s.id}-dup`} className="w-44 h-24 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all p-4">
                   <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
                 </div>
               ))}

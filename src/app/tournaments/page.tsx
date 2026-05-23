@@ -8,7 +8,6 @@ import { Trophy, Search, Calendar, MapPin, ArrowRight, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection } from "firebase/firestore";
 import { cn } from "@/lib/utils";
@@ -19,15 +18,12 @@ export default function TournamentsPage() {
   const { data: tournaments, loading } = useCollection(tournamentsRef);
   
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
 
   const filtered = useMemo(() => {
     return tournaments?.filter((t: any) => {
-      const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = category === "all" || t.gameType.toLowerCase() === category.toLowerCase();
-      return matchesSearch && matchesCategory;
+      return t.name.toLowerCase().includes(search.toLowerCase());
     }) || [];
-  }, [tournaments, search, category]);
+  }, [tournaments, search]);
 
   return (
     <div className="container mx-auto px-4 py-12 space-y-12">
@@ -39,61 +35,56 @@ export default function TournamentsPage() {
         </p>
       </header>
 
-      <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between sticky top-16 z-40 bg-background/80 backdrop-blur py-6 border-b border-white/5">
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <div className="flex flex-col md:flex-row gap-6 items-center justify-center sticky top-16 z-40 bg-background/80 backdrop-blur py-6 border-b border-white/5">
+        <div className="relative w-full max-w-xl">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
-            placeholder="Rechercher un tournoi..."
-            className="pl-10 h-12 bg-card border-white/10"
+            placeholder="Rechercher un tournoi (Foot, PlayStation...)"
+            className="pl-12 h-14 bg-card border-white/10 rounded-2xl shadow-sm text-lg"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        
-        <Tabs value={category} onValueChange={setCategory} className="w-full md:w-auto">
-          <TabsList className="bg-muted p-1 h-12">
-            <TabsTrigger value="all" className="uppercase font-bold text-xs">Tous</TabsTrigger>
-            <TabsTrigger value="football" className="uppercase font-bold text-xs">Football</TabsTrigger>
-            <TabsTrigger value="esport" className="uppercase font-bold text-xs">PlayStation</TabsTrigger>
-          </TabsList>
-        </Tabs>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filtered.map((t: any) => (
-          <div key={t.id} className="group bg-card border border-white/5 rounded-3xl overflow-hidden hover:border-primary/50 transition-all duration-300 flex flex-col h-full shadow-lg">
-            <div className="relative aspect-video overflow-hidden">
+          <div key={t.id} className="group bg-card border border-white/5 rounded-[2.5rem] overflow-hidden hover:border-primary/50 transition-all duration-300 flex flex-col h-full shadow-lg hover:shadow-2xl">
+            <div className="relative aspect-[16/10] overflow-hidden">
               <Image
                 src={t.imageUrl || "https://picsum.photos/seed/onecup/800/600"}
                 alt={t.name}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-              <Badge className={cn(
-                "absolute top-4 left-4 border-none font-bold uppercase",
-                t.gameType?.toLowerCase() === 'football' ? 'bg-primary glow-blue' : 'bg-secondary'
-              )}>{t.gameType}</Badge>
+              <Badge className="absolute top-6 left-6 bg-primary glow-blue border-none font-bold uppercase px-4 py-1.5 rounded-full shadow-lg">
+                {t.gameType}
+              </Badge>
             </div>
             
             <div className="p-8 flex flex-col flex-1 space-y-6">
-              <h3 className="text-2xl font-headline font-bold uppercase leading-tight">{t.name}</h3>
+              <h3 className="text-2xl font-headline font-bold uppercase leading-tight tracking-tighter">{t.name}</h3>
               
               <div className="grid grid-cols-1 gap-4 text-sm text-muted-foreground font-medium">
                 <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-primary" />
-                  {t.startDate ? new Date(t.startDate).toLocaleDateString() : "Juillet 2026"}
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  {t.startDate ? new Date(t.startDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : "Juillet 2026"}
                 </div>
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-primary" />
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                    <MapPin className="w-4 h-4" />
+                  </div>
                   {t.locationStade || "OneCup Arena"}
                 </div>
               </div>
 
               <div className="pt-4 mt-auto">
                 <Link href={`/tournaments/${t.id}`}>
-                  <Button className="w-full h-12 gap-2 bg-primary glow-blue transition-all uppercase font-bold text-xs rounded-xl">
-                    Voir les détails <ArrowRight className="w-4 h-4" />
+                  <Button className="w-full h-14 gap-3 bg-primary glow-blue transition-all uppercase font-black text-sm rounded-2xl">
+                    Participer <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
               </div>
@@ -103,9 +94,10 @@ export default function TournamentsPage() {
       </div>
 
       {!loading && filtered.length === 0 && (
-        <div className="text-center py-24 border border-dashed border-white/10 rounded-[2.5rem]">
-          <Zap className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-10" />
-          <p className="text-muted-foreground font-bold uppercase tracking-widest">Aucun tournoi publié pour le moment</p>
+        <div className="text-center py-32 border border-dashed border-white/10 rounded-[3rem] bg-card/30">
+          <Zap className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-20" />
+          <h3 className="text-xl font-bold uppercase tracking-widest text-muted-foreground">Aucun tournoi trouvé</h3>
+          <p className="text-muted-foreground mt-2">Réessayez avec un autre mot-clé ou repassez plus tard.</p>
         </div>
       )}
     </div>
