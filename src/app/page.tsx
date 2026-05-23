@@ -21,7 +21,7 @@ const upcomingTournaments = [
     category: "Football",
     date: "15 Juin 2026",
     prize: "10 000€",
-    image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || ""
+    image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || null
   },
   {
     id: "t2",
@@ -29,25 +29,27 @@ const upcomingTournaments = [
     category: "Esports",
     date: "02 Juillet 2026",
     prize: "15 000€",
-    image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || ""
+    image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || null
   }
 ];
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "";
+  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || null;
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image
-            src={heroImage}
-            alt="OneCup Hero"
-            fill
-            className="object-cover opacity-30 scale-105"
-            priority
-          />
+          {heroImage && (
+            <Image
+              src={heroImage}
+              alt="OneCup Hero"
+              fill
+              className="object-cover opacity-30 scale-105"
+              priority
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
         
@@ -126,12 +128,14 @@ export default function Home() {
             {upcomingTournaments.map((tournament) => (
               <div key={tournament.id} className="group relative overflow-hidden rounded-3xl bg-card border hover:border-primary/50 transition-all duration-500">
                 <div className="aspect-[16/9] relative overflow-hidden">
-                  <Image
-                    src={tournament.image}
-                    alt={tournament.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                  {tournament.image && (
+                    <Image
+                      src={tournament.image}
+                      alt={tournament.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />
                   <Badge className="absolute top-6 left-6 bg-primary/90 text-white font-bold">{tournament.category}</Badge>
                 </div>

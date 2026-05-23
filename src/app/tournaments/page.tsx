@@ -21,7 +21,7 @@ const tournaments = [
     location: "Stade National",
     prize: "5 000€",
     teams: "16/32",
-    image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || ""
+    image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || null
   },
   {
     id: "2",
@@ -32,7 +32,7 @@ const tournaments = [
     location: "Arène Digitale",
     prize: "10 000€",
     teams: "8/16",
-    image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || ""
+    image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || null
   },
   {
     id: "3",
@@ -91,12 +91,14 @@ export default function TournamentsPage() {
         {filtered.map((t) => (
           <div key={t.id} className="group bg-card border rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300 flex flex-col h-full shadow-lg">
             <div className="relative aspect-video overflow-hidden">
-              <Image
-                src={t.image}
-                alt={t.name}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-              />
+              {t.image && (
+                <Image
+                  src={t.image}
+                  alt={t.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
               <Badge className="absolute top-4 left-4 bg-background/80 backdrop-blur-md text-foreground border-white/10">{t.sport}</Badge>
               <Badge className="absolute bottom-4 left-4 bg-primary glow-blue border-none">{t.status}</Badge>
