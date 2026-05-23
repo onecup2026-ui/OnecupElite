@@ -76,15 +76,15 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Floating Prize Pool Widget */}
+        {/* Dynamic Prize Pool Widget */}
         <div className="hidden xl:block absolute right-24 top-1/2 -translate-y-1/2 w-[400px] animate-float">
           <PrizePoolTracker
-            currentPool={52400}
-            targetPool={150000}
+            currentPool={siteConfig?.currentPrizePool || 52400}
+            targetPool={siteConfig?.targetPrizePool || 150000}
             tiers={[
-              { rank: "Champion Or", amount: 25000, percentage: 50 },
-              { rank: "Finaliste Argent", amount: 15000, percentage: 30 },
-              { rank: "3ème Place Bronze", amount: 10000, percentage: 20 },
+              { rank: "Champion Or", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.5), percentage: 50 },
+              { rank: "Finaliste Argent", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.3), percentage: 30 },
+              { rank: "3ème Place Bronze", amount: Math.floor((siteConfig?.currentPrizePool || 52400) * 0.2), percentage: 20 },
             ]}
           />
         </div>

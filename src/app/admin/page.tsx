@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useMemo, useRef } from "react";
-import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, ExternalLink, Upload, Sparkles, Loader2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useState, useMemo } from "react";
+import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,11 +47,10 @@ export default function AdminDashboard() {
 
   const [siteImages, setSiteImages] = useState({ heroImageUrl: "" });
 
-  // File Upload Helper
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 800000) { // Firestore limit check (approx 1MB)
+      if (file.size > 800000) {
         toast({ variant: "destructive", title: "Fichier trop lourd", description: "Veuillez choisir une image de moins de 800KB." });
         return;
       }
@@ -64,7 +63,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // AI Generation Helper
   const handleAiGeneration = async (prompt: string, context: string, setter: (url: string) => void, id: string) => {
     if (!prompt) {
       toast({ variant: "destructive", title: "Erreur", description: "Veuillez entrer un titre pour guider l'IA." });
@@ -91,7 +89,9 @@ export default function AdminDashboard() {
     const data = {
       heroTitle: formData.get("heroTitle"),
       heroSubtitle: formData.get("heroSubtitle"),
-      heroImageUrl: siteImages.heroImageUrl || siteConfig?.heroImageUrl,
+      heroImageUrl: siteImages.heroImageUrl || siteConfig?.heroImageUrl || "",
+      currentPrizePool: Number(formData.get("currentPrizePool")),
+      targetPrizePool: Number(formData.get("targetPrizePool")),
     };
     setIsSaving(true);
     setDoc(doc(db, "settings", "config"), data, { merge: true })
@@ -136,17 +136,12 @@ export default function AdminDashboard() {
       });
   };
 
-  const handleDelete = (path: string, id: string) => {
-    if (!db) return;
-    deleteDoc(doc(db, path, id)).then(() => toast({ title: "Élément supprimé" }));
-  };
-
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">ADMINISTRATION</h1>
-          <p className="text-muted-foreground">Pilotez votre plateforme OneCup Elite.</p>
+          <p className="text-muted-foreground">Pilotez votre plateforme OneCup Elite en temps réel.</p>
         </div>
         <Badge variant="outline" className="border-primary text-primary px-4 py-1">MODE ÉDITION ACTIF</Badge>
       </div>
@@ -161,23 +156,33 @@ export default function AdminDashboard() {
 
         <TabsContent value="site" className="mt-6">
           <Card className="bg-card/50 border-white/5">
-            <CardHeader><CardTitle>Configuration Accueil</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Configuration Accueil & Cagnotte</CardTitle></CardHeader>
             <CardContent>
               <form onSubmit={handleUpdateConfig} className="space-y-6">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <p className="text-xs font-bold uppercase text-muted-foreground">Titre Héro</p>
-                    <Input name="heroTitle" placeholder="LA VICTOIRE EST UNE PASSION." defaultValue={siteConfig?.heroTitle} />
+                <div className="grid gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">Titre Héro</p>
+                      <Input name="heroTitle" placeholder="Titre principal" defaultValue={siteConfig?.heroTitle} />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">Cagnotte Actuelle (€)</p>
+                      <Input name="currentPrizePool" type="number" defaultValue={siteConfig?.currentPrizePool || 0} />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">Sous-titre</p>
+                      <Textarea name="heroSubtitle" placeholder="Description courte" defaultValue={siteConfig?.heroSubtitle} className="h-20" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">Objectif Cagnotte (€)</p>
+                      <Input name="targetPrizePool" type="number" defaultValue={siteConfig?.targetPrizePool || 100000} />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-bold uppercase text-muted-foreground">Sous-titre</p>
-                    <Textarea name="heroSubtitle" placeholder="Dominez le terrain..." defaultValue={siteConfig?.heroSubtitle} />
-                  </div>
+                  
                   <div className="space-y-4">
                     <p className="text-xs font-bold uppercase text-muted-foreground">Image de fond (Héro)</p>
                     <div className="flex gap-4 items-start">
                       <div className="flex-1 space-y-2">
-                        <Input placeholder="URL de l'image" value={siteImages.heroImageUrl || siteConfig?.heroImageUrl || ""} readOnly />
                         <div className="flex gap-2">
                           <label className="flex-1">
                             <Button type="button" variant="secondary" className="w-full gap-2 cursor-pointer" asChild>
@@ -190,7 +195,7 @@ export default function AdminDashboard() {
                             variant="outline" 
                             className="flex-1 gap-2"
                             disabled={isGenerating === 'site'}
-                            onClick={() => handleAiGeneration("Un stade de football moderne la nuit avec des trophées", "cinématique, éclairage épique", (url) => setSiteImages({heroImageUrl: url}), 'site')}
+                            onClick={() => handleAiGeneration("Un stade de football moderne épique", "cinématique", (url) => setSiteImages({heroImageUrl: url}), 'site')}
                           >
                             {isGenerating === 'site' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} IA
                           </Button>
@@ -219,7 +224,7 @@ export default function AdminDashboard() {
                 <Input placeholder="Sport" value={newTournament.sport} onChange={e => setNewTournament({...newTournament, sport: e.target.value})} />
                 <Input placeholder="Date (ex: 2026-07-15)" value={newTournament.date} onChange={e => setNewTournament({...newTournament, date: e.target.value})} />
                 <Input placeholder="Lieu" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
-                <Input placeholder="Cashprize (ex: 5000€)" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
+                <Input placeholder="Cashprize" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
               </div>
 
               <div className="space-y-2">
@@ -237,7 +242,7 @@ export default function AdminDashboard() {
                         variant="outline" 
                         className="flex-1 gap-2"
                         disabled={isGenerating === 'tourn'}
-                        onClick={() => handleAiGeneration(newTournament.name, `Sport: ${newTournament.sport}, Action intense`, (url) => setNewTournament({...newTournament, imageUrl: url}), 'tourn')}
+                        onClick={() => handleAiGeneration(newTournament.name, `Sport: ${newTournament.sport}`, (url) => setNewTournament({...newTournament, imageUrl: url}), 'tourn')}
                       >
                         {isGenerating === 'tourn' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Générer IA
                       </Button>
@@ -292,7 +297,7 @@ export default function AdminDashboard() {
                       variant="outline" 
                       className="flex-1 gap-2"
                       disabled={isGenerating === 'art'}
-                      onClick={() => handleAiGeneration(newArticle.title, "Style magazine de sport professionnel", (url) => setNewArticle({...newArticle, imageUrl: url}), 'art')}
+                      onClick={() => handleAiGeneration(newArticle.title, "Magazine sport", (url) => setNewArticle({...newArticle, imageUrl: url}), 'art')}
                     >
                       {isGenerating === 'art' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Illustration IA
                     </Button>
@@ -314,9 +319,9 @@ export default function AdminDashboard() {
             <CardHeader><CardTitle>Nouvelle Billetterie</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="Nom du pass (ex: VIP Pass)" value={newTicket.title} onChange={e => setNewTicket({...newTicket, title: e.target.value})} />
+                <Input placeholder="Nom du pass" value={newTicket.title} onChange={e => setNewTicket({...newTicket, title: e.target.value})} />
                 <Input placeholder="Tournoi lié" value={newTicket.tournamentName} onChange={e => setNewTicket({...newTicket, tournamentName: e.target.value})} />
-                <Input placeholder="Prix (ex: 20€)" value={newTicket.price} onChange={e => setNewTicket({...newTicket, price: e.target.value})} />
+                <Input placeholder="Prix" value={newTicket.price} onChange={e => setNewTicket({...newTicket, price: e.target.value})} />
                 <Input placeholder="Lien Billetterie Externe" value={newTicket.externalUrl} onChange={e => setNewTicket({...newTicket, externalUrl: e.target.value})} />
                 <div className="col-span-2 space-y-2">
                   <p className="text-xs font-bold uppercase text-muted-foreground">Image du billet</p>

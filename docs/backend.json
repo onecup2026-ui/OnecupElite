@@ -3,12 +3,14 @@
   "entities": {
     "SiteSettings": {
       "title": "Site Settings",
-      "description": "Configuration globale du site (image héro, textes d'accueil)",
+      "description": "Configuration globale du site (image héro, textes d'accueil, cagnotte)",
       "type": "object",
       "properties": {
         "heroImageUrl": { "type": "string", "description": "URL de l'image de fond principale" },
         "heroTitle": { "type": "string", "description": "Titre principal de l'accueil" },
-        "heroSubtitle": { "type": "string", "description": "Sous-titre de l'accueil" }
+        "heroSubtitle": { "type": "string", "description": "Sous-titre de l'accueil" },
+        "currentPrizePool": { "type": "number", "description": "Montant actuel de la cagnotte globale" },
+        "targetPrizePool": { "type": "number", "description": "Objectif de la cagnotte globale" }
       }
     },
     "Tournament": {
