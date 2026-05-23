@@ -2,12 +2,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { Ticket as TicketIcon, ExternalLink, ShieldCheck, Zap } from "lucide-react";
+import { Ticket as TicketIcon, ExternalLink, ShieldCheck, Zap, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection } from "firebase/firestore";
+
+const OFFICIAL_TICKET_URL = "https://digitaleventcd.vercel.app/";
 
 export default function TicketsPage() {
   const db = useFirestore();
@@ -21,9 +23,36 @@ export default function TicketsPage() {
         <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter uppercase">BILLETTERIE ÉLITE</h1>
         <p className="text-muted-foreground text-lg">
           Réservez vos places pour les événements les plus attendus de la saison OneCup. 
-          Tous nos liens redirigent vers des plateformes de billetterie sécurisées.
+          Tous nos liens redirigent vers notre plateforme de billetterie sécurisée.
         </p>
       </header>
+
+      {/* Main Official Ticket CTA */}
+      <section className="max-w-4xl mx-auto">
+        <Card className="bg-primary glow-blue border-none overflow-hidden rounded-[2.5rem] text-white">
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="p-10 space-y-6 flex flex-col justify-center">
+              <Badge className="bg-white text-primary w-fit font-bold uppercase">OFFRE PRINCIPALE</Badge>
+              <h2 className="text-3xl font-headline font-bold uppercase leading-none">PASS FESTIVAL & FINALE ONECUP</h2>
+              <p className="text-white/80 text-sm">Accès complet à la grande finale du 24 juillet et au festival After Cup du 25 juillet.</p>
+              <a href={OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-black uppercase w-full md:w-auto h-14 px-8 rounded-xl gap-2">
+                  Acheter sur Digital Event <ExternalLink className="w-5 h-5" />
+                </Button>
+              </a>
+            </div>
+            <div className="relative aspect-video md:aspect-auto">
+              <img 
+                src="https://picsum.photos/seed/onecup-ticket-main/800/600" 
+                alt="Tickets" 
+                className="absolute inset-0 w-full h-full object-cover opacity-80"
+                data-ai-hint="crowd concert"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary via-transparent to-transparent hidden md:block" />
+            </div>
+          </div>
+        </Card>
+      </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {loading ? (
@@ -59,36 +88,35 @@ export default function TicketsPage() {
               </CardHeader>
               
               <CardFooter className="p-6 border-t border-white/5">
-                <a href={ticket.externalUrl} target="_blank" rel="noopener noreferrer" className="w-full">
+                <a href={ticket.externalUrl || OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer" className="w-full">
                   <Button className="w-full h-12 bg-primary hover:bg-primary/90 glow-blue gap-2 uppercase font-bold text-sm">
-                    Réserver sur la plateforme <ExternalLink className="w-4 h-4" />
+                    Réserver sur Digital Event <ExternalLink className="w-4 h-4" />
                   </Button>
                 </a>
               </CardFooter>
             </Card>
           ))
         ) : (
-          <div className="col-span-full py-24 text-center border border-dashed border-white/10 rounded-3xl bg-card/30">
-            <TicketIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-10" />
-            <h3 className="text-xl font-bold uppercase">Aucun billet disponible</h3>
+          <div className="col-span-full py-20 text-center border border-dashed border-white/10 rounded-3xl bg-card/30">
+            <TicketIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-10" />
+            <h3 className="text-xl font-bold uppercase">Ventes bientôt ouvertes</h3>
             <p className="text-muted-foreground max-w-sm mx-auto mt-2">
-              Les ventes pour les prochains tournois n'ont pas encore commencé. Restez connectés pour les annonces officielles.
+              Les billets pour les phases éliminatoires arrivent. Restez connectés.
             </p>
           </div>
         )}
       </div>
 
       {/* Info Section */}
-      <section className="bg-primary/5 rounded-3xl p-8 border border-primary/20 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
-        <div className="bg-primary/10 p-4 rounded-2xl shrink-0">
+      <section className="bg-primary/5 rounded-[2.5rem] p-8 border border-primary/20 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
+        <div className="bg-primary/10 p-6 rounded-2xl shrink-0">
           <ShieldCheck className="w-12 h-12 text-primary" />
         </div>
         <div className="space-y-2">
           <h4 className="text-xl font-bold uppercase">Transactions Sécurisées</h4>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Pour votre sécurité, OneCup Elite collabore exclusivement avec des partenaires de billetterie reconnus. 
-            Assurez-vous de toujours passer par nos liens officiels pour éviter toute fraude. En cas de doute, 
-            contactez notre support via le chatbot.
+            Pour votre sécurité, OneCup Elite collabore exclusivement avec <strong>Digital Event</strong>. 
+            Assurez-vous de toujours passer par nos liens officiels pour éviter toute fraude.
           </p>
         </div>
       </section>

@@ -3,11 +3,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Music, Ticket, Star, MapPin, Calendar, ArrowRight, Sparkles, PartyPopper, Trophy, Camera, Users } from "lucide-react";
+import { Music, Ticket, Star, MapPin, Calendar, ArrowRight, Sparkles, PartyPopper, Trophy, Camera, Users, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+
+const OFFICIAL_TICKET_URL = "https://digitaleventcd.vercel.app/";
 
 export default function AfterCupPage() {
   const afterCupImage = PlaceHolderImages.find(img => img.id === 'after-cup')?.imageUrl || "https://picsum.photos/seed/onecup-after/1600/900";
@@ -39,11 +41,11 @@ export default function AfterCupPage() {
               Samedi 25 Juillet : Célébrez la victoire, vibrez au rythme de l'Elite et assistez au sacre des champions.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-8">
-              <Link href="/tickets">
+              <a href={OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="h-16 px-12 bg-secondary hover:bg-secondary/90 glow-blue text-lg gap-3 uppercase font-bold rounded-2xl">
-                  Réserver mon Pass Festival <Ticket className="w-6 h-6" />
+                  Réserver mon Pass Festival <ExternalLink className="w-6 h-6" />
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -132,11 +134,13 @@ export default function AfterCupPage() {
               <span className="font-bold uppercase tracking-widest text-sm">SAMEDI 25 JUILLET 2026</span>
             </div>
           </div>
-          <Link href="/tickets" className="inline-block mt-8">
-            <Button size="lg" className="h-16 px-16 bg-secondary hover:bg-secondary/90 glow-blue uppercase font-bold text-lg rounded-2xl gap-3">
-              Acheter mon ticket <ArrowRight className="w-6 h-6" />
-            </Button>
-          </Link>
+          <div className="inline-block mt-8">
+            <a href={OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="h-16 px-16 bg-secondary hover:bg-secondary/90 glow-blue uppercase font-bold text-lg rounded-2xl gap-3">
+                Acheter mon ticket <ExternalLink className="w-6 h-6" />
+              </Button>
+            </a>
+          </div>
         </div>
       </section>
     </div>
