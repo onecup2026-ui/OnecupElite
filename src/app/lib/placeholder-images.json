@@ -3,19 +3,19 @@
   "placeholderImages": [
     {
       "id": "hero-bg",
-      "description": "Trophée de football doré majestueux sous les projecteurs d'un stade au crépuscule",
-      "imageUrl": "https://picsum.photos/seed/onecup-gold-trophy/1920/1080",
-      "imageHint": "golden trophy"
+      "description": "Un ballon de football entouré de trophées dorés prestigieux",
+      "imageUrl": "https://picsum.photos/seed/ball-trophy-prestige/1920/1080",
+      "imageHint": "soccer trophy"
     },
     {
       "id": "football-tournament",
-      "description": "Action intense lors d'un match de football professionnel sous la pluie",
+      "description": "Action intense lors d'un match de football professionnel",
       "imageUrl": "https://picsum.photos/seed/onecup-pro-soccer/800/600",
       "imageHint": "soccer match"
     },
     {
       "id": "gaming-tournament",
-      "description": "Arène d'e-sport moderne avec éclairage néon bleu et magenta",
+      "description": "Arène d'e-sport moderne avec éclairage néon",
       "imageUrl": "https://picsum.photos/seed/onecup-gaming-arena/800/600",
       "imageHint": "gaming esports"
     },

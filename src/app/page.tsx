@@ -50,7 +50,7 @@ export default function Home() {
               src={heroImage}
               alt="OneCup Hero"
               fill
-              className="object-cover opacity-50 scale-105"
+              className="object-cover opacity-60 scale-100"
               priority
               data-ai-hint={heroHint}
             />
@@ -61,23 +61,23 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl space-y-6">
             <Badge variant="outline" className="border-primary text-primary px-4 py-1 rounded-full animate-pulse bg-primary/10">
-              VERSION 1.0 DISPONIBLE
+              ÉDITION ÉLITE 2026
             </Badge>
             <h1 className="text-6xl md:text-8xl font-headline font-bold leading-none tracking-tighter">
-              AU-DELÀ DE LA <span className="text-primary italic">COUPE.</span><br />
-              REJOIGNEZ <span className="text-primary">L'ÉLITE.</span>
+              LA VICTOIRE<br />
+              EST UNE <span className="text-primary italic">PASSION.</span>
             </h1>
             <p className="text-xl text-muted-foreground font-body max-w-xl">
-              Le premier écosystème pour la gestion de tournois, l'interaction communautaire et les événements sportifs professionnels.
+              Dominez le terrain avec l'écosystème OneCup. La plateforme numéro 1 pour les compétitions de football et d'e-sport de haut niveau.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <Link href="/tournaments">
                 <Button size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90 glow-blue text-lg gap-2">
-                  Participer <ArrowRight className="w-5 h-5" />
+                  Participer Maintenant <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               <Button size="lg" variant="outline" className="h-14 px-8 text-lg gap-2 backdrop-blur-sm">
-                <Play className="w-5 h-5 fill-current" /> Voir la Promo
+                <Play className="w-5 h-5 fill-current" /> Voir le Teaser
               </Button>
             </div>
           </div>
@@ -119,8 +119,8 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-12">
             <div className="space-y-2">
-              <h2 className="text-4xl font-headline font-bold">BATAILLES À VENIR</h2>
-              <p className="text-muted-foreground">Le prochain chapitre de la compétition commence ici.</p>
+              <h2 className="text-4xl font-headline font-bold">TOURNOIS À LA UNE</h2>
+              <p className="text-muted-foreground">Inscrivez votre équipe pour entrer dans l'histoire.</p>
             </div>
             <Link href="/tournaments">
               <Button variant="ghost" className="gap-2 group">
@@ -158,8 +158,8 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="pt-4 flex gap-4">
-                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue">Rejoindre</Button>
-                    <Button variant="outline" className="flex-1">Détails</Button>
+                    <Button className="flex-1 bg-primary hover:bg-primary/90 glow-blue">S'inscrire</Button>
+                    <Button variant="outline" className="flex-1">Voir Détails</Button>
                   </div>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function Home() {
       {/* Sponsor Marquee */}
       <section className="py-16 bg-muted/20 border-y">
         <div className="container mx-auto px-4">
-          <p className="text-center text-xs text-muted-foreground uppercase tracking-widest mb-10 font-bold">Ils nous font confiance</p>
+          <p className="text-center text-xs text-muted-foreground uppercase tracking-widest mb-10 font-bold">Nos Partenaires Officiels</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-10 w-32 relative">
