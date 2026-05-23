@@ -21,7 +21,8 @@ const upcomingTournaments = [
     category: "Football",
     date: "15 Juin 2026",
     prize: "10 000€",
-    image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || null
+    image: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageUrl || null,
+    imageHint: PlaceHolderImages.find(img => img.id === 'football-tournament')?.imageHint || "soccer"
   },
   {
     id: "t2",
@@ -29,12 +30,15 @@ const upcomingTournaments = [
     category: "Esports",
     date: "02 Juillet 2026",
     prize: "15 000€",
-    image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || null
+    image: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageUrl || null,
+    imageHint: PlaceHolderImages.find(img => img.id === 'gaming-tournament')?.imageHint || "gaming"
   }
 ];
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || null;
+  const heroImageData = PlaceHolderImages.find(img => img.id === 'hero-bg');
+  const heroImage = heroImageData?.imageUrl || null;
+  const heroHint = heroImageData?.imageHint || "stadium";
 
   return (
     <div className="flex flex-col">
@@ -46,8 +50,9 @@ export default function Home() {
               src={heroImage}
               alt="OneCup Hero"
               fill
-              className="object-cover opacity-30 scale-105"
+              className="object-cover opacity-40 scale-105"
               priority
+              data-ai-hint={heroHint}
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
@@ -134,6 +139,7 @@ export default function Home() {
                       alt={tournament.name}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      data-ai-hint={tournament.imageHint}
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />

@@ -3,39 +3,39 @@
   "placeholderImages": [
     {
       "id": "hero-bg",
-      "description": "Epic stadium lighting at night",
-      "imageUrl": "https://picsum.photos/seed/onecup-hero/1920/1080",
-      "imageHint": "sports stadium"
+      "description": "Trophée de football doré et ballon sur un terrain verdoyant au crépuscule",
+      "imageUrl": "https://picsum.photos/seed/onecup-trophy-hero/1920/1080",
+      "imageHint": "soccer trophy"
     },
     {
       "id": "football-tournament",
-      "description": "Football match in action",
-      "imageUrl": "https://picsum.photos/seed/onecup-foot/800/600",
-      "imageHint": "soccer game"
+      "description": "Action intense lors d'un match de football professionnel",
+      "imageUrl": "https://picsum.photos/seed/onecup-match/800/600",
+      "imageHint": "soccer match"
     },
     {
       "id": "gaming-tournament",
-      "description": "Pro gaming setup",
-      "imageUrl": "https://picsum.photos/seed/onecup-game/800/600",
+      "description": "Arène d'e-sport moderne avec éclairage néon",
+      "imageUrl": "https://picsum.photos/seed/onecup-gaming/800/600",
       "imageHint": "esports arena"
     },
     {
       "id": "after-cup",
-      "description": "Concert party with lights",
-      "imageUrl": "https://picsum.photos/seed/onecup-after/800/600",
+      "description": "Célébration festive après la victoire avec lumières de scène",
+      "imageUrl": "https://picsum.photos/seed/onecup-party/800/600",
       "imageHint": "music festival"
     },
     {
       "id": "sponsor-tech",
-      "description": "Tech company logo placeholder",
-      "imageUrl": "https://picsum.photos/seed/onecup-tech/300/150",
+      "description": "Logo d'entreprise technologique",
+      "imageUrl": "https://picsum.photos/seed/onecup-tech-logo/300/150",
       "imageHint": "tech logo"
     },
     {
       "id": "sponsor-energy",
-      "description": "Energy drink placeholder",
-      "imageUrl": "https://picsum.photos/seed/onecup-energy/300/150",
-      "imageHint": "beverage logo"
+      "description": "Logo de boisson énergisante",
+      "imageUrl": "https://picsum.photos/seed/onecup-energy-drink/300/150",
+      "imageHint": "energy drink"
     }
   ]
 }
