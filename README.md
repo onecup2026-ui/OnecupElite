@@ -1,7 +1,7 @@
 
 # ONECUP Elite Platform 2026
 
-Une plateforme événementielle dynamique et premium pour la gestion des tournois **ONECUP**, alliant le prestige du football et l'innovation de l'e-sport (PlayStation).
+Une plateforme événementielle dynamique et premium pour la gestion des tournois **ONECUP**, alliant le prestige du football et l'innovation de l'e-sport.
 
 ## 🚀 Caractéristiques principales
 
@@ -11,16 +11,9 @@ Une plateforme événementielle dynamique et premium pour la gestion des tournoi
 - **Cagnotte Progressive (Prize Pool)** : Visualisation dynamique de l'objectif financier.
 - **Assistant IA** : Chatbot intelligent pour répondre aux questions des participants.
 
-## 🛠 Stack Technique
-
-- **Framework** : Next.js 15 (App Router)
-- **Base de données & Auth** : Firebase (Firestore, Authentication)
-- **UI & Styling** : Tailwind CSS, Shadcn UI, Lucide Icons
-- **IA** : Genkit (Google Gemini)
-
 ## 📦 Comment envoyer ce projet sur GitHub ?
 
-Pour sauvegarder votre projet sur votre propre compte GitHub, suivez ces étapes concrètes dans votre terminal :
+Pour sauvegarder votre projet sur votre compte GitHub, suivez ces étapes dans votre terminal :
 
 1. **Initialisez le dépôt local** :
    ```bash
@@ -37,27 +30,24 @@ Pour sauvegarder votre projet sur votre propre compte GitHub, suivez ces étapes
    git commit -m "Initial commit - ONECUP Elite Platform"
    ```
 
-4. **Renommez la branche principale** :
-   ```bash
-   git branch -M main
-   ```
-
-5. **Liez à votre dépôt GitHub distant** :
-   *(Allez sur GitHub, créez un dépôt vide et copiez son URL)*
+4. **Liez à votre dépôt GitHub distant** :
+   *(Créez un dépôt vide sur GitHub et copiez son URL)*
    ```bash
    git remote add origin https://github.com/VOTRE_UTILISATEUR/VOTRE_DEPOT.git
    ```
 
-6. **Poussez votre code** :
+5. **Poussez votre code** :
    ```bash
+   git branch -M main
    git push -u origin main
    ```
 
-## 🔑 Configuration requise
+## 🛠 Stack Technique
 
-Assurez-vous d'avoir configuré vos variables d'environnement dans un fichier `.env` :
-- `NEXT_PUBLIC_FIREBASE_API_KEY`
-- `GEMINI_API_KEY` (pour l'Assistant IA)
+- **Framework** : Next.js 15 (App Router)
+- **Base de données & Auth** : Firebase (Firestore, Authentication)
+- **UI & Styling** : Tailwind CSS, Shadcn UI
+- **IA** : Genkit (Google Gemini)
 
 ---
 © 2026 ONE CUP Platform. Tous droits réservés.

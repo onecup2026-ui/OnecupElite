@@ -133,7 +133,6 @@ export default function Home() {
                   <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
                 </div>
               ))}
-              {/* Duplicate for seamless scrolling */}
               {sponsors.map((s: any) => (
                 <div key={`${s.id}-dup`} className="w-44 h-24 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all p-4">
                   <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
