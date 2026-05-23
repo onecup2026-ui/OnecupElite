@@ -53,6 +53,20 @@
         "imageUrl": { "type": "string" }
       },
       "required": ["title", "excerpt", "imageUrl"]
+    },
+    "Ticket": {
+      "title": "Ticket",
+      "description": "Billet pour un événement ou tournoi",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "tournamentName": { "type": "string" },
+        "price": { "type": "string" },
+        "externalUrl": { "type": "string", "description": "Lien vers la billetterie externe" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["title", "externalUrl"]
     }
   },
   "auth": {
@@ -70,6 +84,10 @@
     "/articles/{articleId}": {
       "schema": "Article",
       "description": "Articles d'actualités"
+    },
+    "/tickets/{ticketId}": {
+      "schema": "Ticket",
+      "description": "Billets en vente"
     }
   }
 }
