@@ -3,10 +3,10 @@
 
 /**
  * ATTENTION : La clé API doit commencer par "AIza". 
- * Vous la trouverez dans : Console Firebase > Paramètres du projet > Général > Vos applications.
+ * Vous la trouverez dans : Console Firebase > Paramètres du projet > Général > Clé API Web.
  */
 export const firebaseConfig = {
-  apiKey: "BI5DzvtGREMJp-vtVniBlcnTgN-qP_71OdlU_C-GS268I5HkDp3C9HVYsPO00pdpSFz2LtqpbYaH-CBsFPM0mH4",
+  apiKey: "REMPLACEZ_PAR_LA_CLE_COMMENÇANT_PAR_AIza",
   authDomain: "941773255078.firebaseapp.com",
   projectId: "941773255078",
   storageBucket: "941773255078.firebasestorage.app",
