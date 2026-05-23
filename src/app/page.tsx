@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play, Heart, X, Zap } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, Calendar, ArrowRight, Play, Heart, X, Zap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
@@ -28,14 +28,14 @@ export default function Home() {
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
   const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
 
-  const { data: siteConfig } = useDoc(configRef);
+  const { data: siteConfig, loading: configLoading } = useDoc(configRef);
   const { data: tournaments } = useCollection(tournamentsRef);
   const { data: sponsors } = useCollection(sponsorsRef);
 
   const defaultHero = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "https://picsum.photos/seed/onecup-match-action/1920/1080";
-  const heroImage = (siteConfig?.heroImageUrl && siteConfig.heroImageUrl.trim() !== "") 
-    ? siteConfig.heroImageUrl 
-    : defaultHero;
+  
+  // Use config image if available, else placeholder
+  const heroImage = siteConfig?.heroImageUrl || defaultHero;
   
   const heroTitle = siteConfig?.heroTitle || "CHAQUE SECONDE COMPTE.";
   const heroSubtitle = siteConfig?.heroSubtitle || "Vibrez au rythme de la OneCup Elite. La plateforme numéro 1 pour les compétitions de football et d'e-sport de haut niveau en RDC.";
@@ -81,7 +81,7 @@ export default function Home() {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 items-center">
-            <div className="max-w-2xl space-y-8 text-center xl:text-left">
+            <div className="max-w-2xl space-y-8 text-center xl:text-left animate-in fade-in slide-in-from-left-8 duration-700">
               <div className="flex justify-center xl:justify-start">
                 <Badge variant="outline" className="border-secondary text-secondary px-4 py-1.5 rounded-full bg-secondary/10 font-bold uppercase tracking-[0.2em] text-xs animate-pulse">
                   <Zap className="w-3 h-3 mr-2 fill-secondary" /> ÉDITION ÉLITE 2026
@@ -107,8 +107,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex justify-center xl:justify-end animate-float">
-              <div className="w-full max-w-[420px]">
+            <div className="flex justify-center xl:justify-end animate-float delay-300">
+              <div className="w-full max-w-[420px] animate-in fade-in zoom-in-95 duration-1000">
                 <PrizePoolTracker
                   currentPool={currentPool}
                   targetPool={targetPool}
@@ -180,7 +180,7 @@ export default function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90" />
                   <div className="absolute top-6 left-6 flex gap-2">
-                    <Badge className="bg-primary/90 text-white font-bold backdrop-blur-sm border-none">{tournament.sport}</Badge>
+                    <Badge className="bg-primary/90 text-white font-bold backdrop-blur-sm border-none">{tournament.gameType || tournament.sport}</Badge>
                     <Badge variant="secondary" className="bg-black/50 text-white backdrop-blur-sm border-white/10">{tournament.maxTeams} Équipes</Badge>
                   </div>
                 </div>
