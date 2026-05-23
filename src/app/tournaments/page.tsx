@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection } from "firebase/firestore";
+import { cn } from "@/lib/utils";
 
 export default function TournamentsPage() {
   const db = useFirestore();
