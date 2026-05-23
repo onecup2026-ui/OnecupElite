@@ -93,9 +93,9 @@ export default function AdminDashboard() {
         heroSubtitle: siteConfig.heroSubtitle || "ONECUP 2026 : L'événement unique où le talent rencontre l'excellence.",
         currentPrizePool: siteConfig.currentPrizePool || 0,
         targetPrizePool: siteConfig.targetPrizePool || 5000000,
-        statSchools: siteConfig.statSchools || "128+",
-        statMatches: siteConfig.statMatches || "240+",
-        statTalents: siteConfig.statTalents || "500+"
+        statSchools: siteConfig.statSchools || "32+",
+        statMatches: siteConfig.statMatches || "15+",
+        statTalents: siteConfig.statTalents || "257+"
       });
     }
   }, [siteConfig]);

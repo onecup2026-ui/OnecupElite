@@ -32,10 +32,10 @@ export default function Home() {
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
   const stats = [
-    { label: "Écoles Élite", value: siteConfig?.statSchools || "128+", icon: Users, color: "text-blue-500" },
-    { label: "Matchs Épiques", value: siteConfig?.statMatches || "240+", icon: Trophy, color: "text-yellow-500" },
+    { label: "Écoles Élite", value: siteConfig?.statSchools || "32+", icon: Users, color: "text-blue-500" },
+    { label: "Matchs Épiques", value: siteConfig?.statMatches || "15+", icon: Trophy, color: "text-yellow-500" },
     { label: "Cagnotte Globale", value: `${(currentPool / 1000000).toFixed(1)}M FC`, icon: DollarSign, color: "text-green-500" },
-    { label: "Talents Révélés", value: siteConfig?.statTalents || "500+", icon: Star, color: "text-red-500" },
+    { label: "Talents Révélés", value: siteConfig?.statTalents || "257+", icon: Star, color: "text-red-500" },
   ];
 
   const tiers = [
