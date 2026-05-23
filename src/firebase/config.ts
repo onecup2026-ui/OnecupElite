@@ -1,12 +1,12 @@
-
 'use client';
 
 /**
- * ATTENTION : La clé API doit commencer par "AIza". 
- * Vous la trouverez dans : Console Firebase > Paramètres du projet > Général > Clé API Web.
+ * ATTENTION : La clé API Web Firebase commence normalement par "AIza".
+ * Si l'erreur "auth/api-key-not-valid" persiste, vérifiez dans :
+ * Console Firebase > Paramètres du projet > Général > Clé API Web.
  */
 export const firebaseConfig = {
-  apiKey: "REMPLACEZ_PAR_LA_CLE_COMMENÇANT_PAR_AIza",
+  apiKey: "BDvfIidnd33HUqb4bTikxBb6u33Y68m00LiG7UwmEGHd4ZV-S0XSeS3D3El8q0t3v6ANSOXI8M0bzcN3_WViYLw",
   authDomain: "941773255078.firebaseapp.com",
   projectId: "941773255078",
   storageBucket: "941773255078.firebasestorage.app",

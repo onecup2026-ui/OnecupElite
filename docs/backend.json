@@ -1,18 +1,17 @@
-
 {
   "entities": {
-    "UserProfile": {
-      "title": "User Profile",
-      "description": "Données utilisateur étendues",
+    "User": {
+      "title": "User",
+      "description": "Profil utilisateur étendu",
       "type": "object",
       "properties": {
         "username": { "type": "string" },
         "email": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
         "displayName": { "type": "string" },
         "photoUrl": { "type": "string" },
         "bio": { "type": "string" },
-        "gameIDs": { "type": "array", "items": { "type": "string" } },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "gameIDs": { "type": "array", "items": { "type": "string" } }
       },
       "required": ["username", "email", "createdAt"]
     },
@@ -34,7 +33,7 @@
         "imageUrl": { "type": "string" },
         "status": { "type": "string", "enum": ["Inscriptions Ouvertes", "En Cours", "Terminé"] }
       },
-      "required": ["name", "gameType", "startDate", "imageUrl"]
+      "required": ["name", "gameType", "startDate", "endDate", "registrationDeadline"]
     },
     "Team": {
       "title": "Team",
@@ -97,29 +96,11 @@
     "providers": ["google.com"]
   },
   "firestore": {
-    "/users/{userId}": {
-      "schema": "UserProfile",
-      "description": "Profils utilisateurs"
-    },
-    "/tournaments/{tournamentId}": {
-      "schema": "Tournament",
-      "description": "Tournois"
-    },
-    "/teams/{teamId}": {
-      "schema": "Team",
-      "description": "Équipes"
-    },
-    "/registrations/{registrationId}": {
-      "schema": "TournamentRegistration",
-      "description": "Inscriptions"
-    },
-    "/matches/{matchId}": {
-      "schema": "Match",
-      "description": "Matchs"
-    },
-    "/teamMemberships/{membershipId}": {
-      "schema": "TeamMembership",
-      "description": "Membres d'équipes"
-    }
+    "/users/{userId}": { "schema": "User", "description": "Profils utilisateurs" },
+    "/tournaments/{tournamentId}": { "schema": "Tournament", "description": "Tournois" },
+    "/teams/{teamId}": { "schema": "Team", "description": "Équipes" },
+    "/registrations/{registrationId}": { "schema": "TournamentRegistration", "description": "Inscriptions" },
+    "/matches/{matchId}": { "schema": "Match", "description": "Matchs" },
+    "/teamMemberships/{membershipId}": { "schema": "TeamMembership", "description": "Membres d'équipes" }
   }
 }
