@@ -51,9 +51,23 @@ export function Navbar() {
     } catch (error: any) {
       console.error("Auth error:", error);
       if (error.code === 'auth/popup-blocked') {
-        toast({ variant: "destructive", title: "Action Recommandée", description: "Veuillez autoriser les popups pour vous connecter." });
+        toast({ 
+          variant: "destructive", 
+          title: "Fenêtre bloquée", 
+          description: "Votre navigateur a bloqué la fenêtre de connexion. Veuillez autoriser les popups pour ce site." 
+        });
+      } else if (error.code === 'auth/unauthorized-domain') {
+        toast({ 
+          variant: "destructive", 
+          title: "Domaine non autorisé", 
+          description: "Ce domaine n'est pas autorisé dans votre console Firebase. Veuillez ajouter l'URL actuelle aux domaines autorisés." 
+        });
       } else {
-        toast({ variant: "destructive", title: "Échec de connexion", description: "Impossible de s'authentifier. Vérifiez votre configuration Firebase." });
+        toast({ 
+          variant: "destructive", 
+          title: "Échec de connexion", 
+          description: error.message || "Impossible de s'authentifier." 
+        });
       }
     }
   };
