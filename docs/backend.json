@@ -15,7 +15,7 @@
         "bio": { "type": "string" },
         "gameIDs": { "type": "array", "items": { "type": "string" } }
       },
-      "required": ["username", "phoneNumber", "createdAt"]
+      "required": ["email", "phoneNumber", "createdAt"]
     },
     "Tournament": {
       "title": "Tournament",
@@ -29,12 +29,12 @@
         "registrationDeadline": { "type": "string", "format": "date-time" },
         "organizerId": { "type": "string" },
         "description": { "type": "string" },
-        "rules": { "type": "string" },
         "entryFee": { "type": "number" },
         "maxTeams": { "type": "number" },
+        "teamsRegistered": { "type": "number" },
         "imageUrl": { "type": "string" }
       },
-      "required": ["name", "gameType", "startDate", "endDate", "registrationDeadline", "organizerId"]
+      "required": ["name", "gameType", "startDate", "organizerId"]
     },
     "Team": {
       "title": "Team",
@@ -51,17 +51,19 @@
     },
     "TournamentRegistration": {
       "title": "Tournament Registration",
-      "description": "Inscription à un tournoi",
+      "description": "Inscription à un tournoi via numéro de téléphone",
       "type": "object",
       "properties": {
         "tournamentId": { "type": "string" },
-        "teamId": { "type": "string" },
-        "userId": { "type": "string" },
+        "tournamentName": { "type": "string" },
+        "teamName": { "type": "string" },
+        "captainName": { "type": "string" },
         "contactPhone": { "type": "string" },
+        "userId": { "type": "string" },
         "registrationDate": { "type": "string", "format": "date-time" },
         "status": { "type": "string" }
       },
-      "required": ["tournamentId", "registrationDate", "status", "contactPhone"]
+      "required": ["tournamentId", "teamName", "contactPhone", "registrationDate", "status"]
     },
     "Match": {
       "title": "Match",
@@ -69,6 +71,7 @@
       "type": "object",
       "properties": {
         "tournamentId": { "type": "string" },
+        "tournamentName": { "type": "string" },
         "team1Id": { "type": "string" },
         "team2Id": { "type": "string" },
         "matchNumber": { "type": "number" },
@@ -79,19 +82,7 @@
         "winnerId": { "type": "string" },
         "resultDetails": { "type": "string" }
       },
-      "required": ["tournamentId", "team1Id", "team2Id", "matchNumber", "scheduledTime", "status"]
-    },
-    "TeamMembership": {
-      "title": "Team Membership",
-      "description": "Lien utilisateur-équipe",
-      "type": "object",
-      "properties": {
-        "userId": { "type": "string" },
-        "teamId": { "type": "string" },
-        "joinedAt": { "type": "string", "format": "date-time" },
-        "role": { "type": "string" }
-      },
-      "required": ["userId", "teamId", "joinedAt", "role"]
+      "required": ["tournamentId", "team1Id", "team2Id", "scheduledTime", "status"]
     }
   },
   "auth": {
@@ -102,7 +93,6 @@
     "/tournaments/{tournamentId}": { "schema": "Tournament", "description": "Tournois" },
     "/teams/{teamId}": { "schema": "Team", "description": "Équipes" },
     "/registrations/{registrationId}": { "schema": "TournamentRegistration", "description": "Inscriptions" },
-    "/matches/{matchId}": { "schema": "Match", "description": "Matchs" },
-    "/teamMemberships/{membershipId}": { "schema": "TeamMembership", "description": "Membres d'équipes" }
+    "/matches/{matchId}": { "schema": "Match", "description": "Matchs" }
   }
 }
