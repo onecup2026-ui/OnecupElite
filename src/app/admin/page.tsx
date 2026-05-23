@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Save, Edit2, Check, Video, MessageCircle, DollarSign, Users, Star, Heart, Link as LinkIcon } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, Settings, Save, Edit2, MessageCircle, Users, Heart, Star, LayoutDashboard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,8 +23,6 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const sponsorLogoRef = useRef<HTMLInputElement>(null);
-  const bgInputRef = useRef<HTMLInputElement>(null);
-  const afterCupInputRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
@@ -41,7 +39,6 @@ export default function AdminDashboard() {
   const { data: siteConfig } = useDoc(configRef);
 
   const [editingTournamentId, setEditingTournamentId] = useState<string | null>(null);
-  const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
   const [editingSponsorId, setEditingSponsorId] = useState<string | null>(null);
 
   const initialTournamentState = {
@@ -61,20 +58,6 @@ export default function AdminDashboard() {
   };
 
   const [tournamentForm, setTournamentForm] = useState(initialTournamentState);
-
-  const initialMatchState = {
-    tournamentId: "", 
-    team1Id: "", 
-    team2Id: "", 
-    matchNumber: 1, 
-    scheduledTime: "", 
-    status: "À Venir", 
-    scoreTeam1: 0, 
-    scoreTeam2: 0,
-    winnerId: ""
-  };
-
-  const [matchForm, setMatchForm] = useState(initialMatchState);
 
   const initialSponsorState = {
     name: "",
@@ -110,7 +93,7 @@ export default function AdminDashboard() {
     }
   }, [siteConfig]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'background' | 'aftercup' | 'sponsor') => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'sponsor') => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -118,10 +101,6 @@ export default function AdminDashboard() {
         const base64 = reader.result as string;
         if (type === 'tournament') {
           setTournamentForm(prev => ({ ...prev, imageUrl: base64 }));
-        } else if (type === 'background') {
-          updateSiteConfig({ heroImageUrl: base64 });
-        } else if (type === 'aftercup') {
-          updateSiteConfig({ afterCupImageUrl: base64 });
         } else if (type === 'sponsor') {
           setSponsorForm(prev => ({ ...prev, logoUrl: base64 }));
         }
@@ -166,31 +145,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleSaveMatch = () => {
-    if (!db || !isAdmin || !matchForm.tournamentId) return;
-    const tournamentName = tournaments?.find(t => t.id === matchForm.tournamentId)?.name || "Tournoi";
-    if (editingMatchId) {
-      updateDoc(doc(db, "matches", editingMatchId), { 
-        ...matchForm, 
-        tournamentName, 
-        updatedAt: serverTimestamp() 
-      }).then(() => {
-        toast({ title: "Match mis à jour !" });
-        setEditingMatchId(null);
-        setMatchForm(initialMatchState);
-      });
-    } else {
-      addDoc(collection(db, "matches"), { 
-        ...matchForm, 
-        tournamentName,
-        createdAt: serverTimestamp() 
-      }).then(() => {
-        toast({ title: "Match programmé !" });
-        setMatchForm(initialMatchState);
-      });
-    }
-  };
-
   const handleSaveSponsor = () => {
     if (!db || !isAdmin) return;
     if (editingSponsorId) {
@@ -225,12 +179,6 @@ export default function AdminDashboard() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const startEditMatch = (m: any) => {
-    setEditingMatchId(m.id);
-    setMatchForm({ ...m });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleDelete = (coll: string, id: string) => {
     if (!db || !isAdmin) return;
     if (confirm("Voulez-vous vraiment supprimer cet élément ?")) {
@@ -251,7 +199,7 @@ export default function AdminDashboard() {
       <header className="flex flex-col md:flex-row items-center justify-between gap-6 border-b pb-8">
         <div className="space-y-1 text-center md:text-left">
           <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">Console Admin ONECUP</h1>
-          <p className="text-muted-foreground text-sm font-medium">Gestion dynamique des tournois, matchs et sponsors.</p>
+          <p className="text-muted-foreground text-sm font-medium">Gestion dynamique des tournois, inscriptions et sponsors.</p>
         </div>
         <Badge className="bg-primary text-white px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs">Admin Connecté</Badge>
       </header>
@@ -259,7 +207,6 @@ export default function AdminDashboard() {
       <Tabs defaultValue="tournaments" className="w-full">
         <TabsList className="bg-muted p-1.5 rounded-2xl mb-12 flex flex-wrap h-auto gap-1">
           <TabsTrigger value="tournaments" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Tournois</TabsTrigger>
-          <TabsTrigger value="matches" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Scores</TabsTrigger>
           <TabsTrigger value="registrations" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Inscriptions</TabsTrigger>
           <TabsTrigger value="sponsors" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Sponsors</TabsTrigger>
           <TabsTrigger value="config" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"><Settings className="w-3 h-3" /> Config</TabsTrigger>
@@ -399,12 +346,6 @@ export default function AdminDashboard() {
                 </div>
               </Card>
             ))}
-            {!registrations?.length && (
-              <div className="text-center py-24 border border-dashed rounded-[3rem] opacity-20">
-                <Users className="w-16 h-16 mx-auto mb-4" />
-                <p className="uppercase font-bold tracking-widest">Aucune inscription</p>
-              </div>
-            )}
           </div>
         </TabsContent>
 

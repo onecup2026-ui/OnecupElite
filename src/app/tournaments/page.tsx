@@ -97,7 +97,7 @@ export default function TournamentsPage() {
         <div className="text-center py-32 border border-dashed border-white/10 rounded-[3rem] bg-card/30">
           <Zap className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-20" />
           <h3 className="text-xl font-bold uppercase tracking-widest text-muted-foreground">Aucun tournoi trouvé</h3>
-          <p className="text-muted-foreground mt-2">Réessayez avec un autre mot-clé ou repassez plus tard.</p>
+          <p className="text-muted-foreground mt-2">Réessayez avec un autre mot-clé.</p>
         </div>
       )}
     </div>

@@ -4,13 +4,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
-  Trophy, Calendar, MapPin, Users, ArrowLeft, Loader2, 
-  CheckCircle2, AlertCircle, LogIn, DollarSign, Clock, 
-  Phone, ShieldCheck, Info, Star, Share2, FileText, 
-  Car, Utensils, Zap, HelpCircle, Medal, MessageCircle, Play
+  Trophy, Calendar, MapPin, ArrowLeft, Loader2, 
+  AlertCircle, ShieldCheck, Info, Share2, Play, Medal, CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -134,7 +132,7 @@ export default function TournamentDetailPage() {
             src={tournament.imageUrl || "https://picsum.photos/seed/onecup/1920/1080"} 
             alt={tournament.name} 
             fill 
-            className="object-cover opacity-70 scale-105 group-hover:scale-100 transition-transform duration-[2s]"
+            className="object-cover opacity-70"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
@@ -172,22 +170,21 @@ export default function TournamentDetailPage() {
                 <h2 className="text-4xl font-headline font-bold uppercase tracking-tighter">L'ÉVÉNEMENT EN DÉTAILS</h2>
               </div>
               <div className="text-muted-foreground text-xl leading-relaxed bg-card/50 p-10 rounded-[3rem] border border-white/5 shadow-inner">
-                <div className="whitespace-pre-line font-medium">{tournament.description || "Un tournoi d'exception pour révéler les nouveaux talents de la RDC. Préparez-vous à entrer dans la légende OneCup."}</div>
+                <div className="whitespace-pre-line font-medium">{tournament.description || "Un tournoi d'exception pour révéler les nouveaux talents de la RDC."}</div>
               </div>
             </section>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-               <Card className="rounded-[2.5rem] border-white/5 bg-primary/5 p-8 space-y-6 overflow-hidden relative group">
-                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2" />
+               <Card className="rounded-[2.5rem] border-white/5 bg-primary/5 p-8 space-y-6 overflow-hidden relative group shadow-sm">
                  <h4 className="text-sm font-bold uppercase tracking-widest text-primary">Prestige & Récompenses</h4>
                  <div className="space-y-6 relative z-10">
                     <div className="flex items-center gap-5">
                       <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-500"><Trophy className="w-6 h-6" /></div>
-                      <div><p className="font-black uppercase text-sm">🥇 Champion OneCup</p><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Trophée Élite + Médailles + Prime</p></div>
+                      <div><p className="font-black uppercase text-sm">🥇 Champion OneCup</p><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Trophée Élite + Prime</p></div>
                     </div>
                     <div className="flex items-center gap-5">
                       <div className="w-12 h-12 rounded-xl bg-slate-300/20 flex items-center justify-center text-slate-400"><Medal className="w-6 h-6" /></div>
-                      <div><p className="font-black uppercase text-sm">🥈 Vice-Champion</p><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Médailles d'argent + Prime</p></div>
+                      <div><p className="font-black uppercase text-sm">🥈 Vice-Champion</p><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Médailles + Prime</p></div>
                     </div>
                  </div>
                </Card>
@@ -227,9 +224,8 @@ export default function TournamentDetailPage() {
                       alt="Teaser Preview" 
                       className="object-cover opacity-60 group-hover:scale-110 transition-transform duration-[1.5s]" 
                     />
-                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors z-10" />
                     <div className="relative z-20 flex flex-col items-center gap-6">
-                      <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center glow-blue scale-100 group-hover:scale-110 transition-transform shadow-2xl">
+                      <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center glow-blue shadow-2xl">
                         <Play className="w-10 h-10 text-white fill-current" />
                       </div>
                       <p className="font-black uppercase tracking-[0.3em] text-white text-xs animate-pulse">Lancer le Teaser Vidéo</p>
@@ -253,7 +249,7 @@ export default function TournamentDetailPage() {
                       </div>
                       <div className="space-y-2">
                         <p className="font-black uppercase text-destructive text-xl tracking-tighter">Tournoi complet</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Les 16 places ont été réservées. Restez connectés pour le tirage au sort.</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Toutes les places ont été réservées.</p>
                       </div>
                     </div>
                   ) : (
@@ -267,7 +263,7 @@ export default function TournamentDetailPage() {
                         <Input required placeholder="Votre nom complet" className="h-14 rounded-2xl bg-background/50" value={formData.captainName} onChange={e => setFormData({...formData, captainName: e.target.value})} />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] uppercase font-black text-primary tracking-widest">Numéro WhatsApp (Contact)</Label>
+                        <Label className="text-[10px] uppercase font-black text-primary tracking-widest">Numéro WhatsApp</Label>
                         <Input required type="tel" placeholder="+243 ..." className="h-14 rounded-2xl bg-background/50" value={formData.contactPhone} onChange={e => setFormData({...formData, contactPhone: e.target.value})} />
                       </div>
 
@@ -286,47 +282,27 @@ export default function TournamentDetailPage() {
                       <Button 
                         type="submit" 
                         disabled={isSubmitting} 
-                        className="w-full h-20 uppercase font-black text-xl bg-primary glow-blue rounded-[2rem] transition-all hover:scale-[1.03] active:scale-95 shadow-xl"
+                        className="w-full h-20 uppercase font-black text-xl bg-primary glow-blue rounded-[2rem] shadow-xl"
                       >
                         {isSubmitting ? <Loader2 className="w-8 h-8 animate-spin" /> : user ? "Valider mon inscription" : "Se connecter pour s'inscrire"}
                       </Button>
-                      
-                      {!user && (
-                        <p className="text-[10px] text-center text-muted-foreground uppercase font-black tracking-widest opacity-60">
-                          Connexion sécurisée via Google
-                        </p>
-                      )}
                     </form>
                   )}
                   
                   <div className="pt-6 border-t border-white/10 flex gap-3">
-                     <Button variant="outline" className="flex-1 h-12 rounded-2xl uppercase font-black text-[10px] tracking-widest border-white/10" asChild>
-                       <Link href="/rules">Voir Règlement</Link>
-                     </Button>
-                     <Button variant="outline" onClick={handleShare} className="flex-1 h-12 rounded-2xl uppercase font-black text-[10px] tracking-widest border-white/10 gap-2 hover:bg-primary/10 hover:text-primary transition-all">
-                       <Share2 className="w-4 h-4" /> Partager
+                     <Button variant="outline" onClick={handleShare} className="w-full h-12 rounded-2xl uppercase font-black text-[10px] tracking-widest border-white/10 gap-2 hover:bg-primary/10 hover:text-primary transition-all">
+                       <Share2 className="w-4 h-4" /> Partager l'événement
                      </Button>
                   </div>
                 </CardContent>
               </Card>
-
-              <div className="bg-card/30 p-8 rounded-[3rem] border border-white/5 space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500"><ShieldCheck className="w-5 h-5" /></div>
-                  <p className="text-[10px] font-black uppercase tracking-widest">Plateforme 100% Sécurisée</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500"><Clock className="w-5 h-5" /></div>
-                  <p className="text-[10px] font-black uppercase tracking-widest">Confirmation sous 24 heures</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="max-w-6xl p-0 overflow-hidden bg-black border-none ring-0 shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+        <DialogContent className="max-w-6xl p-0 overflow-hidden bg-black border-none ring-0">
           <div className="aspect-video w-full">
             {tournament.teaserVideoUrl && (
               <iframe
