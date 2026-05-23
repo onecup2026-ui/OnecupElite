@@ -1,0 +1,64 @@
+
+{
+  "entities": {
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "Configuration globale du site (image héro, textes d'accueil)",
+      "type": "object",
+      "properties": {
+        "heroImageUrl": { "type": "string", "description": "URL de l'image de fond principale" },
+        "heroTitle": { "type": "string", "description": "Titre principal de l'accueil" },
+        "heroSubtitle": { "type": "string", "description": "Sous-titre de l'accueil" }
+      }
+    },
+    "Tournament": {
+      "title": "Tournament",
+      "description": "Détails d'un tournoi",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "sport": { "type": "string" },
+        "date": { "type": "string" },
+        "location": { "type": "string" },
+        "prize": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["Inscriptions Ouvertes", "À Venir", "Terminé"] },
+        "teamsRegistered": { "type": "number" },
+        "teamsMax": { "type": "number" }
+      },
+      "required": ["name", "sport", "date", "imageUrl"]
+    },
+    "Article": {
+      "title": "Article",
+      "description": "Article d'actualité",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "author": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["title", "excerpt", "imageUrl"]
+    }
+  },
+  "auth": {
+    "providers": ["google.com"]
+  },
+  "firestore": {
+    "/settings/config": {
+      "schema": "SiteSettings",
+      "description": "Paramètres globaux du site"
+    },
+    "/tournaments/{tournamentId}": {
+      "schema": "Tournament",
+      "description": "Liste des tournois"
+    },
+    "/articles/{articleId}": {
+      "schema": "Article",
+      "description": "Articles d'actualités"
+    }
+  }
+}

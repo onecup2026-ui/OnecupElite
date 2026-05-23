@@ -1,150 +1,185 @@
 
 "use client";
 
-import { Trophy, Users, DollarSign, Ticket, Activity, Settings, Plus, Download, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-
-const overviewStats = [
-  { title: "Total Revenue", value: "$42,500.00", change: "+12.5%", icon: DollarSign },
-  { title: "Registrations", value: "842", change: "+24.2%", icon: Users },
-  { title: "Tickets Sold", value: "1,240", change: "+8.1%", icon: Ticket },
-  { title: "Active Events", value: "12", change: "0%", icon: Trophy },
-];
-
-const recentActivities = [
-  { id: 1, user: "Alex Rivera", action: "Registered for Cyber Strike", time: "2 mins ago", amount: "$50" },
-  { id: 2, user: "Team Apex", action: "Payment Validated", time: "15 mins ago", amount: "$150" },
-  { id: 3, user: "Sara Chen", action: "Purchased After Cup Ticket", time: "1 hour ago", amount: "$25" },
-];
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDoc, useCollection, useFirestore } from "@/firebase";
+import { doc, setDoc, addDoc, deleteDoc, collection } from "firebase/firestore";
+import { toast } from "@/hooks/use-toast";
 
 export default function AdminDashboard() {
+  const db = useFirestore();
+  const { data: siteConfig } = useDoc(db ? doc(db, "settings", "config") : null);
+  const { data: tournaments } = useCollection(db ? collection(db, "tournaments") : null);
+  const { data: articles } = useCollection(db ? collection(db, "articles") : null);
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Form states for new items
+  const [newTournament, setNewTournament] = useState({
+    name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes"
+  });
+  const [newArticle, setNewArticle] = useState({
+    title: "", excerpt: "", category: "Tournois", date: new Date().toLocaleDateString(), author: "Admin", imageUrl: ""
+  });
+
+  const handleUpdateConfig = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!db) return;
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      heroTitle: formData.get("heroTitle"),
+      heroSubtitle: formData.get("heroSubtitle"),
+      heroImageUrl: formData.get("heroImageUrl"),
+    };
+    setIsSaving(true);
+    setDoc(doc(db, "settings", "config"), data, { merge: true })
+      .then(() => toast({ title: "Configuration mise à jour" }))
+      .finally(() => setIsSaving(false));
+  };
+
+  const handleAddTournament = () => {
+    if (!db) return;
+    addDoc(collection(db, "tournaments"), newTournament)
+      .then(() => {
+        toast({ title: "Tournoi ajouté" });
+        setNewTournament({ name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes" });
+      });
+  };
+
+  const handleDeleteTournament = (id: string) => {
+    if (!db) return;
+    deleteDoc(doc(db, "tournaments", id));
+  };
+
+  const handleAddArticle = () => {
+    if (!db) return;
+    addDoc(collection(db, "articles"), newArticle)
+      .then(() => {
+        toast({ title: "Article ajouté" });
+        setNewArticle({ title: "", excerpt: "", category: "Tournois", date: new Date().toLocaleDateString(), author: "Admin", imageUrl: "" });
+      });
+  };
+
+  const handleDeleteArticle = (id: string) => {
+    if (!db) return;
+    deleteDoc(doc(db, "articles", id));
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-headline font-bold">COMMAND CENTER</h1>
-          <p className="text-muted-foreground">Overview and management of ONE CUP ecosystem.</p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" /> Export Report
-          </Button>
-          <Button className="bg-primary hover:bg-primary/90 glow-blue gap-2">
-            <Plus className="w-4 h-4" /> Create Tournament
-          </Button>
+          <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">CENTRE DE CONTRÔLE</h1>
+          <p className="text-muted-foreground">Gérez tout le contenu dynamique de OneCup Elite.</p>
         </div>
       </div>
 
-      {/* Grid Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {overviewStats.map((stat, idx) => (
-          <Card key={idx} className="bg-card/50 border-white/5">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{stat.title}</CardTitle>
-              <stat.icon className="w-4 h-4 text-primary" />
+      <Tabs defaultValue="site" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 bg-card border">
+          <TabsTrigger value="site" className="gap-2"><Settings className="w-4 h-4" /> Site & Design</TabsTrigger>
+          <TabsTrigger value="tournaments" className="gap-2"><Trophy className="w-4 h-4" /> Tournois</TabsTrigger>
+          <TabsTrigger value="articles" className="gap-2"><Newspaper className="w-4 h-4" /> Actualités</TabsTrigger>
+        </TabsList>
+
+        {/* SITE CONFIG */}
+        <TabsContent value="site" className="mt-6">
+          <Card className="bg-card/50 border-white/5">
+            <CardHeader>
+              <CardTitle>Configuration de l'Accueil</CardTitle>
+              <CardDescription>Modifiez les textes et l'image héro de la page d'accueil.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-primary mt-1 flex items-center gap-1">
-                {stat.change} <span className="text-muted-foreground">vs last month</span>
-              </p>
+              <form onSubmit={handleUpdateConfig} className="space-y-4">
+                <div className="grid gap-2">
+                  <label className="text-sm font-bold uppercase">Titre Héro</label>
+                  <Input name="heroTitle" defaultValue={siteConfig?.heroTitle || "LA VICTOIRE EST UNE PASSION."} />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-bold uppercase">Sous-titre Héro</label>
+                  <Textarea name="heroSubtitle" defaultValue={siteConfig?.heroSubtitle || "Dominez le terrain avec l'écosystème OneCup."} />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-bold uppercase flex items-center gap-2"><ImageIcon className="w-4 h-4" /> URL de l'Image Héro</label>
+                  <Input name="heroImageUrl" defaultValue={siteConfig?.heroImageUrl || "https://picsum.photos/seed/onecup-hero/1920/1080"} />
+                </div>
+                <Button type="submit" disabled={isSaving} className="bg-primary glow-blue gap-2">
+                  <Save className="w-4 h-4" /> Enregistrer les modifications
+                </Button>
+              </form>
             </CardContent>
           </Card>
-        ))}
-      </div>
+        </TabsContent>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Management Table */}
-        <Card className="lg:col-span-2 bg-card/50 border-white/5">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Tournament Logistics</CardTitle>
-                <CardDescription>Monitor active registrations and payment statuses.</CardDescription>
-              </div>
-              <Activity className="w-5 h-5 text-primary" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow className="border-white/5 hover:bg-transparent">
-                  <TableHead>Event</TableHead>
-                  <TableHead>Capacity</TableHead>
-                  <TableHead>Revenue</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {[
-                  { name: "Golden Goal League", fill: 75, revenue: "$12,400", status: "Active" },
-                  { name: "Cyber Strike Open", fill: 90, revenue: "$8,200", status: "Active" },
-                  { name: "Beach Spike Pro", fill: 30, revenue: "$2,100", status: "Upcoming" },
-                ].map((item, idx) => (
-                  <TableRow key={idx} className="border-white/5 group hover:bg-muted/30 transition-colors">
-                    <TableCell className="font-medium">{item.name}</TableCell>
-                    <TableCell className="w-[150px]">
-                      <div className="flex items-center gap-2">
-                        <Progress value={item.fill} className="h-1.5 bg-muted" />
-                        <span className="text-xs text-muted-foreground">{item.fill}%</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{item.revenue}</TableCell>
-                    <TableCell>
-                      <Badge variant={item.status === 'Active' ? 'default' : 'outline'} className={item.status === 'Active' ? 'bg-primary/20 text-primary border-primary/20' : ''}>
-                        {item.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        Manage <ChevronRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        {/* TOURNAMENTS */}
+        <TabsContent value="tournaments" className="mt-6 space-y-6">
+          <Card className="bg-card/50 border-white/5">
+            <CardHeader>
+              <CardTitle>Nouveau Tournoi</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
+              <Input placeholder="Sport" value={newTournament.sport} onChange={e => setNewTournament({...newTournament, sport: e.target.value})} />
+              <Input placeholder="Date" value={newTournament.date} onChange={e => setNewTournament({...newTournament, date: e.target.value})} />
+              <Input placeholder="Lieu" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
+              <Input placeholder="Prix / Cashprize" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
+              <Input placeholder="URL de l'image" value={newTournament.imageUrl} onChange={e => setNewTournament({...newTournament, imageUrl: e.target.value})} />
+              <Button onClick={handleAddTournament} className="md:col-span-2 bg-primary glow-blue"><Plus className="w-4 h-4 mr-2" /> Ajouter le tournoi</Button>
+            </CardContent>
+          </Card>
 
-        {/* Real-time Activity Feed */}
-        <Card className="bg-card/50 border-white/5">
-          <CardHeader>
-            <CardTitle>Recent Pulse</CardTitle>
-            <CardDescription>Live updates from participants.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex gap-4 items-start pb-6 border-b border-white/5 last:border-0 last:pb-0">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Users className="w-5 h-5 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {tournaments?.map((t: any) => (
+              <Card key={t.id} className="bg-card border-white/5 relative overflow-hidden">
+                <div className="h-32 bg-muted relative">
+                  {t.imageUrl && <img src={t.imageUrl} className="w-full h-full object-cover opacity-50" />}
                 </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-bold">{activity.user}</p>
-                  <p className="text-xs text-muted-foreground">{activity.action}</p>
-                  <div className="flex items-center gap-2 pt-1">
-                    <span className="text-[10px] text-muted-foreground uppercase">{activity.time}</span>
-                    <span className="text-[10px] font-bold text-primary">{activity.amount}</span>
-                  </div>
-                </div>
-              </div>
+                <CardContent className="pt-4">
+                  <h3 className="font-bold">{t.name}</h3>
+                  <p className="text-xs text-muted-foreground">{t.sport} • {t.date}</p>
+                  <Button variant="destructive" size="sm" onClick={() => handleDeleteTournament(t.id)} className="mt-4 w-full gap-2">
+                    <Trash2 className="w-4 h-4" /> Supprimer
+                  </Button>
+                </CardContent>
+              </Card>
             ))}
-            <Button variant="outline" className="w-full mt-4">View All Logs</Button>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </TabsContent>
+
+        {/* ARTICLES */}
+        <TabsContent value="articles" className="mt-6 space-y-6">
+          <Card className="bg-card/50 border-white/5">
+            <CardHeader>
+              <CardTitle>Nouvel Article</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Input placeholder="Titre de l'article" value={newArticle.title} onChange={e => setNewArticle({...newArticle, title: e.target.value})} />
+              <Textarea placeholder="Résumé" value={newArticle.excerpt} onChange={e => setNewArticle({...newArticle, excerpt: e.target.value})} />
+              <Input placeholder="URL de l'image" value={newArticle.imageUrl} onChange={e => setNewArticle({...newArticle, imageUrl: e.target.value})} />
+              <Button onClick={handleAddArticle} className="w-full bg-primary glow-blue"><Plus className="w-4 h-4 mr-2" /> Publier l'article</Button>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {articles?.map((a: any) => (
+              <Card key={a.id} className="bg-card border-white/5 flex gap-4 p-4 items-center">
+                <img src={a.imageUrl} className="w-20 h-20 object-cover rounded" />
+                <div className="flex-1">
+                  <h3 className="font-bold text-sm">{a.title}</h3>
+                  <Button variant="ghost" size="sm" onClick={() => handleDeleteArticle(a.id)} className="text-destructive p-0 h-auto hover:bg-transparent mt-2">
+                    Supprimer
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
