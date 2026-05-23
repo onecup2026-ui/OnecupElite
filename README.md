@@ -33,9 +33,8 @@ Pour sauvegarder votre projet sur votre compte GitHub, suivez ces étapes dans v
    ```
 
 4. **Liez à votre dépôt GitHub distant** :
-   *(Remplacez VOTRE_DEPOT par le nom de votre dépôt créé sur GitHub)*
    ```bash
-   git remote add origin https://github.com/christianrwemera7-max/VOTRE_DEPOT.git
+   git remote add origin https://github.com/christianrwemera7-max/onecup-2026.git
    ```
 
 5. **Poussez votre code** :
