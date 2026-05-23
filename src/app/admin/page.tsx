@@ -2,19 +2,21 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign, Heart, Video } from "lucide-react";
+import { Trophy, Newspaper, Settings, Plus, Save, Trash2, Image as ImageIcon, ListPlus, Ticket as TicketIcon, Upload, Sparkles, Loader2, DollarSign, Heart, Video, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDoc, useCollection, useFirestore } from "@/firebase";
-import { doc, setDoc, addDoc, deleteDoc, collection } from "firebase/firestore";
+import { doc, setDoc, addDoc, deleteDoc, collection, query, orderBy } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { generateTournamentImage } from "@/ai/flows/ai-image-generator";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export default function AdminDashboard() {
   const db = useFirestore();
@@ -25,19 +27,21 @@ export default function AdminDashboard() {
   const articlesRef = useMemo(() => (db ? collection(db, "articles") : null), [db]);
   const ticketsRef = useMemo(() => (db ? collection(db, "tickets") : null), [db]);
   const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
+  const registrationsRef = useMemo(() => (db ? query(collection(db, "registrations"), orderBy("createdAt", "desc")) : null), [db]);
 
   const { data: siteConfig } = useDoc(configRef);
   const { data: tournaments } = useCollection(tournamentsRef);
   const { data: articles } = useCollection(articlesRef);
   const { data: tickets } = useCollection(ticketsRef);
   const { data: sponsors } = useCollection(sponsorsRef);
+  const { data: registrations } = useCollection(registrationsRef);
 
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
 
   // Form states
   const [newTournament, setNewTournament] = useState({
-    name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", schedule: [] as { label: string; date: string }[]
+    name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", teamsMax: 16, teamsRegistered: 0, description: "", schedule: [] as { label: string; date: string }[]
   });
   const [scheduleItem, setScheduleItem] = useState({ label: "", date: "" });
 
@@ -120,67 +124,13 @@ export default function AdminDashboard() {
     addDoc(collection(db, "tournaments"), newTournament)
       .then(() => {
         toast({ title: "Tournoi ajouté" });
-        setNewTournament({ name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", schedule: [] });
+        setNewTournament({ name: "", sport: "Football", date: "", location: "", prize: "", imageUrl: "", status: "Inscriptions Ouvertes", teamsMax: 16, teamsRegistered: 0, description: "", schedule: [] });
       })
       .catch((err) => {
         errorEmitter.emit('permission-error', new FirestorePermissionError({
           path: '/tournaments',
           operation: 'create',
           requestResourceData: newTournament
-        }));
-      });
-  };
-
-  const handleAddArticle = () => {
-    if (!db || !newArticle.title) return;
-    addDoc(collection(db, "articles"), newArticle)
-      .then(() => {
-        toast({ title: "Article publié" });
-        setNewArticle({ title: "", excerpt: "", category: "Tournois", date: new Date().toLocaleDateString(), author: "Admin", imageUrl: "" });
-      })
-      .catch((err) => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: '/articles',
-          operation: 'create',
-          requestResourceData: newArticle
-        }));
-      });
-  };
-
-  const handleAddTicket = () => {
-    if (!db || !newTicket.title || !newTicket.externalUrl) {
-      toast({ variant: "destructive", title: "Erreur", description: "Le titre et le lien sont obligatoires." });
-      return;
-    }
-    addDoc(collection(db, "tickets"), newTicket)
-      .then(() => {
-        toast({ title: "Billet ajouté" });
-        setNewTicket({ title: "", tournamentName: "", price: "", externalUrl: "", description: "", imageUrl: "" });
-      })
-      .catch((err) => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: '/tickets',
-          operation: 'create',
-          requestResourceData: newTicket
-        }));
-      });
-  };
-
-  const handleAddSponsor = () => {
-    if (!db || !newSponsor.name || !newSponsor.logoUrl) {
-      toast({ variant: "destructive", title: "Erreur", description: "Le nom et le logo sont obligatoires." });
-      return;
-    }
-    addDoc(collection(db, "sponsors"), newSponsor)
-      .then(() => {
-        toast({ title: "Partenaire ajouté" });
-        setNewSponsor({ name: "", logoUrl: "", websiteUrl: "" });
-      })
-      .catch((err) => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: '/sponsors',
-          operation: 'create',
-          requestResourceData: newSponsor
         }));
       });
   };
@@ -209,22 +159,73 @@ export default function AdminDashboard() {
 
       <Tabs defaultValue="site" className="w-full">
         <TabsList className="flex flex-wrap h-auto p-1 bg-muted rounded-xl mb-6 gap-1 overflow-x-auto no-scrollbar">
-          <TabsTrigger value="site" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
-            <Settings className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Paramètres</span>
+          <TabsTrigger value="site" className="py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Settings className="w-4 h-4 mr-2" /> Paramètres
           </TabsTrigger>
-          <TabsTrigger value="tournaments" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
-            <Trophy className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Tournois</span>
+          <TabsTrigger value="tournaments" className="py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Trophy className="w-4 h-4 mr-2" /> Tournois
           </TabsTrigger>
-          <TabsTrigger value="articles" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
-            <Newspaper className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">News</span>
+          <TabsTrigger value="registrations" className="py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Users className="w-4 h-4 mr-2" /> Inscriptions
           </TabsTrigger>
-          <TabsTrigger value="tickets" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
-            <TicketIcon className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Billets</span>
+          <TabsTrigger value="articles" className="py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Newspaper className="w-4 h-4 mr-2" /> News
           </TabsTrigger>
-          <TabsTrigger value="sponsors" className="flex-1 md:flex-none py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
-            <Heart className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Sponsors</span>
+          <TabsTrigger value="tickets" className="py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TicketIcon className="w-4 h-4 mr-2" /> Billets
+          </TabsTrigger>
+          <TabsTrigger value="sponsors" className="py-3 px-4 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Heart className="w-4 h-4 mr-2" /> Sponsors
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="registrations" className="space-y-6">
+           <Card>
+            <CardHeader><CardTitle className="text-xl">Suivi des Inscriptions</CardTitle></CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="border-b bg-muted/50">
+                    <tr>
+                      <th className="p-3 text-left font-bold uppercase text-[10px]">Date</th>
+                      <th className="p-3 text-left font-bold uppercase text-[10px]">Équipe</th>
+                      <th className="p-3 text-left font-bold uppercase text-[10px]">Tournoi</th>
+                      <th className="p-3 text-left font-bold uppercase text-[10px]">Capitaine</th>
+                      <th className="p-3 text-left font-bold uppercase text-[10px]">Contact</th>
+                      <th className="p-3 text-right font-bold uppercase text-[10px]">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {registrations?.map((reg: any) => (
+                      <tr key={reg.id} className="border-b hover:bg-muted/30 transition-colors">
+                        <td className="p-3 text-muted-foreground">
+                          {reg.createdAt ? format(reg.createdAt.toDate(), "dd/MM HH:mm", { locale: fr }) : "-"}
+                        </td>
+                        <td className="p-3 font-bold uppercase text-primary">{reg.teamName}</td>
+                        <td className="p-3">{reg.tournamentName}</td>
+                        <td className="p-3">{reg.captainName}</td>
+                        <td className="p-3">
+                          <p className="text-[10px]">{reg.contactEmail}</p>
+                          <p className="text-[10px] text-muted-foreground">{reg.contactPhone}</p>
+                        </td>
+                        <td className="p-3 text-right">
+                          <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDelete('registrations', reg.id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                    {!registrations?.length && (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-muted-foreground italic">Aucune inscription pour le moment.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="site" className="space-y-6">
           <Card className="shadow-lg border-white/5">
@@ -309,9 +310,18 @@ export default function AdminDashboard() {
                   <Input placeholder="Ville ou en ligne" value={newTournament.location} onChange={e => setNewTournament({...newTournament, location: e.target.value})} />
                 </div>
                 <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Places Max</p>
+                  <Input type="number" value={newTournament.teamsMax} onChange={e => setNewTournament({...newTournament, teamsMax: Number(e.target.value)})} />
+                </div>
+                <div className="space-y-1">
                   <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Cashprize (FC)</p>
                   <Input placeholder="ex: 5.000.000 FC" value={newTournament.prize} onChange={e => setNewTournament({...newTournament, prize: e.target.value})} />
                 </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Description</p>
+                <Textarea placeholder="Détails du tournoi..." value={newTournament.description} onChange={e => setNewTournament({...newTournament, description: e.target.value})} />
               </div>
 
               <div className="space-y-2">
@@ -339,31 +349,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="space-y-4 border-t pt-6">
-                <p className="text-xs font-bold uppercase tracking-wider">Programme du tournoi</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <Input className="sm:col-span-1" placeholder="Phase (ex: Finale)" value={scheduleItem.label} onChange={e => setScheduleItem({...scheduleItem, label: e.target.value})} />
-                  <Input className="sm:col-span-1" placeholder="Date" value={scheduleItem.date} onChange={e => setScheduleItem({...scheduleItem, date: e.target.value})} />
-                  <Button variant="secondary" onClick={() => {
-                    if (scheduleItem.label && scheduleItem.date) {
-                      setNewTournament({ ...newTournament, schedule: [...newTournament.schedule, scheduleItem] });
-                      setScheduleItem({ label: "", date: "" });
-                    }
-                  }} className="w-full">Ajouter</Button>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {newTournament.schedule.map((s, i) => (
-                    <Badge key={i} className="gap-2 py-1.5 px-3 bg-primary/10 text-primary border-primary/20">
-                      {s.label} ({s.date}) 
-                      <Trash2 className="w-3 h-3 cursor-pointer hover:text-destructive transition-colors" onClick={() => {
-                        const updated = [...newTournament.schedule];
-                        updated.splice(i, 1);
-                        setNewTournament({...newTournament, schedule: updated});
-                      }} />
-                    </Badge>
-                  ))}
-                </div>
-              </div>
               <Button onClick={handleAddTournament} className="w-full bg-primary glow-blue h-14 font-bold uppercase text-lg text-white">Publier le tournoi</Button>
             </CardContent>
           </Card>
@@ -381,7 +366,7 @@ export default function AdminDashboard() {
                 </div>
                 <CardContent className="p-4">
                   <h4 className="font-bold uppercase truncate">{t.name}</h4>
-                  <p className="text-xs text-muted-foreground">{t.sport} • {t.date}</p>
+                  <p className="text-xs text-muted-foreground">{t.sport} • {t.teamsRegistered}/{t.teamsMax} équipes</p>
                 </CardContent>
               </Card>
             ))}

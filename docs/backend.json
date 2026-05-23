@@ -26,11 +26,11 @@
         "prize": { "type": "string" },
         "imageUrl": { "type": "string" },
         "status": { "type": "string", "enum": ["Inscriptions Ouvertes", "À Venir", "Terminé"] },
-        "teamsRegistered": { "type": "number" },
-        "teamsMax": { "type": "number" },
+        "teamsRegistered": { "type": "number", "default": 0 },
+        "teamsMax": { "type": "number", "default": 16 },
+        "description": { "type": "string" },
         "schedule": {
           "type": "array",
-          "description": "Phases clés du tournoi (éliminatoires, finales, etc.)",
           "items": {
             "type": "object",
             "properties": {
@@ -41,6 +41,22 @@
         }
       },
       "required": ["name", "sport", "date", "imageUrl"]
+    },
+    "Registration": {
+      "title": "Registration",
+      "description": "Inscription d'une équipe à un tournoi",
+      "type": "object",
+      "properties": {
+        "tournamentId": { "type": "string" },
+        "tournamentName": { "type": "string" },
+        "teamName": { "type": "string" },
+        "captainName": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["teamName", "captainName", "contactEmail"]
     },
     "Article": {
       "title": "Article",
@@ -65,7 +81,7 @@
         "title": { "type": "string" },
         "tournamentName": { "type": "string" },
         "price": { "type": "string" },
-        "externalUrl": { "type": "string", "description": "Lien vers la billetterie externe" },
+        "externalUrl": { "type": "string" },
         "description": { "type": "string" },
         "imageUrl": { "type": "string" }
       },
@@ -73,7 +89,7 @@
     },
     "Sponsor": {
       "title": "Sponsor",
-      "description": "Partenaire ou sponsor de la plateforme",
+      "description": "Partenaire ou sponsor",
       "type": "object",
       "properties": {
         "name": { "type": "string" },
@@ -84,7 +100,7 @@
     },
     "Post": {
       "title": "Post",
-      "description": "Message publié par un membre de la communauté",
+      "description": "Message communautaire",
       "type": "object",
       "properties": {
         "userId": { "type": "string" },
@@ -103,23 +119,27 @@
   "firestore": {
     "/settings/config": {
       "schema": "SiteSettings",
-      "description": "Paramètres globaux du site"
+      "description": "Paramètres globaux"
     },
     "/tournaments/{tournamentId}": {
       "schema": "Tournament",
       "description": "Liste des tournois"
     },
+    "/registrations/{registrationId}": {
+      "schema": "Registration",
+      "description": "Inscriptions des équipes"
+    },
     "/articles/{articleId}": {
       "schema": "Article",
-      "description": "Articles d'actualités"
+      "description": "Articles"
     },
     "/tickets/{ticketId}": {
       "schema": "Ticket",
-      "description": "Billets en vente"
+      "description": "Billets"
     },
     "/sponsors/{sponsorId}": {
       "schema": "Sponsor",
-      "description": "Liste des partenaires"
+      "description": "Sponsors"
     },
     "/posts/{postId}": {
       "schema": "Post",
