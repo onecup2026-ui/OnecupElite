@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Trophy, Calendar, MapPin, Users, ArrowLeft, Loader2, CheckCircle2, AlertCircle, LogIn, DollarSign, Clock } from "lucide-react";
+import { Trophy, Calendar, MapPin, Users, ArrowLeft, Loader2, CheckCircle2, AlertCircle, LogIn, DollarSign, Clock, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +33,6 @@ export default function TournamentDetailPage() {
   const [formData, setFormData] = useState({
     teamName: "",
     captainName: "",
-    contactEmail: "",
     contactPhone: ""
   });
 
@@ -54,15 +53,21 @@ export default function TournamentDetailPage() {
     e.preventDefault();
     if (!db || !user || !tournament || isFull) return;
 
+    if (!formData.contactPhone || formData.contactPhone.length < 8) {
+      toast({ variant: "destructive", title: "Téléphone requis", description: "Veuillez entrer un numéro de téléphone valide." });
+      return;
+    }
+
     setIsSubmitting(true);
     const registrationData = {
       teamName: formData.teamName,
       captainName: formData.captainName,
-      contactEmail: formData.contactEmail,
       contactPhone: formData.contactPhone,
       tournamentId: id,
       tournamentName: tournament.name,
       userId: user.uid,
+      status: "En attente",
+      registrationDate: serverTimestamp(),
       createdAt: serverTimestamp()
     };
 
@@ -98,10 +103,10 @@ export default function TournamentDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-8">
           <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-            <img src={tournament.imageUrl} alt={tournament.name} className="w-full h-full object-cover" />
+            <img src={tournament.imageUrl || "https://picsum.photos/seed/onecup/800/450"} alt={tournament.name} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8 space-y-2">
-              <Badge className="bg-primary uppercase font-bold">{tournament.sport}</Badge>
+              <Badge className="bg-primary uppercase font-bold">{tournament.gameType || tournament.sport}</Badge>
               <h1 className="text-4xl md:text-6xl font-headline font-bold text-white uppercase tracking-tighter">
                 {tournament.name}
               </h1>
@@ -109,32 +114,32 @@ export default function TournamentDetailPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="p-4 text-center">
-              <Calendar className="w-5 h-5 mx-auto text-primary" />
+            <Card className="p-4 text-center border-white/5 bg-card/50">
+              <Calendar className="w-5 h-5 mx-auto text-primary mb-2" />
               <p className="text-[10px] font-bold uppercase text-muted-foreground">Date</p>
-              <p className="font-bold text-sm">{tournament.date}</p>
+              <p className="font-bold text-sm">{tournament.startDate}</p>
             </Card>
-            <Card className="p-4 text-center">
-              <Clock className="w-5 h-5 mx-auto text-primary" />
+            <Card className="p-4 text-center border-white/5 bg-card/50">
+              <Clock className="w-5 h-5 mx-auto text-primary mb-2" />
               <p className="text-[10px] font-bold uppercase text-muted-foreground">Clôture</p>
               <p className="font-bold text-sm">{tournament.registrationDeadline || "N/A"}</p>
             </Card>
-            <Card className="p-4 text-center">
-              <DollarSign className="w-5 h-5 mx-auto text-primary" />
+            <Card className="p-4 text-center border-white/5 bg-card/50">
+              <DollarSign className="w-5 h-5 mx-auto text-primary mb-2" />
               <p className="text-[10px] font-bold uppercase text-muted-foreground">Frais</p>
               <p className="font-bold text-sm">{tournament.entryFee?.toLocaleString() || 0} FC</p>
             </Card>
-            <Card className="p-4 text-center">
-              <Trophy className="w-5 h-5 mx-auto text-primary" />
+            <Card className="p-4 text-center border-white/5 bg-card/50">
+              <Trophy className="w-5 h-5 mx-auto text-primary mb-2" />
               <p className="text-[10px] font-bold uppercase text-muted-foreground">Cashprize</p>
-              <p className="font-bold text-sm">{tournament.prize}</p>
+              <p className="font-bold text-sm">{tournament.prize || "À définir"}</p>
             </Card>
           </div>
 
           <div className="space-y-4">
             <h2 className="text-2xl font-headline font-bold uppercase">Règlement & Détails</h2>
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-              {tournament.description}
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-line bg-muted/20 p-6 rounded-2xl border border-white/5">
+              {tournament.description || "Aucune description détaillée fournie."}
             </p>
           </div>
         </div>
@@ -142,35 +147,46 @@ export default function TournamentDetailPage() {
         <div className="space-y-6">
           <Card className={cn("sticky top-24 border-primary/20 shadow-xl", isFull && "opacity-80")}>
             <CardHeader className="bg-primary/5 border-b">
-              <CardTitle className="text-lg uppercase">Inscription Équipe</CardTitle>
+              <CardTitle className="text-lg uppercase flex items-center gap-2">
+                <Users className="w-5 h-5" /> Inscription Équipe
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               {isFull ? (
                 <div className="text-center py-8 space-y-2">
                   <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
-                  <p className="font-bold uppercase text-destructive">Complet</p>
+                  <p className="font-bold uppercase text-destructive">Tournoi Complet</p>
+                  <p className="text-xs text-muted-foreground">Toutes les places ont été réservées.</p>
                 </div>
               ) : !user ? (
-                <Button onClick={handleLogin} className="w-full h-12 uppercase font-bold gap-2">
-                  <LogIn className="w-4 h-4" /> Se connecter
-                </Button>
+                <div className="space-y-4">
+                  <p className="text-sm text-center text-muted-foreground">Connectez-vous pour inscrire votre équipe.</p>
+                  <Button onClick={handleLogin} className="w-full h-12 uppercase font-bold gap-2 glow-blue">
+                    <LogIn className="w-4 h-4" /> Se connecter
+                  </Button>
+                </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-bold">Nom de l'équipe</Label>
-                    <Input required value={formData.teamName} onChange={e => setFormData({...formData, teamName: e.target.value})} />
+                    <Input required placeholder="Ex: Dragons FC" value={formData.teamName} onChange={e => setFormData({...formData, teamName: e.target.value})} />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Capitaine</Label>
-                    <Input required value={formData.captainName} onChange={e => setFormData({...formData, captainName: e.target.value})} />
+                    <Label className="text-[10px] uppercase font-bold">Nom du Capitaine</Label>
+                    <Input required placeholder="Ex: Jean Mukoko" value={formData.captainName} onChange={e => setFormData({...formData, captainName: e.target.value})} />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold">Email</Label>
-                    <Input required type="email" value={formData.contactEmail} onChange={e => setFormData({...formData, contactEmail: e.target.value})} />
+                    <Label className="text-[10px] uppercase font-bold flex items-center gap-1">
+                      <Phone className="w-3 h-3" /> Numéro de Téléphone
+                    </Label>
+                    <Input required type="tel" placeholder="Ex: +243 000 000 000" value={formData.contactPhone} onChange={e => setFormData({...formData, contactPhone: e.target.value})} />
                   </div>
-                  <Button type="submit" disabled={isSubmitting} className="w-full h-14 uppercase font-bold mt-4">
-                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "S'inscrire"}
+                  <Button type="submit" disabled={isSubmitting} className="w-full h-14 uppercase font-bold mt-4 glow-blue">
+                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirmer l'inscription"}
                   </Button>
+                  <p className="text-[9px] text-center text-muted-foreground uppercase">
+                    En validant, vous acceptez le règlement du tournoi OneCup Elite.
+                  </p>
                 </form>
               )}
             </CardContent>

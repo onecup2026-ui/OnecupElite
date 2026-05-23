@@ -1,18 +1,21 @@
+
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Calendar } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Image as ImageIcon, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useCollection, useFirestore, useUser } from "@/firebase";
 import { doc, addDoc, deleteDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
+import { generateTournamentImage } from "@/ai/flows/ai-image-generator";
 
 const ADMIN_EMAIL = "onecup2026@gmail.com";
 
@@ -34,10 +37,33 @@ export default function AdminDashboard() {
   const [newTournament, setNewTournament] = useState({
     name: "", gameType: "Football", startDate: "", endDate: "", registrationDeadline: "", entryFee: 0, maxTeams: 16, description: "", imageUrl: ""
   });
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const [newMatch, setNewMatch] = useState({
     tournamentId: "", team1Id: "", team2Id: "", matchNumber: 1, scheduledTime: "", status: "À Venir", scoreTeam1: 0, scoreTeam2: 0
   });
+
+  const handleGenerateImage = async () => {
+    if (!newTournament.name) {
+      toast({ variant: "destructive", title: "Nom requis", description: "Donnez un nom au tournoi pour générer l'image." });
+      return;
+    }
+    setIsGeneratingImage(true);
+    try {
+      const url = await generateTournamentImage({ 
+        prompt: newTournament.name, 
+        context: newTournament.gameType 
+      });
+      if (url) {
+        setNewTournament(prev => ({ ...prev, imageUrl: url }));
+        toast({ title: "Image générée avec succès !" });
+      }
+    } catch (error) {
+      toast({ variant: "destructive", title: "Erreur IA", description: "Impossible de générer l'image." });
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
 
   const handleAddTournament = () => {
     if (!db || !isAdmin || !user) return;
@@ -82,12 +108,85 @@ export default function AdminDashboard() {
         <Badge className="bg-primary px-4 py-1">Mode Elite</Badge>
       </div>
 
-      <Tabs defaultValue="matches" className="w-full">
+      <Tabs defaultValue="tournaments" className="w-full">
         <TabsList className="bg-muted p-1 rounded-xl mb-6">
-          <TabsTrigger value="matches" className="uppercase font-bold text-xs">Matchs</TabsTrigger>
           <TabsTrigger value="tournaments" className="uppercase font-bold text-xs">Tournois</TabsTrigger>
+          <TabsTrigger value="matches" className="uppercase font-bold text-xs">Matchs</TabsTrigger>
           <TabsTrigger value="registrations" className="uppercase font-bold text-xs">Inscriptions</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="tournaments" className="space-y-6">
+          <Card className="border-primary/20">
+            <CardHeader><CardTitle className="text-lg uppercase">Configuration Tournoi</CardTitle></CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
+                <Select onValueChange={(val) => setNewTournament({...newTournament, gameType: val})}>
+                  <SelectTrigger><SelectValue placeholder="Sport/Jeu" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Football">Football</SelectItem>
+                    <SelectItem value="Esport">Esport</SelectItem>
+                    <SelectItem value="Basketball">Basketball</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input placeholder="Début" type="date" value={newTournament.startDate} onChange={e => setNewTournament({...newTournament, startDate: e.target.value})} />
+                <Input placeholder="Fin" type="date" value={newTournament.endDate} onChange={e => setNewTournament({...newTournament, endDate: e.target.value})} />
+                <Input placeholder="Clôture Inscriptions" type="date" value={newTournament.registrationDeadline} onChange={e => setNewTournament({...newTournament, registrationDeadline: e.target.value})} />
+                <Input type="number" placeholder="Équipes Max" value={newTournament.maxTeams} onChange={e => setNewTournament({...newTournament, maxTeams: Number(e.target.value)})} />
+                <Input type="number" placeholder="Frais (FC)" value={newTournament.entryFee} onChange={e => setNewTournament({...newTournament, entryFee: Number(e.target.value)})} />
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                  <Input placeholder="URL de l'image" value={newTournament.imageUrl} onChange={e => setNewTournament({...newTournament, imageUrl: e.target.value})} className="flex-1" />
+                  <Button 
+                    variant="outline" 
+                    onClick={handleGenerateImage} 
+                    disabled={isGeneratingImage}
+                    className="gap-2 shrink-0 border-primary/30 text-primary hover:bg-primary/5 uppercase font-bold text-xs"
+                  >
+                    {isGeneratingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    Générer avec l'IA
+                  </Button>
+                </div>
+                {newTournament.imageUrl && (
+                  <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden border">
+                    <img src={newTournament.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+                <Textarea 
+                  placeholder="Description et règlement du tournoi..." 
+                  value={newTournament.description} 
+                  onChange={e => setNewTournament({...newTournament, description: e.target.value})}
+                  className="min-h-[100px]"
+                />
+              </div>
+
+              <Button onClick={handleAddTournament} className="w-full h-12 uppercase font-bold bg-primary glow-blue">Publier le Tournoi</Button>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tournaments?.map((t: any) => (
+              <Card key={t.id} className="p-4 flex items-center justify-between border-white/5">
+                <div className="flex items-center gap-4">
+                  {t.imageUrl ? (
+                    <img src={t.imageUrl} className="w-12 h-12 rounded-lg object-cover" alt="" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Trophy className="w-6 h-6 text-primary" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-bold text-xs uppercase">{t.name}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">{t.gameType} • {t.maxTeams} équipes</p>
+                  </div>
+                </div>
+                <Button size="icon" variant="ghost" onClick={() => handleDelete('tournaments', t.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
 
         <TabsContent value="matches" className="space-y-6">
           <Card className="border-primary/20">
@@ -122,49 +221,6 @@ export default function AdminDashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="tournaments" className="space-y-6">
-          <Card className="border-primary/20">
-            <CardHeader><CardTitle className="text-lg uppercase">Configuration Tournoi</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Input placeholder="Nom du tournoi" value={newTournament.name} onChange={e => setNewTournament({...newTournament, name: e.target.value})} />
-                <Select onValueChange={(val) => setNewTournament({...newTournament, gameType: val})}>
-                  <SelectTrigger><SelectValue placeholder="Sport/Jeu" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Football">Football</SelectItem>
-                    <SelectItem value="Esport">Esport</SelectItem>
-                    <SelectItem value="Basketball">Basketball</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input placeholder="Début" type="date" value={newTournament.startDate} onChange={e => setNewTournament({...newTournament, startDate: e.target.value})} />
-                <Input placeholder="Fin" type="date" value={newTournament.endDate} onChange={e => setNewTournament({...newTournament, endDate: e.target.value})} />
-                <Input placeholder="Clôture Inscriptions" type="date" value={newTournament.registrationDeadline} onChange={e => setNewTournament({...newTournament, registrationDeadline: e.target.value})} />
-                <Input type="number" placeholder="Équipes Max" value={newTournament.maxTeams} onChange={e => setNewTournament({...newTournament, maxTeams: Number(e.target.value)})} />
-                <Input type="number" placeholder="Frais (FC)" value={newTournament.entryFee} onChange={e => setNewTournament({...newTournament, entryFee: Number(e.target.value)})} />
-                <Input placeholder="URL Image" value={newTournament.imageUrl} onChange={e => setNewTournament({...newTournament, imageUrl: e.target.value})} />
-              </div>
-              <Button onClick={handleAddTournament} className="w-full h-12 uppercase font-bold bg-primary glow-blue">Publier</Button>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tournaments?.map((t: any) => (
-              <Card key={t.id} className="p-4 flex items-center justify-between border-white/5">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Trophy className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-xs uppercase">{t.name}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">{t.gameType} • {t.maxTeams} équipes</p>
-                  </div>
-                </div>
-                <Button size="icon" variant="ghost" onClick={() => handleDelete('tournaments', t.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
         <TabsContent value="registrations">
            <Card className="border-primary/20">
             <CardHeader><CardTitle className="text-lg uppercase">Inscriptions Récentes</CardTitle></CardHeader>
@@ -174,7 +230,7 @@ export default function AdminDashboard() {
                   <div key={r.id} className="flex items-center justify-between p-4 border rounded-xl bg-card">
                     <div>
                       <p className="font-bold uppercase text-sm">{r.teamName}</p>
-                      <p className="text-[10px] text-muted-foreground">Par: {r.captainName} • Tournoi: {r.tournamentName}</p>
+                      <p className="text-[10px] text-muted-foreground">Par: {r.captainName} • Tél: {r.contactPhone} • Tournoi: {r.tournamentName}</p>
                     </div>
                     <Badge variant="secondary" className="text-[10px] uppercase">{r.status || "En attente"}</Badge>
                     <Button size="icon" variant="ghost" onClick={() => handleDelete('registrations', r.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
