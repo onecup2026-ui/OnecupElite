@@ -4,12 +4,12 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Zap } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Zap, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
-import { useDoc, useFirestore } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { useDoc, useFirestore, useCollection } from "@/firebase";
+import { doc, collection } from "firebase/firestore";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,10 @@ export default function Home() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
+  const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
+  
   const { data: siteConfig, loading: configLoading } = useDoc(configRef);
+  const { data: sponsors } = useCollection(sponsorsRef);
 
   const defaultHero = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "https://picsum.photos/seed/onecup-match-action/1920/1080";
   const heroImage = siteConfig?.heroImageUrl || defaultHero;
@@ -115,6 +118,31 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Sponsors Scrolling Marquee */}
+      {sponsors && sponsors.length > 0 && (
+        <section className="py-20 bg-muted/30 border-y border-white/5 overflow-hidden">
+          <div className="container mx-auto px-4 mb-10 flex items-center justify-between">
+            <h2 className="text-xs font-bold uppercase tracking-[0.4em] text-muted-foreground">ILS NOUS FONT CONFIANCE</h2>
+            <Link href="/sponsors" className="text-[10px] font-black uppercase text-primary hover:underline tracking-widest">Voir tous les partenaires</Link>
+          </div>
+          <div className="relative flex overflow-x-hidden">
+            <div className="animate-marquee flex whitespace-nowrap gap-20 items-center py-4">
+              {sponsors.map((s: any) => (
+                <div key={s.id} className="w-40 h-20 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all">
+                  <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
+                </div>
+              ))}
+              {/* Duplicate for seamless scrolling */}
+              {sponsors.map((s: any) => (
+                <div key={`${s.id}-dup`} className="w-40 h-20 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all">
+                  <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
         <DialogContent className="max-w-5xl p-0 overflow-hidden bg-black border-none">

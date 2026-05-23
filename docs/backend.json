@@ -87,6 +87,18 @@
         "resultDetails": { "type": "string" }
       },
       "required": ["tournamentId", "team1Id", "team2Id", "scheduledTime", "status"]
+    },
+    "Sponsor": {
+      "title": "Sponsor",
+      "description": "Partenaire officiel de l'événement",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "websiteUrl": { "type": "string" },
+        "category": { "type": "string" }
+      },
+      "required": ["name", "logoUrl"]
     }
   },
   "auth": {
@@ -97,6 +109,7 @@
     "/tournaments/{tournamentId}": { "schema": "Tournament", "description": "Tournois" },
     "/teams/{teamId}": { "schema": "Team", "description": "Équipes" },
     "/registrations/{registrationId}": { "schema": "TournamentRegistration", "description": "Inscriptions" },
-    "/matches/{matchId}": { "schema": "Match", "description": "Matchs" }
+    "/matches/{matchId}": { "schema": "Match", "description": "Matchs" },
+    "/sponsors/{sponsorId}": { "schema": "Sponsor", "description": "Partenaires" }
   }
 }

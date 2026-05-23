@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Save, Edit2, Check, Video, MessageCircle, DollarSign, Users, Star } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, X, Settings, Save, Edit2, Check, Video, MessageCircle, DollarSign, Users, Star, Heart, Link as LinkIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ export default function AdminDashboard() {
   const { user, loading: userLoading } = useUser();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sponsorLogoRef = useRef<HTMLInputElement>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
   const afterCupInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,15 +31,18 @@ export default function AdminDashboard() {
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
   const matchesRef = useMemo(() => (db ? collection(db, "matches") : null), [db]);
   const registrationsRef = useMemo(() => (db ? collection(db, "registrations") : null), [db]);
+  const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
 
   const { data: tournaments } = useCollection(tournamentsRef);
   const { data: matches } = useCollection(matchesRef);
   const { data: registrations } = useCollection(registrationsRef);
+  const { data: sponsors } = useCollection(sponsorsRef);
   const { data: siteConfig } = useDoc(configRef);
 
   const [editingTournamentId, setEditingTournamentId] = useState<string | null>(null);
   const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
+  const [editingSponsorId, setEditingSponsorId] = useState<string | null>(null);
 
   const initialTournamentState = {
     name: "", 
@@ -72,6 +76,15 @@ export default function AdminDashboard() {
 
   const [matchForm, setMatchForm] = useState(initialMatchState);
 
+  const initialSponsorState = {
+    name: "",
+    logoUrl: "",
+    websiteUrl: "",
+    category: "Partenaire Officiel"
+  };
+
+  const [sponsorForm, setSponsorForm] = useState(initialSponsorState);
+
   const [isSavingConfig, setIsSavingConfig] = useState(false);
   const [configForm, setConfigForm] = useState({
     heroTitle: "",
@@ -97,7 +110,7 @@ export default function AdminDashboard() {
     }
   }, [siteConfig]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'background' | 'aftercup') => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'background' | 'aftercup' | 'sponsor') => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -109,6 +122,8 @@ export default function AdminDashboard() {
           updateSiteConfig({ heroImageUrl: base64 });
         } else if (type === 'aftercup') {
           updateSiteConfig({ afterCupImageUrl: base64 });
+        } else if (type === 'sponsor') {
+          setSponsorForm(prev => ({ ...prev, logoUrl: base64 }));
         }
       };
       reader.readAsDataURL(file);
@@ -176,9 +191,43 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSaveSponsor = () => {
+    if (!db || !isAdmin) return;
+    if (editingSponsorId) {
+      updateDoc(doc(db, "sponsors", editingSponsorId), {
+        ...sponsorForm,
+        updatedAt: serverTimestamp()
+      }).then(() => {
+        toast({ title: "Partenaire mis à jour !" });
+        setEditingSponsorId(null);
+        setSponsorForm(initialSponsorState);
+      });
+    } else {
+      addDoc(collection(db, "sponsors"), {
+        ...sponsorForm,
+        createdAt: serverTimestamp()
+      }).then(() => {
+        toast({ title: "Nouveau partenaire ajouté !" });
+        setSponsorForm(initialSponsorState);
+      });
+    }
+  };
+
   const startEditTournament = (t: any) => {
     setEditingTournamentId(t.id);
     setTournamentForm({ ...t });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const startEditSponsor = (s: any) => {
+    setEditingSponsorId(s.id);
+    setSponsorForm({ ...s });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const startEditMatch = (m: any) => {
+    setEditingMatchId(m.id);
+    setMatchForm({ ...m });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -212,6 +261,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="tournaments" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Tournois</TabsTrigger>
           <TabsTrigger value="matches" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Matchs & Scores</TabsTrigger>
           <TabsTrigger value="registrations" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Inscriptions</TabsTrigger>
+          <TabsTrigger value="sponsors" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Partenaires</TabsTrigger>
           <TabsTrigger value="config" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"><Settings className="w-3 h-3" /> Configuration</TabsTrigger>
         </TabsList>
 
@@ -255,10 +305,6 @@ export default function AdminDashboard() {
                   <div className="space-y-4">
                     <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Lien Vidéo Teaser (YouTube)</Label>
                     <Input value={tournamentForm.teaserVideoUrl} onChange={e => setTournamentForm({...tournamentForm, teaserVideoUrl: e.target.value})} className="h-12 rounded-xl" placeholder="https://www.youtube.com/watch?v=..." />
-                    <div className="p-4 bg-muted/50 rounded-xl space-y-2">
-                       <p className="text-[10px] font-bold uppercase text-primary">Comment obtenir le lien ?</p>
-                       <p className="text-[9px] text-muted-foreground">Copiez l'adresse de votre vidéo YouTube. Elle s'affichera automatiquement sur la page détails du tournoi.</p>
-                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -281,13 +327,55 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <h3 className="font-bold text-sm uppercase tracking-tight">{t.name}</h3>
-                    <p className="text-[10px] text-muted-foreground uppercase font-medium">{t.gameType} • {t.locationStade} ({t.locationCommune})</p>
-                    <Badge variant="outline" className="mt-2 text-[9px] border-primary/20 text-primary uppercase font-bold">{t.teamsRegistered || 0} / {t.maxTeams} équipes</Badge>
+                    <p className="text-[10px] text-muted-foreground uppercase font-medium">{t.gameType} • {t.locationStade}</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Button size="icon" variant="ghost" onClick={() => startEditTournament(t)} className="rounded-full hover:bg-primary/10 hover:text-primary"><Edit2 className="w-4 h-4" /></Button>
                   <Button size="icon" variant="ghost" onClick={() => handleDelete('tournaments', t.id)} className="rounded-full hover:text-destructive hover:bg-destructive/10"><Trash2 className="w-4 h-4" /></Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="sponsors" className="space-y-10">
+          <Card className="border-primary/20 shadow-2xl rounded-[2.5rem] overflow-hidden">
+            <CardHeader className="bg-primary/5 border-b p-8">
+              <CardTitle className="text-2xl uppercase font-headline font-bold">{editingSponsorId ? "Modifier le" : "Nouveau"} Partenaire</CardTitle>
+              <CardDescription>Ajoutez un logo qui défilera sur le site.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Nom du Partenaire</Label><Input value={sponsorForm.name} onChange={e => setSponsorForm({...sponsorForm, name: e.target.value})} className="h-12 rounded-xl" /></div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Catégorie</Label><Input value={sponsorForm.category} onChange={e => setSponsorForm({...sponsorForm, category: e.target.value})} className="h-12 rounded-xl" placeholder="Ex: Partenaire Officiel" /></div>
+                <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Site Web (Lien)</Label><Input value={sponsorForm.websiteUrl} onChange={e => setSponsorForm({...sponsorForm, websiteUrl: e.target.value})} className="h-12 rounded-xl" placeholder="https://..." /></div>
+                <div className="space-y-4">
+                    <Label className="text-[10px] font-bold uppercase">Logo du Partenaire</Label>
+                    <input type="file" ref={sponsorLogoRef} className="hidden" onChange={(e) => handleFileUpload(e, 'sponsor')} accept="image/*" />
+                    <Button variant="outline" onClick={() => sponsorLogoRef.current?.click()} className="w-full h-12 rounded-xl gap-2 text-xs uppercase font-bold border-dashed">
+                      <Upload className="w-4 h-4" /> Choisir le logo
+                    </Button>
+                    {sponsorForm.logoUrl && <img src={sponsorForm.logoUrl} className="h-20 object-contain mx-auto border rounded-xl p-2 bg-white" alt="Logo" />}
+                </div>
+              </div>
+              <Button onClick={handleSaveSponsor} className="w-full h-14 bg-primary uppercase font-bold rounded-xl mt-4">
+                {editingSponsorId ? "Mettre à jour" : "Ajouter le Partenaire"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {sponsors?.map((s: any) => (
+              <Card key={s.id} className="p-4 border-white/5 bg-card flex flex-col items-center gap-4 rounded-2xl relative group">
+                <img src={s.logoUrl} className="h-16 object-contain bg-white rounded-lg p-2" alt={s.name} />
+                <div className="text-center">
+                  <p className="font-bold text-xs uppercase">{s.name}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase">{s.category}</p>
+                </div>
+                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button size="icon" variant="ghost" onClick={() => startEditSponsor(s)} className="h-8 w-8 rounded-full bg-background/80"><Edit2 className="w-3 h-3" /></Button>
+                  <Button size="icon" variant="ghost" onClick={() => handleDelete('sponsors', s.id)} className="h-8 w-8 rounded-full bg-background/80 hover:text-destructive"><Trash2 className="w-3 h-3" /></Button>
                 </div>
               </Card>
             ))}
@@ -342,10 +430,9 @@ export default function AdminDashboard() {
           </div>
         </TabsContent>
 
-        {/* Other Tabs Content (Matches, Registrations) remains the same but within this methodology */}
         <TabsContent value="matches" className="space-y-6">
           <Card className="border-primary/20 rounded-[2.5rem] shadow-xl overflow-hidden">
-            <CardHeader className="bg-primary/5 p-8 border-b"><CardTitle className="text-xl uppercase font-bold">Programmation & Résultats</CardTitle></CardHeader>
+            <CardHeader className="bg-primary/5 p-8 border-b"><CardTitle className="text-xl uppercase font-bold">{editingMatchId ? "Modifier le" : "Programmation"} Match</CardTitle></CardHeader>
             <CardContent className="p-8 space-y-6">
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-2">
@@ -364,7 +451,9 @@ export default function AdminDashboard() {
                 <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Score Équipe 2</Label><Input type="number" value={matchForm.scoreTeam2} onChange={e => setMatchForm({...matchForm, scoreTeam2: Number(e.target.value)})} className="rounded-xl h-12" /></div>
                 <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Gagnant (ID)</Label><Input value={matchForm.winnerId} onChange={e => setMatchForm({...matchForm, winnerId: e.target.value})} className="rounded-xl h-12" placeholder="Nom de l'équipe gagnante" /></div>
               </div>
-              <Button onClick={handleSaveMatch} className="w-full h-12 bg-primary uppercase font-bold rounded-xl mt-4">Valider le Match</Button>
+              <Button onClick={handleSaveMatch} className="w-full h-12 bg-primary uppercase font-bold rounded-xl mt-4">
+                {editingMatchId ? "Confirmer la modification" : "Valider le Match"}
+              </Button>
             </CardContent>
           </Card>
           <div className="space-y-4">
@@ -419,8 +508,4 @@ export default function AdminDashboard() {
       </Tabs>
     </div>
   );
-}
-
-function startEditMatch(m: any) {
-    // This is a local mock for the snippet
 }
