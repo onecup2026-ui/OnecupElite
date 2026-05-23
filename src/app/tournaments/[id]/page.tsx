@@ -113,7 +113,7 @@ export default function TournamentDetailPage() {
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Lien copié dans le presse-papier !" });
+      toast({ title: "Lien copié !" });
     }
   };
 
@@ -145,7 +145,7 @@ export default function TournamentDetailPage() {
         <div className="container mx-auto px-4 relative z-10 pb-12 space-y-6">
           <Link href="/tournaments">
             <Button variant="outline" size="sm" className="gap-2 bg-background/50 backdrop-blur-md border-white/20 text-foreground font-bold uppercase text-[10px]">
-              <ArrowLeft className="w-4 h-4" /> Retour aux tournois
+              <ArrowLeft className="w-4 h-4" /> Retour
             </Button>
           </Link>
           
@@ -180,7 +180,7 @@ export default function TournamentDetailPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-muted-foreground uppercase">Lieu</p>
-                <p className="font-bold">{tournament.locationStade || "OneCup Arena"}, {tournament.locationCommune || "Kinshasa"}</p>
+                <p className="font-bold">{tournament.locationStade || "OneCup Arena"}</p>
               </div>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function TournamentDetailPage() {
             {/* 3. Détails & 4. Conditions */}
             <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Card className="rounded-[2rem] border-white/5 overflow-hidden">
-                <CardHeader className="bg-muted/30"><CardTitle className="text-sm uppercase font-bold tracking-widest">Détails Techniques</CardTitle></CardHeader>
+                <CardHeader className="bg-muted/30"><CardTitle className="text-sm uppercase font-bold tracking-widest">Détails</CardTitle></CardHeader>
                 <CardContent className="p-6 space-y-4">
                   <div className="flex justify-between border-b border-white/5 pb-2">
                     <span className="text-xs text-muted-foreground uppercase">Type</span>
@@ -237,12 +237,8 @@ export default function TournamentDetailPage() {
                     <span className="text-xs font-bold uppercase">Interscolaire</span>
                   </div>
                   <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-xs text-muted-foreground uppercase">Adresse précise</span>
-                    <span className="text-[10px] font-bold uppercase text-right">{tournament.locationAdresse || "OneCup Arena, RDC"}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-xs text-muted-foreground uppercase">Durée Match</span>
-                    <span className="text-xs font-bold uppercase">2 x 45 min</span>
+                    <span className="text-xs text-muted-foreground uppercase">Adresse</span>
+                    <span className="text-[10px] font-bold uppercase text-right">{tournament.locationAdresse || "OneCup Arena"}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground uppercase">Format</span>
@@ -261,10 +257,6 @@ export default function TournamentDetailPage() {
                   <div className="flex justify-between border-b border-white/5 pb-2">
                     <span className="text-xs text-muted-foreground uppercase">Places Max</span>
                     <span className="text-xs font-bold uppercase">{tournament.maxTeams} Équipes</span>
-                  </div>
-                  <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-xs text-muted-foreground uppercase">Date Limite</span>
-                    <span className="text-xs font-bold uppercase">{tournament.registrationDeadline || "N/A"}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground uppercase">Places Restantes</span>
@@ -286,7 +278,7 @@ export default function TournamentDetailPage() {
                   <ul className="text-[10px] text-muted-foreground uppercase font-bold space-y-1">
                     <li>Trophée</li>
                     <li>Médailles d'or</li>
-                    <li>Récompense financière</li>
+                    <li>Récompense</li>
                   </ul>
                 </div>
                 <div className="p-6 bg-slate-400/10 border border-slate-400/20 rounded-3xl text-center space-y-3">
@@ -294,14 +286,12 @@ export default function TournamentDetailPage() {
                   <h4 className="font-bold uppercase text-slate-400">🥈 Vice-champion</h4>
                   <ul className="text-[10px] text-muted-foreground uppercase font-bold space-y-1">
                     <li>Médailles d'argent</li>
-                    <li>Récompense</li>
                   </ul>
                 </div>
                 <div className="p-6 bg-orange-700/10 border border-orange-700/20 rounded-3xl text-center space-y-3">
                   <Medal className="w-10 h-10 text-orange-700 mx-auto" />
                   <h4 className="font-bold uppercase text-orange-700">🥉 3ème Place</h4>
                   <ul className="text-[10px] text-muted-foreground uppercase font-bold space-y-1">
-                    <li>Médailles de bronze</li>
                     <li>Récompense</li>
                   </ul>
                 </div>
@@ -325,7 +315,7 @@ export default function TournamentDetailPage() {
                   </div>
                 ))}
                 {registrations?.length === 0 && (
-                  <p className="col-span-full text-center py-12 text-muted-foreground italic">Aucune équipe inscrite pour le moment.</p>
+                  <p className="col-span-full text-center py-12 text-muted-foreground italic">En attente des premières inscriptions.</p>
                 )}
               </div>
             </section>
@@ -356,18 +346,17 @@ export default function TournamentDetailPage() {
             {/* 12. Bouton d'action (Inscriptions) */}
             <Card className="sticky top-24 rounded-[2.5rem] border-primary/20 shadow-2xl overflow-hidden bg-card/80 backdrop-blur-xl">
               <CardHeader className="bg-primary p-8">
-                <CardTitle className="text-white uppercase font-bold text-center tracking-tighter text-2xl">REJOINDRE LA COMPÉTITION</CardTitle>
+                <CardTitle className="text-white uppercase font-bold text-center tracking-tighter text-2xl">S'INSCRIRE MAINTENANT</CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-6">
                 {isFull ? (
                   <div className="text-center py-8 space-y-4">
                     <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
                     <p className="font-bold uppercase text-destructive text-lg">Tournoi Complet</p>
-                    <p className="text-sm text-muted-foreground">Rejoignez la liste d'attente via notre support chat.</p>
                   </div>
                 ) : !user ? (
                   <div className="space-y-6">
-                    <p className="text-sm text-center text-muted-foreground leading-relaxed">Connectez-vous avec votre compte Google pour accéder au formulaire d'inscription officiel de la ONECUP.</p>
+                    <p className="text-sm text-center text-muted-foreground leading-relaxed">Connectez-vous pour accéder au formulaire officiel.</p>
                     <Button onClick={handleLogin} className="w-full h-16 uppercase font-bold text-lg bg-primary glow-blue rounded-2xl gap-3">
                       <LogIn className="w-6 h-6" /> Se connecter
                     </Button>
@@ -379,11 +368,11 @@ export default function TournamentDetailPage() {
                       <Input required placeholder="Ex: Collège Elite" className="h-12 rounded-xl" value={formData.teamName} onChange={e => setFormData({...formData, teamName: e.target.value})} />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] uppercase font-bold text-muted-foreground">Nom du responsable</Label>
+                      <Label className="text-[10px] uppercase font-bold text-muted-foreground">Responsable</Label>
                       <Input required placeholder="Ex: M. Jean" className="h-12 rounded-xl" value={formData.captainName} onChange={e => setFormData({...formData, captainName: e.target.value})} />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] uppercase font-bold text-muted-foreground">Contact WhatsApp / Téléphone</Label>
+                      <Label className="text-[10px] uppercase font-bold text-muted-foreground">Contact WhatsApp</Label>
                       <Input required type="tel" placeholder="+243 ..." className="h-12 rounded-xl" value={formData.contactPhone} onChange={e => setFormData({...formData, contactPhone: e.target.value})} />
                     </div>
                     <Button type="submit" disabled={isSubmitting} className="w-full h-16 uppercase font-black text-lg bg-primary glow-blue rounded-2xl transition-all hover:scale-105">
@@ -394,10 +383,10 @@ export default function TournamentDetailPage() {
                 
                 <div className="grid grid-cols-2 gap-4 pt-4">
                    <Button variant="outline" className="h-12 rounded-xl uppercase font-bold text-[10px]" asChild>
-                     <Link href="/rules"><FileText className="w-4 h-4 mr-2" /> Règlement</Link>
+                     <Link href="/rules">Règlement</Link>
                    </Button>
                    <Button variant="outline" onClick={handleShare} className="h-12 rounded-xl uppercase font-bold text-[10px]">
-                     <Share2 className="w-4 h-4 mr-2" /> Partager
+                     Partager
                    </Button>
                 </div>
               </CardContent>
@@ -408,20 +397,16 @@ export default function TournamentDetailPage() {
               <CardHeader><CardTitle className="text-sm uppercase font-bold">Infos Pratiques</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center border border-white/5"><Car className="w-4 h-4 text-primary" /></div>
+                  <Car className="w-4 h-4 text-primary" />
                   <span className="text-[10px] font-bold uppercase">Parking Sécurisé</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center border border-white/5"><ShieldCheck className="w-4 h-4 text-primary" /></div>
+                  <ShieldCheck className="w-4 h-4 text-primary" />
                   <span className="text-[10px] font-bold uppercase">Sécurité 24/7</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center border border-white/5"><Utensils className="w-4 h-4 text-primary" /></div>
+                  <Utensils className="w-4 h-4 text-primary" />
                   <span className="text-[10px] font-bold uppercase">Restauration sur place</span>
-                </div>
-                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-2xl">
-                   <p className="text-[8px] font-bold uppercase text-destructive mb-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Interdictions</p>
-                   <p className="text-[9px] text-muted-foreground uppercase font-medium">Alcool, objets dangereux, comportement violent.</p>
                 </div>
               </CardContent>
             </Card>
@@ -435,9 +420,6 @@ export default function TournamentDetailPage() {
                 </Button>
                 <Button variant="ghost" className="w-full justify-start gap-3 h-12 hover:bg-muted" asChild>
                    <a href="https://wa.me/243000000000"><MessageCircle className="w-5 h-5 text-green-500" /> <span className="text-xs font-bold">WhatsApp ONECUP</span></a>
-                </Button>
-                <Button variant="ghost" className="w-full justify-start gap-3 h-12 hover:bg-muted" asChild>
-                   <a href="mailto:onecup2026@gmail.com"><Star className="w-5 h-5 text-primary" /> <span className="text-xs font-bold">onecup2026@gmail.com</span></a>
                 </Button>
               </CardContent>
             </Card>

@@ -13,7 +13,6 @@ export default function ResultsPage() {
 
   const matchesQuery = useMemo(() => {
     if (!db) return null;
-    // On trie par numéro de match pour respecter la logique de progression
     return query(collection(db, "matches"), orderBy("matchNumber", "asc"));
   }, [db]);
 
@@ -25,7 +24,7 @@ export default function ResultsPage() {
         <Badge variant="outline" className="border-primary text-primary px-3 py-1 font-bold">LIVE SCOREBOARD</Badge>
         <h1 className="text-5xl md:text-7xl font-headline font-bold tracking-tighter uppercase">PROGRESSION <span className="text-primary">ONECUP</span></h1>
         <p className="text-muted-foreground text-xl">
-          Suivez la route vers la gloire. Chaque match, chaque but, chaque victoire nous rapproche du sacre final.
+          Suivez la route vers la gloire. Chaque match, chaque but nous rapproche du sacre final.
         </p>
       </header>
 
@@ -88,7 +87,7 @@ export default function ResultsPage() {
         <div className="text-center py-24 bg-muted/5 rounded-[3rem] border border-dashed border-white/10">
           <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-10" />
           <h3 className="text-xl font-bold uppercase tracking-widest">En attente du coup d'envoi</h3>
-          <p className="text-muted-foreground font-medium mt-2">Les scores s'afficheront ici en direct dès le début de la ONECUP.</p>
+          <p className="text-muted-foreground font-medium mt-2">Les scores s'afficheront ici dès le début de la ONECUP.</p>
         </div>
       )}
     </div>

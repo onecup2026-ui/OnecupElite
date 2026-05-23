@@ -35,7 +35,7 @@ export default function TournamentsPage() {
         <Badge variant="outline" className="border-primary text-primary font-bold uppercase tracking-widest">ÉDITION ONECUP 2026</Badge>
         <h1 className="text-5xl md:text-7xl font-headline font-bold uppercase tracking-tighter">LES TOURNOIS <span className="text-primary">OFFICIELS</span></h1>
         <p className="text-muted-foreground text-xl">
-          Deux disciplines, deux chemins vers la gloire. Choisissez votre arène et défendez vos couleurs.
+          Deux tournois majeurs, deux chemins vers la gloire. Choisissez votre arène et défendez vos couleurs.
         </p>
       </header>
 
@@ -51,7 +51,7 @@ export default function TournamentsPage() {
              </div>
            </div>
            <div className="p-8 space-y-4">
-              <p className="text-muted-foreground font-medium">La compétition reine sur gazon. Le tournoi interscolaire ultime où le talent brut rencontre l'élite.</p>
+              <p className="text-muted-foreground font-medium">La compétition reine sur gazon. Le tournoi interscolaire ultime où le talent rencontre l'élite.</p>
               <Button onClick={() => setCategory("football")} className="gap-2 bg-primary uppercase font-bold text-xs h-10 rounded-xl">Voir OneCup Football</Button>
            </div>
         </div>
@@ -66,7 +66,7 @@ export default function TournamentsPage() {
              </div>
            </div>
            <div className="p-8 space-y-4">
-              <p className="text-muted-foreground font-medium">L'excellence numérique. Tactique, réflexes et maîtrise de la manette pour le sacre e-sport.</p>
+              <p className="text-muted-foreground font-medium">L'excellence numérique. Tactique, réflexes et maîtrise pour le sacre e-sport ultime.</p>
               <Button onClick={() => setCategory("esport")} className="gap-2 bg-secondary uppercase font-bold text-xs h-10 rounded-xl">Voir OneCup PlayStation</Button>
            </div>
         </div>
@@ -126,7 +126,7 @@ export default function TournamentsPage() {
               <div className="pt-4 mt-auto">
                 <Link href={`/tournaments/${t.id}`}>
                   <Button className="w-full h-12 gap-2 bg-primary glow-blue transition-all uppercase font-bold text-xs rounded-xl">
-                    Détails du tournoi <ArrowRight className="w-4 h-4" />
+                    Détails <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </div>

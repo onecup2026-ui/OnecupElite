@@ -134,7 +134,7 @@ export default function Home() {
                  </div>
                  <h3 className="text-2xl font-headline font-bold uppercase">OneCup Football</h3>
                  <p className="text-muted-foreground text-sm">Le tournoi interscolaire roi. Onze joueurs, un ballon, une seule gloire.</p>
-                 <span className="inline-flex items-center text-primary font-bold uppercase text-xs gap-2">Découvrir le tournoi <ArrowRight className="w-4 h-4" /></span>
+                 <span className="inline-flex items-center text-primary font-bold uppercase text-xs gap-2">Voir le tournoi <ArrowRight className="w-4 h-4" /></span>
                </div>
              </Link>
 
@@ -144,8 +144,8 @@ export default function Home() {
                    <Gamepad2 className="w-10 h-10" />
                  </div>
                  <h3 className="text-2xl font-headline font-bold uppercase">OneCup PlayStation</h3>
-                 <p className="text-muted-foreground text-sm">Le challenge e-sport de haut niveau. Tactique, précision et manette en main.</p>
-                 <span className="inline-flex items-center text-secondary font-bold uppercase text-xs gap-2">Découvrir le tournoi <ArrowRight className="w-4 h-4" /></span>
+                 <p className="text-muted-foreground text-sm">Le challenge e-sport de haut niveau. Tactique, précision et maîtrise de la manette.</p>
+                 <span className="inline-flex items-center text-secondary font-bold uppercase text-xs gap-2">Voir le tournoi <ArrowRight className="w-4 h-4" /></span>
                </div>
              </Link>
            </div>
