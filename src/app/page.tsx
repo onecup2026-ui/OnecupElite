@@ -35,6 +35,18 @@ export default function Home() {
 
   const featuredTournaments = tournaments?.slice(0, 2) || [];
 
+  // Configuration de la cagnotte basée sur les nouveaux paliers fournis
+  const currentPool = siteConfig?.currentPrizePool || 1350000;
+  const targetPool = siteConfig?.targetPrizePool || 5000000;
+
+  // Calcul dynamique des paliers (on garde les proportions basées sur 1.35M si le pool change)
+  const tiers = [
+    { rank: "Gagnant Or", amount: Math.floor(currentPool * (1000000 / 1350000)), percentage: 74 },
+    { rank: "Finaliste", amount: Math.floor(currentPool * (2000000 / 13500000)), percentage: 15 }, // Correction proportionnelle ~14.8%
+    { rank: "Meilleur Joueur", amount: Math.floor(currentPool * (100000 / 1350000)), percentage: 7 },
+    { rank: "Meilleur Gardien", amount: Math.floor(currentPool * (50000 / 1350000)), percentage: 4 },
+  ];
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -77,17 +89,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Dynamic Prize Pool Widget - Responsive position */}
+            {/* Dynamic Prize Pool Widget */}
             <div className="flex justify-center xl:justify-end animate-float">
               <div className="w-full max-w-[400px]">
                 <PrizePoolTracker
-                  currentPool={siteConfig?.currentPrizePool || 125000000}
-                  targetPool={siteConfig?.targetPrizePool || 250000000}
-                  tiers={[
-                    { rank: "Champion Or", amount: Math.floor((siteConfig?.currentPrizePool || 125000000) * 0.5), percentage: 50 },
-                    { rank: "Finaliste Argent", amount: Math.floor((siteConfig?.currentPrizePool || 125000000) * 0.3), percentage: 30 },
-                    { rank: "3ème Place Bronze", amount: Math.floor((siteConfig?.currentPrizePool || 125000000) * 0.2), percentage: 20 },
-                  ]}
+                  currentPool={currentPool}
+                  targetPool={targetPool}
+                  tiers={tiers}
                 />
               </div>
             </div>
