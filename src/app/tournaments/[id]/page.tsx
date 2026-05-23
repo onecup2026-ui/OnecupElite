@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Trophy, Calendar, MapPin, Users, ArrowLeft, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Trophy, Calendar, MapPin, Users, ArrowLeft, Loader2, CheckCircle2, AlertCircle, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -55,38 +55,37 @@ export default function TournamentDetailPage() {
 
     setIsSubmitting(true);
     const registrationData = {
-      ...formData,
+      teamName: formData.teamName,
+      captainName: formData.captainName,
+      contactEmail: formData.contactEmail,
+      contactPhone: formData.contactPhone,
       tournamentId: id,
       tournamentName: tournament.name,
       userId: user.uid,
       createdAt: serverTimestamp()
     };
 
-    try {
-      // 1. Ajouter l'inscription
-      await addDoc(collection(db, "registrations"), registrationData);
-      
-      // 2. Incrémenter le compteur du tournoi
-      if (tournamentRef) {
-        await updateDoc(tournamentRef, {
-          teamsRegistered: increment(1)
+    addDoc(collection(db, "registrations"), registrationData)
+      .then(async () => {
+        if (tournamentRef) {
+          await updateDoc(tournamentRef, {
+            teamsRegistered: increment(1)
+          });
+        }
+        toast({
+          title: "Inscription réussie !",
+          description: `L'équipe ${formData.teamName} est officiellement inscrite.`,
         });
-      }
-
-      toast({
-        title: "Inscription réussie !",
-        description: `L'équipe ${formData.teamName} est officiellement inscrite.`,
-      });
-      router.push("/tournaments");
-    } catch (err) {
-      errorEmitter.emit('permission-error', new FirestorePermissionError({
-        path: '/registrations',
-        operation: 'create',
-        requestResourceData: registrationData
-      }));
-    } finally {
-      setIsSubmitting(false);
-    }
+        router.push("/tournaments");
+      })
+      .catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: '/registrations',
+          operation: 'create',
+          requestResourceData: registrationData
+        }));
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   if (loadingTournament) {
@@ -101,9 +100,9 @@ export default function TournamentDetailPage() {
   if (!tournament) {
     return (
       <div className="container mx-auto px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold">Tournoi non trouvé</h1>
+        <h1 className="text-2xl font-bold uppercase">Tournoi introuvable</h1>
         <Link href="/tournaments">
-          <Button variant="link">Retourner aux tournois</Button>
+          <Button variant="link" className="mt-4">Retourner à la liste</Button>
         </Link>
       </div>
     );
@@ -112,20 +111,19 @@ export default function TournamentDetailPage() {
   return (
     <div className="container mx-auto px-4 py-12 space-y-8">
       <Link href="/tournaments">
-        <Button variant="ghost" className="gap-2 mb-4">
-          <ArrowLeft className="w-4 h-4" /> Retour
+        <Button variant="ghost" className="gap-2 mb-4 group font-bold uppercase text-xs">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Retour aux tournois
         </Button>
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Infos Tournoi */}
         <div className="lg:col-span-2 space-y-8">
           <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-white/10">
             <img src={tournament.imageUrl} alt={tournament.name} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8 space-y-2">
-              <Badge className="bg-primary glow-blue uppercase">{tournament.sport}</Badge>
-              <h1 className="text-4xl md:text-5xl font-headline font-bold text-white uppercase tracking-tighter">
+              <Badge className="bg-primary glow-blue uppercase font-bold">{tournament.sport}</Badge>
+              <h1 className="text-4xl md:text-6xl font-headline font-bold text-white uppercase tracking-tighter">
                 {tournament.name}
               </h1>
             </div>
@@ -149,87 +147,96 @@ export default function TournamentDetailPage() {
             </Card>
             <Card className="bg-card border-white/5 p-4 text-center space-y-1">
               <Users className="w-5 h-5 mx-auto text-primary" />
-              <p className="text-[10px] font-bold uppercase text-muted-foreground">Places</p>
+              <p className="text-[10px] font-bold uppercase text-muted-foreground">Inscriptions</p>
               <p className="font-bold text-sm">{tournament.teamsRegistered || 0} / {tournament.teamsMax || 16}</p>
             </Card>
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-2xl font-headline font-bold uppercase tracking-tight">À propos de cet événement</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2 className="text-2xl font-headline font-bold uppercase tracking-tight">Détails de l'événement</h2>
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
               {tournament.description || "Rejoignez l'élite du sport pour une compétition acharnée. Un tournoi organisé par OneCup pour mettre en lumière les meilleurs talents de la région."}
             </p>
           </div>
         </div>
 
-        {/* Formulaire Inscription */}
         <div className="space-y-6">
-          <Card className="sticky top-24 border-primary/20 shadow-xl overflow-hidden">
+          <Card className={cn("sticky top-24 border-primary/20 shadow-xl overflow-hidden", isFull && "opacity-80")}>
             <CardHeader className="bg-primary/5 border-b border-primary/10">
-              <CardTitle className="text-lg uppercase font-headline">Inscription de l'équipe</CardTitle>
+              <CardTitle className="text-lg uppercase font-headline">Rejoindre la compétition</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               {isFull ? (
                 <div className="text-center space-y-4 py-8">
-                  <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
-                  <p className="font-bold uppercase text-destructive">Tournoi Complet</p>
-                  <p className="text-xs text-muted-foreground">Toutes les places ont été réservées. Restez connectés pour les prochaines éditions.</p>
+                  <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+                    <AlertCircle className="w-8 h-8 text-destructive" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-bold uppercase text-destructive">Inscriptions Closes</p>
+                    <p className="text-xs text-muted-foreground">Ce tournoi a atteint sa capacité maximale de {tournament.teamsMax} équipes.</p>
+                  </div>
                 </div>
               ) : !user ? (
-                <div className="text-center space-y-4 py-8">
-                  <p className="text-sm text-muted-foreground">Vous devez être connecté pour inscrire votre équipe.</p>
-                  <Button onClick={handleLogin} className="w-full bg-primary glow-blue uppercase font-bold">
-                    Se connecter avec Google
+                <div className="text-center space-y-6 py-8">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Connectez-vous pour accéder au formulaire d'inscription et enregistrer votre équipe.
+                  </p>
+                  <Button onClick={handleLogin} className="w-full bg-primary glow-blue h-12 uppercase font-bold gap-2">
+                    <LogIn className="w-4 h-4" /> Se connecter avec Google
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold">Nom de l'équipe</Label>
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Nom de l'équipe</Label>
                     <Input 
                       required 
                       placeholder="ex: Kinshasa Warriors" 
                       value={formData.teamName}
                       onChange={e => setFormData({...formData, teamName: e.target.value})}
+                      className="h-12 bg-muted/30 border-none focus-visible:ring-1"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold">Nom du Capitaine</Label>
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Nom du Capitaine</Label>
                     <Input 
                       required 
                       placeholder="Nom complet" 
                       value={formData.captainName}
                       onChange={e => setFormData({...formData, captainName: e.target.value})}
+                      className="h-12 bg-muted/30 border-none focus-visible:ring-1"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold">Email de contact</Label>
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Email de contact</Label>
                     <Input 
                       required 
                       type="email" 
                       placeholder="capitaine@exemple.com" 
                       value={formData.contactEmail}
                       onChange={e => setFormData({...formData, contactEmail: e.target.value})}
+                      className="h-12 bg-muted/30 border-none focus-visible:ring-1"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold">Téléphone</Label>
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Téléphone</Label>
                     <Input 
                       required 
                       placeholder="+243 ..." 
                       value={formData.contactPhone}
                       onChange={e => setFormData({...formData, contactPhone: e.target.value})}
+                      className="h-12 bg-muted/30 border-none focus-visible:ring-1"
                     />
                   </div>
                   <Button 
                     type="submit" 
                     disabled={isSubmitting} 
-                    className="w-full bg-primary glow-blue h-12 uppercase font-bold mt-4"
+                    className="w-full bg-primary glow-blue h-14 uppercase font-bold mt-4 text-white"
                   >
-                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirmer l'inscription"}
+                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Valider l'inscription"}
                   </Button>
-                  <p className="text-[10px] text-center text-muted-foreground mt-2">
-                    En cliquant, vous acceptez le règlement du tournoi OneCup Elite.
+                  <p className="text-[9px] text-center text-muted-foreground leading-tight px-2">
+                    En validant, vous confirmez avoir lu le règlement de OneCup Elite et vous engagez à respecter le calendrier.
                   </p>
                 </form>
               )}
@@ -238,17 +245,21 @@ export default function TournamentDetailPage() {
 
           <Card className="bg-muted/30 border-none p-6 space-y-4">
             <h4 className="text-xs font-bold uppercase text-primary flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4" /> Pourquoi s'inscrire ?
+              <CheckCircle2 className="w-4 h-4" /> AVANTAGES ÉLITE
             </h4>
-            <ul className="text-xs space-y-2 text-muted-foreground">
-              <li>• Visibilité internationale pour vos joueurs</li>
-              <li>• Encadrement professionnel par OneCup</li>
-              <li>• Accès aux statistiques live des matchs</li>
-              <li>• Chance de remporter une partie de la cagnotte</li>
+            <ul className="text-[11px] space-y-3 text-muted-foreground">
+              <li className="flex gap-2"><span>•</span> Diffusion en direct des matchs sur nos réseaux</li>
+              <li className="flex gap-2"><span>•</span> Statistiques professionnelles pour chaque joueur</li>
+              <li className="flex gap-2"><span>•</span> Dotations sponsors et accès VIP aux événements</li>
+              <li className="flex gap-2"><span>•</span> Système de classement national OneCup</li>
             </ul>
           </Card>
         </div>
       </div>
     </div>
   );
+}
+
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(' ');
 }

@@ -1,5 +1,8 @@
+
 'use client';
 
+// Cette configuration sera automatiquement remplie par les variables d'environnement 
+// de votre projet Firebase Studio une fois le projet provisionné.
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "placeholder-key",
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "placeholder-auth",

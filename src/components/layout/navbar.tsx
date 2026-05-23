@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Calendar, Users, Newspaper, Ticket, PartyPopper, LayoutDashboard, Menu, X, LogIn, LogOut, User, ShieldCheck } from "lucide-react";
+import { Trophy, Calendar, Users, Newspaper, Ticket, PartyPopper, LayoutDashboard, Menu, X, LogIn, LogOut, ShieldCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -51,9 +51,9 @@ export function Navbar() {
     } catch (error: any) {
       console.error("Auth error:", error);
       if (error.code === 'auth/popup-blocked') {
-        toast({ variant: "destructive", title: "Popup Bloqué", description: "Veuillez autoriser les fenêtres surgissantes pour vous connecter." });
+        toast({ variant: "destructive", title: "Action Recommandée", description: "Veuillez autoriser les popups pour vous connecter." });
       } else {
-        toast({ variant: "destructive", title: "Erreur", description: "La connexion a échoué. Veuillez réessayer." });
+        toast({ variant: "destructive", title: "Échec de connexion", description: "Impossible de s'authentifier." });
       }
     }
   };
@@ -62,9 +62,9 @@ export function Navbar() {
     if (!auth) return;
     try {
       await signOut(auth);
-      toast({ title: "Déconnexion", description: "À bientôt sur OneCup Elite." });
+      toast({ title: "Déconnexion", description: "À bientôt !" });
     } catch (error) {
-      toast({ variant: "destructive", title: "Erreur", description: "Déconnexion impossible." });
+      toast({ variant: "destructive", title: "Erreur", description: "Impossible de se déconnecter." });
     }
   };
 
@@ -103,52 +103,52 @@ export function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          {!loading && (
-            user ? (
-              <div className="flex items-center gap-3">
-                {isAdmin && (
-                  <Link href="/admin">
-                    <Button variant="outline" className="gap-2 h-9 text-xs font-bold uppercase border-primary/30 text-primary hover:bg-primary/5">
-                      <ShieldCheck className="w-4 h-4" />
-                      Admin
-                    </Button>
-                  </Link>
-                )}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 overflow-hidden ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
-                      <Avatar className="h-full w-full">
-                        <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
-                        <AvatarFallback className="bg-primary/10 text-primary">{user.displayName?.[0] || "U"}</AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64 p-2">
-                    <div className="flex flex-col space-y-1 p-2 mb-2">
-                      <p className="text-sm font-bold leading-none">{user.displayName}</p>
-                      <p className="text-[10px] leading-none text-muted-foreground truncate">{user.email}</p>
-                    </div>
-                    <DropdownMenuSeparator />
-                    {isAdmin && (
-                      <DropdownMenuItem asChild className="cursor-pointer">
-                        <Link href="/admin" className="flex items-center gap-2">
-                          <LayoutDashboard className="h-4 w-4" />
-                          <span>Tableau de bord Admin</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive cursor-pointer">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Se déconnecter</span>
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+          ) : user ? (
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <Link href="/admin">
+                  <Button variant="outline" className="gap-2 h-9 text-xs font-bold uppercase border-primary/30 text-primary hover:bg-primary/5">
+                    <ShieldCheck className="w-4 h-4" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 overflow-hidden ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
+                    <Avatar className="h-full w-full">
+                      <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
+                      <AvatarFallback className="bg-primary/10 text-primary font-bold">{user.displayName?.[0] || "U"}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64 p-2">
+                  <div className="flex flex-col space-y-1 p-2 mb-2">
+                    <p className="text-sm font-bold leading-none">{user.displayName}</p>
+                    <p className="text-[10px] leading-none text-muted-foreground truncate">{user.email}</p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link href="/admin" className="flex items-center gap-2">
+                        <LayoutDashboard className="h-4 w-4" />
+                        <span>Tableau de bord Admin</span>
+                      </Link>
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ) : (
-              <Button onClick={handleLogin} className="bg-primary hover:bg-primary/90 glow-blue h-9 text-xs font-bold uppercase px-6">
-                Se connecter
-              </Button>
-            )
+                  )}
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Se déconnecter</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <Button onClick={handleLogin} className="bg-primary hover:bg-primary/90 glow-blue h-9 text-xs font-bold uppercase px-6">
+              Connexion
+            </Button>
           )}
         </div>
 
@@ -168,18 +168,20 @@ export function Navbar() {
         isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0 pointer-events-none"
       )}>
         <div className="flex flex-col p-4 gap-2 bg-card/50 max-h-[calc(100vh-4rem)] overflow-y-auto">
-          {user && (
+          {loading ? (
+            <div className="flex justify-center p-4"><Loader2 className="w-6 h-6 animate-spin" /></div>
+          ) : user ? (
             <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl mb-2">
                <Avatar className="h-10 w-10 border border-primary/20">
                 <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
-                <AvatarFallback>{user.displayName?.[0] || "U"}</AvatarFallback>
+                <AvatarFallback className="font-bold">{user.displayName?.[0] || "U"}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
                 <p className="text-sm font-bold uppercase">{user.displayName}</p>
                 <p className="text-[10px] text-muted-foreground">{user.email}</p>
               </div>
             </div>
-          )}
+          ) : null}
 
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
