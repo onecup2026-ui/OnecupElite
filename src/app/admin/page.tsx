@@ -240,7 +240,7 @@ export default function AdminDashboard() {
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full h-24 border-dashed rounded-2xl gap-3 text-xs uppercase font-bold">
                       <Upload className="w-6 h-6 text-primary" /> Sélectionner l'image
                     </Button>
-                    {tournamentForm.imageUrl && <img src={tournamentForm.imageUrl} className="w-full aspect-video object-cover rounded-2xl border shadow-lg" />}
+                    {tournamentForm.imageUrl && <img src={tournamentForm.imageUrl} className="w-full aspect-video object-cover rounded-2xl border shadow-lg" alt="Preview" />}
                   </div>
                   <div className="space-y-4">
                     <Label className="text-[10px] font-bold uppercase">Lien Vidéo Teaser (YT)</Label>

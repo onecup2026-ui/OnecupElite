@@ -6,10 +6,11 @@ Une plateforme événementielle dynamique et premium pour la gestion des tournoi
 ## 🚀 Caractéristiques principales
 
 - **Architecture 100% Dynamique** : Tout le contenu (tournois, matchs, sponsors, statistiques) est piloté via un panneau d'administration sécurisé.
-- **Gestion des Inscriptions** : Système d'inscription ultra-rapide pour les capitaines avec contact WhatsApp direct depuis l'administration.
+- **Gestion des Inscriptions** : Système d'inscription ultra-rapide pour les capitaines avec nom d'équipe et validation du règlement.
+- **Bouton WhatsApp Direct** : Contactez les capitaines directement depuis l'administration.
 - **Suivi des Scores en Live** : Mise à jour en temps réel des résultats.
 - **Cagnotte Progressive (Prize Pool)** : Visualisation dynamique de l'objectif financier.
-- **Assistant IA** : Chatbot intelligent pour répondre aux questions des participants.
+- **Partage Dynamique** : Partagez les tournois et l'agenda via l'API native (WhatsApp, etc.).
 
 ## 📦 Comment envoyer ce projet sur GitHub ?
 
@@ -31,9 +32,9 @@ Pour sauvegarder votre projet sur votre compte GitHub, suivez ces étapes dans v
    ```
 
 4. **Liez à votre dépôt GitHub distant** :
-   *(Créez un dépôt vide sur GitHub et copiez son URL)*
+   *(Remplacez VOTRE_DEPOT par le nom de votre dépôt)*
    ```bash
-   git remote add origin https://github.com/VOTRE_UTILISATEUR/VOTRE_DEPOT.git
+   git remote add origin https://github.com/christianrwemera7-max/VOTRE_DEPOT.git
    ```
 
 5. **Poussez votre code** :

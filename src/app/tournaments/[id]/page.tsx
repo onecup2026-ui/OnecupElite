@@ -68,7 +68,7 @@ export default function TournamentDetailPage() {
     }
 
     if (!formData.teamName.trim() || !formData.contactPhone || !agreedToRules) {
-      toast({ variant: "destructive", title: "Formulaire incomplet", description: "Veuillez remplir tous les champs obligatoires." });
+      toast({ variant: "destructive", title: "Formulaire incomplet", description: "Veuillez remplir tous les champs obligatoires et accepter le règlement." });
       return;
     }
 
@@ -134,6 +134,7 @@ export default function TournamentDetailPage() {
             fill 
             className="object-cover opacity-70"
             priority
+            data-ai-hint="stadium grass"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         </div>
@@ -223,6 +224,7 @@ export default function TournamentDetailPage() {
                       fill 
                       alt="Teaser Preview" 
                       className="object-cover opacity-60 group-hover:scale-110 transition-transform duration-[1.5s]" 
+                      data-ai-hint="stadium crowd"
                     />
                     <div className="relative z-20 flex flex-col items-center gap-6">
                       <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center glow-blue shadow-2xl">
@@ -255,7 +257,7 @@ export default function TournamentDetailPage() {
                   ) : (
                     <form onSubmit={handleLoginAndSubmit} className="space-y-6">
                       <div className="space-y-2">
-                        <Label className="text-[10px] uppercase font-black text-primary tracking-widest">Nom de l'équipe (ou école)</Label>
+                        <Label className="text-[10px] uppercase font-black text-primary tracking-widest">Nom de l'équipe</Label>
                         <Input required placeholder="Ex: AS Elite Kinshasa" className="h-14 rounded-2xl bg-background/50 border-primary/20 font-bold" value={formData.teamName} onChange={e => setFormData({...formData, teamName: e.target.value})} />
                       </div>
                       <div className="space-y-2">
