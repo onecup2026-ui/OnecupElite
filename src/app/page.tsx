@@ -95,30 +95,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-16 md:py-24 bg-white">
+      {/* Features Grid - COMPACT VERSION */}
+      <section className="py-12 md:py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-            <div className="space-y-4 md:space-y-6 group">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-[#0051a3]/10 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Target className="w-6 h-6 md:w-8 md:h-8 text-[#0051a3] group-hover:text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            <div className="space-y-3 md:space-y-4 group">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-[#0051a3]/10 rounded-xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Target className="w-5 h-5 md:w-6 md:h-6 text-[#0051a3] group-hover:text-white" />
               </div>
-              <h3 className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">100%<br/><span className="text-[#0051a3]">ÉQUITÉ</span></h3>
-              <p className="text-muted-foreground font-medium text-base md:text-lg">Un règlement strict pour garantir la justice sportive à chaque match.</p>
+              <h3 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tighter leading-tight">100%<br/><span className="text-[#0051a3]">ÉQUITÉ</span></h3>
+              <p className="text-muted-foreground font-medium text-sm md:text-base leading-relaxed">Un règlement strict pour garantir la justice sportive à chaque match.</p>
             </div>
-            <div className="space-y-4 md:space-y-6 group">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-[#0051a3]/10 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Zap className="w-6 h-6 md:w-8 md:h-8 text-[#0051a3] group-hover:text-white" />
+            <div className="space-y-3 md:space-y-4 group">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-[#0051a3]/10 rounded-xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Zap className="w-5 h-5 md:w-6 md:h-6 text-[#0051a3] group-hover:text-white" />
               </div>
-              <h3 className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">LIVE<br/><span className="text-[#0051a3]">DATA</span></h3>
-              <p className="text-muted-foreground font-medium text-base md:text-lg">Suivez les statistiques et les scores en temps réel sur tous vos écrans.</p>
+              <h3 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tighter leading-tight">LIVE<br/><span className="text-[#0051a3]">DATA</span></h3>
+              <p className="text-muted-foreground font-medium text-sm md:text-base leading-relaxed">Suivez les statistiques et les scores en temps réel sur tous vos écrans.</p>
             </div>
-            <div className="space-y-4 md:space-y-6 group">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-[#0051a3]/10 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Star className="w-6 h-6 md:w-8 md:h-8 text-[#0051a3] group-hover:text-white" />
+            <div className="space-y-3 md:space-y-4 group">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-[#0051a3]/10 rounded-xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Star className="w-5 h-5 md:w-6 md:h-6 text-[#0051a3] group-hover:text-white" />
               </div>
-              <h3 className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">GLOBAL<br/><span className="text-[#0051a3]">REACH</span></h3>
-              <p className="text-muted-foreground font-medium text-base md:text-lg">Une visibilité média sans précédent pour les talents émergents.</p>
+              <h3 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tighter leading-tight">GLOBAL<br/><span className="text-[#0051a3]">REACH</span></h3>
+              <p className="text-muted-foreground font-medium text-sm md:text-base leading-relaxed">Une visibilité média sans précédent pour les talents émergents.</p>
             </div>
           </div>
         </div>
