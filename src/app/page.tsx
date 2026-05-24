@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
 import { useDoc, useFirestore, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 
@@ -147,6 +147,10 @@ export default function Home() {
 
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
         <DialogContent className="max-w-5xl p-0 overflow-hidden bg-black border-none">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Teaser Vidéo OneCup 2026</DialogTitle>
+            <DialogDescription>Vidéo de présentation de l'événement.</DialogDescription>
+          </DialogHeader>
           <div className="aspect-video w-full">
             <iframe
               src={heroVideoUrl ? `https://www.youtube.com/embed/${heroVideoUrl.split('v=')[1] || heroVideoUrl.split('/').pop()}?autoplay=1` : ""}

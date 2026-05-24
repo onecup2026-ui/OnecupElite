@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export default function TournamentDetailPage() {
   const { id } = useParams();
@@ -305,6 +305,10 @@ export default function TournamentDetailPage() {
 
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
         <DialogContent className="max-w-6xl p-0 overflow-hidden bg-black border-none ring-0">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Teaser - {tournament.name}</DialogTitle>
+            <DialogDescription>Vidéo de présentation du tournoi.</DialogDescription>
+          </DialogHeader>
           <div className="aspect-video w-full">
             {tournament.teaserVideoUrl && (
               <iframe
