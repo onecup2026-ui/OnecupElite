@@ -23,7 +23,7 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -54,22 +54,22 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
   }
 }
 
 @layer components {
-  .section-container {
-    @apply container mx-auto px-4 py-16 md:py-24;
+  .glow-blue {
+    @apply shadow-[0_0_20px_rgba(37,99,235,0.3)];
   }
   
-  .simple-card {
-    @apply bg-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow;
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
   }
+}
 
-  .btn-primary {
-    @apply bg-primary text-primary-foreground font-semibold h-11 px-8 rounded-lg transition-all hover:opacity-90 active:scale-[0.98];
-  }
+.font-headline {
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 @keyframes marquee {
