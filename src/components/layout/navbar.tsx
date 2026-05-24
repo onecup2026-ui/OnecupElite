@@ -46,13 +46,13 @@ export function Navbar() {
     <nav className="sticky top-0 z-[100] w-full bg-[#0051a3] text-white">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="font-headline font-black text-2xl md:text-3xl tracking-tighter uppercase leading-none">
+          <span className="font-headline font-black text-3xl md:text-4xl tracking-tighter uppercase leading-none">
             ONE CUP
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-2">
+        {/* Desktop Nav Items (Centered or hidden depending on FIFA look) */}
+        <div className="hidden xl:flex items-center gap-2">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
               <Button
@@ -68,7 +68,8 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Right Icons (Search, User, Menu) */}
+        <div className="flex items-center gap-2 md:gap-6">
           <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-10 h-10">
             <Search className="w-5 h-5" />
           </Button>
@@ -80,12 +81,12 @@ export function Navbar() {
             </Avatar>
           ) : (
             <Button variant="ghost" size="icon" onClick={handleLogin} className="text-white hover:bg-white/10 rounded-full w-10 h-10">
-              <User className="w-5 h-5" />
+              <User className="w-6 h-6" />
             </Button>
           )}
           
           <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-10 h-10" onClick={() => setIsOpen(true)}>
-            <Menu className="w-6 h-6" />
+            <Menu className="w-7 h-7" />
           </Button>
         </div>
       </div>
@@ -95,7 +96,7 @@ export function Navbar() {
         <div className="fixed inset-0 z-[200] bg-[#0051a3] text-white overflow-y-auto animate-in fade-in duration-300">
           <div className="container mx-auto px-6 py-6 flex flex-col min-h-screen">
             <div className="flex items-center justify-between mb-12">
-              <span className="font-headline font-black text-2xl uppercase">MENU</span>
+              <span className="font-headline font-black text-2xl uppercase tracking-tighter">MENU</span>
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full" onClick={() => setIsOpen(false)}>
                 <X className="w-8 h-8" />
               </Button>
