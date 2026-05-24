@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
@@ -132,49 +133,51 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Rewards & Prize Summary */}
-      <section className="pt-32 pb-20 bg-white">
+      {/* REWARDS POSTER - COMPACT & PRESTIGIOUS */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-             <div className="space-y-8">
-                <Badge variant="outline" className="border-primary text-primary px-4 py-1 text-[10px] font-black uppercase tracking-[0.4em]">ENJEUX FINAUX</Badge>
+          <Link href="/rewards" className="block group">
+            <div className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl transition-all group-hover:shadow-primary/20 group-hover:-translate-y-1">
+              {/* Background Decorative Trophy */}
+              <Trophy className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] text-white/5 -rotate-12 pointer-events-none" />
+              
+              <div className="relative z-10 space-y-8 text-center md:text-left">
+                <Badge className="bg-primary text-white border-none px-6 py-1.5 rounded-full font-black text-[10px] uppercase tracking-[0.4em] shadow-lg">
+                  Cagnotte Elite 2026
+                </Badge>
+                
                 <div className="space-y-2">
-                  <h2 className="text-5xl md:text-8xl font-headline font-black text-slate-900 leading-none tracking-tighter uppercase">
-                    LA GRANDE <br/><span className="text-primary">CAGNOTTE.</span>
+                  <h2 className="text-4xl md:text-7xl font-headline font-black text-white leading-none tracking-tighter uppercase">
+                    UN MILLION <span className="text-primary">DE FRANCS.</span>
                   </h2>
-                  <p className="text-2xl md:text-4xl font-headline font-bold text-slate-400 uppercase tracking-tight">
-                    UN MILLION DE FRANCS CONGOLAIS
+                  <p className="text-xs md:text-lg text-white/40 font-black uppercase tracking-[0.3em] leading-relaxed">
+                    POUR LE CHAMPION DE L'ÉDITION ÉLITE
                   </p>
                 </div>
-                <div className="flex gap-12 pt-4">
-                   <div className="space-y-1">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Inscriptions</p>
-                      <p className="text-3xl font-black text-slate-900">{stats.teams} <span className="text-sm opacity-40">Equipes</span></p>
-                   </div>
-                   <div className="space-y-1">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prestige</p>
-                      <p className="text-3xl font-black text-slate-900">100% <span className="text-sm opacity-40">Elite</span></p>
-                   </div>
-                </div>
-             </div>
 
-             <div className="relative group cursor-pointer" onClick={() => window.location.href='/rewards'}>
-                <div className="absolute -inset-4 bg-primary/5 rounded-[3rem] blur-2xl group-hover:bg-primary/10 transition-all" />
-                <Card className="relative bg-slate-900 text-white rounded-[3rem] p-12 border-none shadow-2xl overflow-hidden">
-                   <Trophy className="absolute top-10 right-10 w-32 h-32 text-white/5 -rotate-12" />
-                   <div className="space-y-6 relative z-10">
-                      <Badge className="bg-primary text-white font-black px-4 py-1 rounded-lg uppercase">LIVE PRIZE</Badge>
-                      <p className="text-7xl md:text-8xl font-headline font-black tracking-tighter leading-none">
-                        1<span className="text-primary">M</span>
-                      </p>
-                      <p className="text-sm font-black uppercase tracking-[0.3em] text-white/60">Francs Congolais pour le Champion</p>
-                      <Button className="bg-white text-slate-900 hover:bg-slate-100 rounded-2xl h-14 px-8 font-black uppercase text-xs tracking-widest gap-2">
-                         Détails des Gains <TrendingUp className="w-4 h-4" />
-                      </Button>
-                   </div>
-                </Card>
-             </div>
-          </div>
+                <div className="flex flex-wrap justify-center md:justify-start gap-4 md:gap-8">
+                  <div className="space-y-1 border-l-2 border-primary pl-4">
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Inscriptions</p>
+                    <p className="text-2xl font-black text-white">{stats.teams} <span className="text-[10px] opacity-40">ÉQUIPES</span></p>
+                  </div>
+                  <div className="space-y-1 border-l-2 border-primary pl-4">
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Standard</p>
+                    <p className="text-2xl font-black text-white">100% <span className="text-[10px] opacity-40">ELITE</span></p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative z-10 flex flex-col items-center justify-center space-y-6 shrink-0 md:pl-10">
+                <div className="flex items-start text-white">
+                   <span className="text-8xl md:text-[11rem] font-headline font-black leading-none tracking-tighter animate-fifa-in">1</span>
+                   <span className="text-primary text-5xl md:text-7xl font-headline font-black leading-none mt-2 md:mt-4">M</span>
+                </div>
+                <Button size="lg" className="h-16 px-12 bg-white text-slate-900 hover:bg-primary hover:text-white rounded-2xl font-black uppercase text-xs tracking-[0.2em] gap-3 shadow-2xl transition-all">
+                  VOIR LES PRIX <TrendingUp className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 
