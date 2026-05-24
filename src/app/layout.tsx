@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/layout/navbar';
@@ -6,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { SupportChat } from '@/components/shared/chatbot';
 import { FirebaseClientProvider } from '@/firebase';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
+import { ThemeSync } from '@/components/shared/theme-sync';
 
 export const metadata: Metadata = {
   title: 'OneCup Elite | Gestion de Tournois et Événements',
@@ -26,6 +28,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col">
         <FirebaseClientProvider>
+          <ThemeSync />
           <FirebaseErrorListener />
           <Navbar />
           <main className="flex-grow">

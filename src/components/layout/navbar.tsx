@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Plus, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import { useAuth, useUser } from "@/firebase";
+import { useState, useEffect, useMemo } from "react";
+import { useAuth, useUser, useDoc, useFirestore } from "@/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { doc } from "firebase/firestore";
 
 const navItems = [
   { name: "TOURNOIS", href: "/tournaments" },
@@ -25,6 +26,10 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
   const auth = useAuth();
+  const db = useFirestore();
+
+  const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
+  const { data: siteConfig } = useDoc(configRef);
 
   useEffect(() => {
     if (isOpen) {
@@ -44,12 +49,16 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-[100] w-full bg-[#0051a3] text-white">
+    <nav className="sticky top-0 z-[100] w-full bg-primary text-white transition-colors duration-500">
       <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <span className="font-headline font-black text-2xl md:text-3xl tracking-tighter uppercase leading-none">
-            ONE CUP
-          </span>
+        <Link href="/" className="flex items-center gap-3 group">
+          {siteConfig?.logoUrl ? (
+            <img src={siteConfig.logoUrl} alt="Logo" className="h-8 md:h-10 w-auto object-contain" />
+          ) : (
+            <span className="font-headline font-black text-2xl md:text-3xl tracking-tighter uppercase leading-none">
+              ONE CUP
+            </span>
+          )}
         </Link>
 
         {/* Desktop Nav Items */}
@@ -86,15 +95,15 @@ export function Navbar() {
             </Button>
           )}
           
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-9 h-9" onClick={() => setIsOpen(true)}>
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-9 h-9 xl:hidden" onClick={() => setIsOpen(true)}>
             <Menu className="w-6 h-6" />
           </Button>
         </div>
       </div>
 
-      {/* Mobile Menu Overlay - Refined design */}
+      {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-[200] bg-[#0051a3]/80 backdrop-blur-2xl text-white overflow-y-auto animate-in fade-in duration-500">
+        <div className="fixed inset-0 z-[200] bg-primary/95 backdrop-blur-2xl text-white overflow-y-auto animate-in fade-in duration-500">
           <div className="container mx-auto px-6 py-6 flex flex-col min-h-screen">
             <div className="flex items-center justify-between mb-12">
               <span className="font-headline font-bold text-[10px] uppercase tracking-[0.5em] opacity-60">MENU</span>

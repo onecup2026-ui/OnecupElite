@@ -11,9 +11,9 @@
     --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71% 4%;
-    --primary: 211 100% 32%; /* Bleu FIFA Original */
+    --primary: 211 100% 32%; /* Bleu FIFA Original - Surchargé dynamiquement */
     --primary-foreground: 210 40% 98%;
-    --secondary: 224 71% 4%; /* Noir FIFA */
+    --secondary: 224 71% 4%; /* Noir FIFA - Surchargé dynamiquement */
     --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -23,7 +23,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 211 100% 32%;
+    --ring: var(--primary);
     --radius: 0.5rem;
   }
 }
@@ -31,6 +31,7 @@
 @layer base {
   * {
     @apply border-border;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   }
   body {
     @apply bg-white text-foreground font-sans antialiased overflow-x-hidden;
@@ -43,7 +44,7 @@
 }
 
 .glow-blue {
-  @apply shadow-[0_0_40px_rgba(0,81,163,0.3)];
+  box-shadow: 0 0 40px hsla(var(--primary), 0.3);
 }
 
 @keyframes slideUp {
@@ -55,14 +56,10 @@
   animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Fix for mobile responsiveness on small screens */
+/* Fix for mobile responsiveness */
 @media (max-width: 640px) {
   .container {
     padding-left: 1rem;
     padding-right: 1rem;
-  }
-  
-  h1 {
-    font-size: clamp(2rem, 8vw, 4rem) !important;
   }
 }
