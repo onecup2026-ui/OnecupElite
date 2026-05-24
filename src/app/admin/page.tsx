@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, Settings, Save, Edit2, MessageCircle, Users, Heart, Star, LayoutDashboard } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, Settings, Save, Edit2, MessageCircle, Users, LayoutDashboard, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,19 +9,27 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useCollection, useFirestore, useUser, useDoc } from "@/firebase";
+import { useCollection, useFirestore, useUser, useDoc, useStorage } from "@/firebase";
 import { doc, addDoc, deleteDoc, collection, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { signOut } from "firebase/auth";
+import { useAuth } from "@/firebase";
 
 const ADMIN_EMAIL = "onecup2026@gmail.com";
 
 export default function AdminDashboard() {
   const db = useFirestore();
+  const storage = useStorage();
+  const auth = useAuth();
   const { user, loading: userLoading } = useUser();
   const { toast } = useToast();
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const sponsorLogoRef = useRef<HTMLInputElement>(null);
+  const heroUploadRef = useRef<HTMLInputElement>(null);
+  const afterCupUploadRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
@@ -38,6 +45,7 @@ export default function AdminDashboard() {
 
   const [editingTournamentId, setEditingTournamentId] = useState<string | null>(null);
   const [editingSponsorId, setEditingSponsorId] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const initialTournamentState = {
     name: "", 
@@ -70,6 +78,8 @@ export default function AdminDashboard() {
   const [configForm, setConfigForm] = useState({
     heroTitle: "",
     heroSubtitle: "",
+    heroImageUrl: "",
+    afterCupImageUrl: "",
     currentPrizePool: 0,
     targetPrizePool: 0,
     statSchools: "",
@@ -82,6 +92,8 @@ export default function AdminDashboard() {
       setConfigForm({
         heroTitle: siteConfig.heroTitle || "DEVENEZ UNE LÉGENDE.\nLA GLOIRE VOUS APPELLE.",
         heroSubtitle: siteConfig.heroSubtitle || "ONECUP 2026 : L'événement unique où le talent rencontre l'excellence.",
+        heroImageUrl: siteConfig.heroImageUrl || "",
+        afterCupImageUrl: siteConfig.afterCupImageUrl || "",
         currentPrizePool: siteConfig.currentPrizePool || 0,
         targetPrizePool: siteConfig.targetPrizePool || 5000000,
         statSchools: siteConfig.statSchools || "32+",
@@ -90,6 +102,25 @@ export default function AdminDashboard() {
       });
     }
   }, [siteConfig]);
+
+  const handleStorageUpload = async (e: React.ChangeEvent<HTMLInputElement>, path: string, callback: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (!file || !storage) return;
+
+    setIsUploading(true);
+    try {
+      const storageRef = ref(storage, `design/${path}_${Date.now()}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(snapshot.ref);
+      callback(url);
+      toast({ title: "Image téléversée avec succès !" });
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Erreur lors du téléversement" });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'tournament' | 'sponsor') => {
     const file = e.target.files?.[0];
@@ -114,6 +145,13 @@ export default function AdminDashboard() {
       .then(() => toast({ title: "Configuration sauvegardée !" }))
       .catch(e => console.error(e))
       .finally(() => setIsSavingConfig(false));
+  };
+
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth);
+      toast({ title: "Déconnexion réussie" });
+    }
   };
 
   const handleSaveTournament = () => {
@@ -190,16 +228,27 @@ export default function AdminDashboard() {
   };
 
   if (userLoading) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-primary" /></div>;
-  if (!isAdmin) return <div className="p-20 text-center flex flex-col items-center gap-4"><ShieldCheck className="w-12 h-12 text-destructive" /><h2 className="text-2xl font-bold uppercase tracking-tighter">Accès Administrateur Requis</h2></div>;
+  
+  if (!isAdmin) return (
+    <div className="p-20 text-center flex flex-col items-center gap-6">
+      <ShieldCheck className="w-16 h-16 text-destructive" />
+      <h2 className="text-3xl font-bold uppercase tracking-tighter">Accès Administrateur Requis</h2>
+      <p className="text-muted-foreground">Vous n'avez pas les droits pour accéder à cette console.</p>
+      {user && <Button variant="destructive" onClick={handleLogout} className="rounded-full px-8">Changer de compte</Button>}
+    </div>
+  );
 
   return (
     <div className="container mx-auto px-4 py-12 space-y-12 bg-background min-h-screen">
       <header className="flex flex-col md:flex-row items-center justify-between gap-6 border-b pb-8">
         <div className="space-y-1 text-center md:text-left">
           <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">Console Admin ONECUP</h1>
-          <p className="text-muted-foreground text-sm font-medium">Gestion dynamique des tournois, inscriptions et sponsors.</p>
+          <p className="text-muted-foreground text-sm font-medium">Gestion dynamique du site, des tournois et des bannières.</p>
         </div>
-        <Badge className="bg-primary text-white px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs">Admin Connecté</Badge>
+        <div className="flex items-center gap-4">
+          <Badge className="bg-primary text-white px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs">Admin Connecté</Badge>
+          <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-full text-xs uppercase font-bold">Déconnexion</Button>
+        </div>
       </header>
 
       <Tabs defaultValue="tournaments" className="w-full">
@@ -207,7 +256,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="tournaments" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Tournois</TabsTrigger>
           <TabsTrigger value="registrations" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Inscriptions</TabsTrigger>
           <TabsTrigger value="sponsors" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Sponsors</TabsTrigger>
-          <TabsTrigger value="config" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"><Settings className="w-3 h-3" /> Config</TabsTrigger>
+          <TabsTrigger value="config" className="flex-1 uppercase font-bold text-[10px] py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"><Settings className="w-3 h-3" /> Config Design</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tournaments" className="space-y-10">
@@ -279,11 +328,92 @@ export default function AdminDashboard() {
           </div>
         </TabsContent>
 
+        <TabsContent value="config" className="space-y-10">
+          <Card className="border-primary/20 shadow-2xl rounded-[2.5rem] overflow-hidden">
+            <CardHeader className="bg-primary/5 border-b p-8">
+              <CardTitle className="text-2xl uppercase font-headline font-bold">Design & Configuration Globale</CardTitle>
+              <CardDescription>Personnalisez l'immersion visuelle du site (Bannières, Titres, Stats).</CardDescription>
+            </CardHeader>
+            <CardContent className="p-8 space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                {/* Image Accueil */}
+                <div className="space-y-4">
+                  <Label className="text-xs font-black uppercase tracking-widest text-primary">Bannière Accueil (Hero)</Label>
+                  <div 
+                    className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed border-primary/20 group cursor-pointer bg-muted"
+                    onClick={() => heroUploadRef.current?.click()}
+                  >
+                    {configForm.heroImageUrl ? (
+                      <img src={configForm.heroImageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform" alt="Hero" />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                        <ImageIcon className="w-10 h-10 text-muted-foreground" />
+                        <span className="text-[10px] font-bold uppercase text-muted-foreground">Aucune image sélectionnée</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Upload className="w-8 h-8 text-white" />
+                    </div>
+                    {isUploading && (
+                      <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                      </div>
+                    )}
+                  </div>
+                  <input type="file" ref={heroUploadRef} className="hidden" onChange={(e) => handleStorageUpload(e, 'hero', (url) => setConfigForm({...configForm, heroImageUrl: url}))} accept="image/*" />
+                  <p className="text-[10px] text-muted-foreground italic">Cliquez sur l'image pour changer le fond d'écran d'accueil.</p>
+                </div>
+
+                {/* Image After Cup */}
+                <div className="space-y-4">
+                  <Label className="text-xs font-black uppercase tracking-widest text-primary">Bannière After Cup</Label>
+                  <div 
+                    className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed border-primary/20 group cursor-pointer bg-muted"
+                    onClick={() => afterCupUploadRef.current?.click()}
+                  >
+                    {configForm.afterCupImageUrl ? (
+                      <img src={configForm.afterCupImageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform" alt="After Cup" />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                        <ImageIcon className="w-10 h-10 text-muted-foreground" />
+                        <span className="text-[10px] font-bold uppercase text-muted-foreground">Aucune image sélectionnée</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Upload className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <input type="file" ref={afterCupUploadRef} className="hidden" onChange={(e) => handleStorageUpload(e, 'aftercup', (url) => setConfigForm({...configForm, afterCupImageUrl: url}))} accept="image/*" />
+                  <p className="text-[10px] text-muted-foreground italic">Cliquez sur l'image pour changer le fond d'écran After Cup.</p>
+                </div>
+              </div>
+
+              <div className="space-y-8 pt-8 border-t">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Titre Hero</Label><Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-12 rounded-xl" /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Sous-titre Hero</Label><Textarea value={configForm.heroSubtitle} onChange={e => setConfigForm({...configForm, heroSubtitle: e.target.value})} className="rounded-xl min-h-[48px]" /></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t pt-8">
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Cagnotte Actuelle (FC)</Label><Input type="number" value={configForm.currentPrizePool} onChange={e => setConfigForm({...configForm, currentPrizePool: Number(e.target.value)})} className="h-12 rounded-xl" /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Objectif Cagnotte (FC)</Label><Input type="number" value={configForm.targetPrizePool} onChange={e => setConfigForm({...configForm, targetPrizePool: Number(e.target.value)})} className="h-12 rounded-xl" /></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t pt-8">
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Écoles</Label><Input value={configForm.statSchools} onChange={e => setConfigForm({...configForm, statSchools: e.target.value})} className="h-12 rounded-xl" /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Matchs</Label><Input value={configForm.statMatches} onChange={e => setConfigForm({...configForm, statMatches: e.target.value})} className="h-12 rounded-xl" /></div>
+                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Talents</Label><Input value={configForm.statTalents} onChange={e => setConfigForm({...configForm, statTalents: e.target.value})} className="h-12 rounded-xl" /></div>
+                </div>
+              </div>
+              <Button onClick={() => updateSiteConfig(configForm)} className="w-full h-16 uppercase font-black text-lg bg-primary rounded-2xl" disabled={isSavingConfig}>
+                {isSavingConfig ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-5 h-5 mr-3" /> } Sauvegarder la Configuration Élite
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="sponsors" className="space-y-10">
           <Card className="border-primary/20 shadow-2xl rounded-[2.5rem] overflow-hidden">
             <CardHeader className="bg-primary/5 border-b p-8">
               <CardTitle className="text-2xl uppercase font-headline font-bold">{editingSponsorId ? "Modifier" : "Ajouter"} un Sponsor</CardTitle>
-              <CardDescription>Les sponsors défileront sur l'accueil et s'afficheront sur la page dédiée.</CardDescription>
             </CardHeader>
             <CardContent className="p-8 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -345,35 +475,6 @@ export default function AdminDashboard() {
               </Card>
             ))}
           </div>
-        </TabsContent>
-
-        <TabsContent value="config" className="space-y-10">
-          <Card className="border-primary/20 shadow-2xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="bg-primary/5 border-b p-8">
-              <CardTitle className="text-2xl uppercase font-headline font-bold">Configuration du Site</CardTitle>
-              <CardDescription>Modifiez les titres, statistiques et visuels de la page d'accueil.</CardDescription>
-            </CardHeader>
-            <CardContent className="p-8 space-y-10">
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Titre Hero</Label><Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-12 rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Sous-titre Hero</Label><Textarea value={configForm.heroSubtitle} onChange={e => setConfigForm({...configForm, heroSubtitle: e.target.value})} className="rounded-xl min-h-[48px]" /></div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t pt-8">
-                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Cagnotte Actuelle (FC)</Label><Input type="number" value={configForm.currentPrizePool} onChange={e => setConfigForm({...configForm, currentPrizePool: Number(e.target.value)})} className="h-12 rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Objectif Cagnotte (FC)</Label><Input type="number" value={configForm.targetPrizePool} onChange={e => setConfigForm({...configForm, targetPrizePool: Number(e.target.value)})} className="h-12 rounded-xl" /></div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t pt-8">
-                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Écoles</Label><Input value={configForm.statSchools} onChange={e => setConfigForm({...configForm, statSchools: e.target.value})} className="h-12 rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Matchs</Label><Input value={configForm.statMatches} onChange={e => setConfigForm({...configForm, statMatches: e.target.value})} className="h-12 rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] font-bold uppercase">Stat: Talents</Label><Input value={configForm.statTalents} onChange={e => setConfigForm({...configForm, statTalents: e.target.value})} className="h-12 rounded-xl" /></div>
-                </div>
-              </div>
-              <Button onClick={() => updateSiteConfig(configForm)} className="w-full h-16 uppercase font-black text-lg bg-primary rounded-2xl" disabled={isSavingConfig}>
-                {isSavingConfig ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-5 h-5 mr-3" /> } Sauvegarder Config Globale
-              </Button>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

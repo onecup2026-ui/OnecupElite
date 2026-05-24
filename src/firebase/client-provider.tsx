@@ -6,12 +6,14 @@ import { FirebaseProvider } from './provider';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth } from 'firebase/auth';
+import { FirebaseStorage } from 'firebase/storage';
 
 export function FirebaseClientProvider({ children }: { children: React.ReactNode }) {
   const [services, setServices] = useState<{
     app: FirebaseApp;
     firestore: Firestore;
     auth: Auth;
+    storage: FirebaseStorage;
   } | null>(null);
 
   useEffect(() => {
@@ -26,6 +28,7 @@ export function FirebaseClientProvider({ children }: { children: React.ReactNode
       app={services.app}
       firestore={services.firestore}
       auth={services.auth}
+      storage={services.storage}
     >
       {children}
     </FirebaseProvider>
