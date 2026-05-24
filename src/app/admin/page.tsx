@@ -6,7 +6,7 @@ import {
   Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, 
   Settings, Save, Edit2, MessageCircle, ImageIcon, 
   Layout, Newspaper, Users, Info, Ticket as TicketIcon,
-  Search, Image as ImageLucide
+  Search, Image as ImageLucide, Clock
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,7 @@ export default function AdminDashboard() {
     carouselImages: ["", "", "", ""],
     afterCupImageUrl: "", 
     afterCupDescription: "Célébrez la victoire, assistez au sacre des champions.",
+    targetDate: "2026-07-15T00:00:00"
   });
 
   const [tournamentForm, setTournamentForm] = useState({
@@ -78,7 +79,8 @@ export default function AdminDashboard() {
         heroTitle: siteConfig.heroTitle || "",
         carouselImages: siteConfig.carouselImages || ["", "", "", ""],
         afterCupImageUrl: siteConfig.afterCupImageUrl || "",
-        afterCupDescription: siteConfig.afterCupDescription || ""
+        afterCupDescription: siteConfig.afterCupDescription || "",
+        targetDate: siteConfig.targetDate || "2026-07-15T00:00:00"
       });
     }
   }, [siteConfig]);
@@ -104,9 +106,9 @@ export default function AdminDashboard() {
     if (!db || !isAdmin) return;
     try {
       await setDoc(doc(db, "settings", "config"), configForm, { merge: true });
-      toast({ title: "Design mis à jour" });
+      toast({ title: "Paramètres mis à jour" });
     } catch (e) {
-      toast({ variant: "destructive", title: "Erreur" });
+      toast({ variant: "destructive", title: "Erreur lors de la sauvegarde" });
     }
   };
 
@@ -125,7 +127,7 @@ export default function AdminDashboard() {
       <div className="container mx-auto px-4 -mt-10">
         <Tabs defaultValue="design">
           <TabsList className="bg-white p-2 rounded-2xl mb-12 shadow-xl border overflow-x-auto h-auto">
-            <TabsTrigger value="design" className="px-8 py-3 font-black uppercase text-[10px]">Carousel & Design</TabsTrigger>
+            <TabsTrigger value="design" className="px-8 py-3 font-black uppercase text-[10px]">Design & Chrono</TabsTrigger>
             <TabsTrigger value="tournaments" className="px-8 py-3 font-black uppercase text-[10px]">Tournois</TabsTrigger>
             <TabsTrigger value="sponsors" className="px-8 py-3 font-black uppercase text-[10px]">Sponsors</TabsTrigger>
           </TabsList>
@@ -155,20 +157,39 @@ export default function AdminDashboard() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t pt-10">
-                <div className="space-y-4">
-                  <Label className="font-black uppercase text-xs">Titre Hero Principal</Label>
-                  <Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-14 rounded-xl" />
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <Label className="font-black uppercase text-xs">Titre Hero Principal</Label>
+                    <Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-14 rounded-xl" />
+                  </div>
+                  <div className="space-y-4">
+                    <Label className="font-black uppercase text-xs flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /> Date du Compte à Rebours (ISO)</Label>
+                    <Input 
+                      type="datetime-local" 
+                      value={configForm.targetDate.slice(0, 16)} 
+                      onChange={e => setConfigForm({...configForm, targetDate: e.target.value})} 
+                      className="h-14 rounded-xl" 
+                    />
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold italic">Le chrono de l'accueil se basera sur cette date.</p>
+                  </div>
                 </div>
+                
                 <div className="space-y-4">
                   <Label className="font-black uppercase text-xs">Bannière After Cup</Label>
                   <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-dashed bg-slate-50 cursor-pointer" onClick={() => afterCupUploadRef.current?.click()}>
                     {configForm.afterCupImageUrl ? <img src={configForm.afterCupImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-8 h-8 text-slate-200" /></div>}
                   </div>
                   <input type="file" ref={afterCupUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'design', (url) => setConfigForm({...configForm, afterCupImageUrl: url}))} />
+                  <Textarea 
+                    placeholder="Description courte After Cup (2 lignes)" 
+                    value={configForm.afterCupDescription} 
+                    onChange={e => setConfigForm({...configForm, afterCupDescription: e.target.value})}
+                    className="mt-4 rounded-xl h-24"
+                  />
                 </div>
               </div>
 
-              <Button onClick={handleSaveConfig} className="w-full h-20 rounded-3xl font-black uppercase text-xl bg-primary shadow-xl">Appliquer le Design</Button>
+              <Button onClick={handleSaveConfig} className="w-full h-20 rounded-3xl font-black uppercase text-xl bg-primary shadow-xl">Appliquer les changements</Button>
             </Card>
           </TabsContent>
 
@@ -187,9 +208,13 @@ export default function AdminDashboard() {
                   <Input placeholder="Nom du tournoi" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} className="h-14 rounded-xl" />
                   <Input placeholder="Stade" value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} className="h-14 rounded-xl" />
                   <Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} className="h-14 rounded-xl" />
+                  <Textarea placeholder="Description" value={tournamentForm.description} onChange={e => setTournamentForm({...tournamentForm, description: e.target.value})} className="rounded-xl h-24" />
                 </div>
               </div>
-              <Button onClick={() => addDoc(collection(db!, "tournaments"), {...tournamentForm, createdAt: serverTimestamp()}).then(() => setTournamentForm({name:"", gameType:"Football", startDate:"", locationStade:"", maxTeams:16, entryFee:0, description:"", imageUrl:"", teamsRegistered: 0}))} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Publier</Button>
+              <Button onClick={() => addDoc(collection(db!, "tournaments"), {...tournamentForm, createdAt: serverTimestamp()}).then(() => {
+                toast({ title: "Tournoi publié !" });
+                setTournamentForm({name:"", gameType:"Football", startDate:"", locationStade:"", maxTeams:16, entryFee:0, description:"", imageUrl:"", teamsRegistered: 0});
+              })} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Publier le tournoi</Button>
             </Card>
           </TabsContent>
 
@@ -201,7 +226,10 @@ export default function AdminDashboard() {
                 <Input placeholder="Logo URL" value={sponsorForm.logoUrl} onChange={e => setSponsorForm({...sponsorForm, logoUrl: e.target.value})} className="h-14 rounded-xl" />
                 <Input placeholder="Site Web" value={sponsorForm.websiteUrl} onChange={e => setSponsorForm({...sponsorForm, websiteUrl: e.target.value})} className="h-14 rounded-xl" />
               </div>
-              <Button onClick={() => addDoc(collection(db!, "sponsors"), {...sponsorForm, createdAt: serverTimestamp()}).then(() => setSponsorForm({name:"", logoUrl:"", websiteUrl:"", category:"Partenaire"}))} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Ajouter</Button>
+              <Button onClick={() => addDoc(collection(db!, "sponsors"), {...sponsorForm, createdAt: serverTimestamp()}).then(() => {
+                toast({ title: "Sponsor ajouté !" });
+                setSponsorForm({name:"", logoUrl:"", websiteUrl:"", category:"Partenaire"});
+              })} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Ajouter le sponsor</Button>
             </Card>
           </TabsContent>
         </Tabs>

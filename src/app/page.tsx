@@ -46,12 +46,13 @@ export default function Home() {
   const heroTitle = siteConfig?.heroTitle || "La Plus Grande Coupe du Monde de l'Histoire";
   const afterCupImage = siteConfig?.afterCupImageUrl || "https://picsum.photos/seed/after-cup-fest/1600/900";
   const afterCupDescription = siteConfig?.afterCupDescription || "Vibrez au rythme de l'Elite. Célébrez la victoire, assistez au sacre des champions.";
+  const targetDateStr = siteConfig?.targetDate || "2026-07-15T00:00:00";
 
   // Dynamic Countdown logic
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const targetDate = new Date('2026-07-15T00:00:00').getTime();
+    const targetDate = new Date(targetDateStr).getTime();
 
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
@@ -72,7 +73,7 @@ export default function Home() {
     calculateTimeLeft();
     const timer = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [targetDateStr]);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -129,7 +130,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* COMPACT FEATURES - ULTRA REDUIT */}
+      {/* COMPACT FEATURES */}
       <section className="pt-32 pb-8 bg-white border-b border-slate-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -164,7 +165,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TOURNOIS RECENTS - APPEL À L'ACTION */}
+      {/* TOURNOIS RECENTS */}
       <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4 space-y-12">
           <div className="flex items-end justify-between border-b pb-6">
@@ -228,7 +229,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SPONSORS MARQUEE - BAS DE PAGE */}
+      {/* SPONSORS MARQUEE */}
       <section className="bg-white py-20 border-y overflow-hidden">
         <div className="container mx-auto px-4 mb-12 text-center">
            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">NOS PARTENAIRES OFFICIELS</span>
