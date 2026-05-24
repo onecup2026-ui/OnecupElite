@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
@@ -43,19 +42,16 @@ export default function AdminDashboard() {
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
-  // Firestore Refs
   const tournamentsRef = useMemo(() => (db ? collection(db, "tournaments") : null), [db]);
   const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
 
-  // Data fetching
   const { data: tournaments } = useCollection(tournamentsRef);
   const { data: sponsors } = useCollection(sponsorsRef);
   const { data: siteConfig } = useDoc(configRef);
 
   const [isUploading, setIsUploading] = useState(false);
 
-  // Forms States
   const [configForm, setConfigForm] = useState({
     heroTitle: "", 
     carouselImages: ["", "", "", ""],
@@ -77,7 +73,7 @@ export default function AdminDashboard() {
     if (siteConfig) {
       setConfigForm({ 
         heroTitle: siteConfig.heroTitle || "",
-        carouselImages: siteConfig.carouselImages || ["", "", "", ""],
+        carouselImages: Array.isArray(siteConfig.carouselImages) ? siteConfig.carouselImages : ["", "", "", ""],
         afterCupImageUrl: siteConfig.afterCupImageUrl || "",
         afterCupDescription: siteConfig.afterCupDescription || "",
         targetDate: siteConfig.targetDate || "2026-07-15T00:00:00"
@@ -126,7 +122,7 @@ export default function AdminDashboard() {
 
       <div className="container mx-auto px-4 -mt-10">
         <Tabs defaultValue="design">
-          <TabsList className="bg-white p-2 rounded-2xl mb-12 shadow-xl border overflow-x-auto h-auto">
+          <TabsList className="bg-white p-2 rounded-2xl mb-12 shadow-xl border overflow-x-auto h-auto flex flex-nowrap">
             <TabsTrigger value="design" className="px-8 py-3 font-black uppercase text-[10px]">Design & Chrono</TabsTrigger>
             <TabsTrigger value="tournaments" className="px-8 py-3 font-black uppercase text-[10px]">Tournois</TabsTrigger>
             <TabsTrigger value="sponsors" className="px-8 py-3 font-black uppercase text-[10px]">Sponsors</TabsTrigger>
@@ -135,11 +131,11 @@ export default function AdminDashboard() {
           <TabsContent value="design">
             <Card className="rounded-[3rem] p-10 bg-white border-none shadow-xl space-y-12">
               <div className="space-y-6">
-                <h3 className="text-2xl font-headline font-black uppercase">Carousel Hero (4 Photos)</h3>
+                <h3 className="text-2xl font-headline font-black uppercase tracking-tight">Carousel Hero (4 Photos)</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {configForm.carouselImages.map((img, idx) => (
                     <div key={idx} className="space-y-4">
-                      <Label className="text-[10px] uppercase font-black text-slate-400">Photo {idx + 1}</Label>
+                      <Label className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Photo {idx + 1}</Label>
                       <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-50" onClick={() => carouselUploadRefs[idx].current?.click()}>
                         {img ? <img src={img} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageLucide className="w-8 h-8 text-slate-200" /></div>}
                         <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm">
@@ -159,77 +155,83 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t pt-10">
                 <div className="space-y-8">
                   <div className="space-y-4">
-                    <Label className="font-black uppercase text-xs">Titre Hero Principal</Label>
-                    <Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-14 rounded-xl" />
+                    <Label className="font-black uppercase text-xs tracking-widest">Titre Hero Principal</Label>
+                    <Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-14 rounded-xl border-slate-100" />
                   </div>
                   <div className="space-y-4">
-                    <Label className="font-black uppercase text-xs flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /> Date du Compte à Rebours (ISO)</Label>
+                    <Label className="font-black uppercase text-xs flex items-center gap-2 tracking-widest"><Clock className="w-4 h-4 text-primary" /> Date du Compte à Rebours (ISO)</Label>
                     <Input 
                       type="datetime-local" 
                       value={configForm.targetDate.slice(0, 16)} 
                       onChange={e => setConfigForm({...configForm, targetDate: e.target.value})} 
-                      className="h-14 rounded-xl" 
+                      className="h-14 rounded-xl border-slate-100" 
                     />
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold italic">Le chrono de l'accueil se basera sur cette date.</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold italic tracking-tighter">Le chrono de l'accueil se basera sur cette date.</p>
                   </div>
                 </div>
                 
                 <div className="space-y-4">
-                  <Label className="font-black uppercase text-xs">Bannière After Cup</Label>
+                  <Label className="font-black uppercase text-xs tracking-widest">Bannière After Cup</Label>
                   <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-dashed bg-slate-50 cursor-pointer" onClick={() => afterCupUploadRef.current?.click()}>
                     {configForm.afterCupImageUrl ? <img src={configForm.afterCupImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-8 h-8 text-slate-200" /></div>}
+                    <div className="absolute inset-0 bg-primary/40 opacity-0 hover:opacity-100 flex items-center justify-center transition-all">
+                       <Upload className="w-8 h-8 text-white" />
+                    </div>
                   </div>
                   <input type="file" ref={afterCupUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'design', (url) => setConfigForm({...configForm, afterCupImageUrl: url}))} />
                   <Textarea 
                     placeholder="Description courte After Cup (2 lignes)" 
                     value={configForm.afterCupDescription} 
                     onChange={e => setConfigForm({...configForm, afterCupDescription: e.target.value})}
-                    className="mt-4 rounded-xl h-24"
+                    className="mt-4 rounded-xl h-24 border-slate-100"
                   />
                 </div>
               </div>
 
-              <Button onClick={handleSaveConfig} className="w-full h-20 rounded-3xl font-black uppercase text-xl bg-primary shadow-xl">Appliquer les changements</Button>
+              <Button onClick={handleSaveConfig} className="w-full h-20 rounded-3xl font-black uppercase text-xl bg-primary shadow-xl glow-blue">Appliquer les changements</Button>
             </Card>
           </TabsContent>
 
           <TabsContent value="tournaments" className="space-y-8">
              <Card className="rounded-[3rem] p-10 bg-white border-none shadow-xl space-y-6">
-              <h3 className="text-2xl font-headline font-black uppercase">Nouveau Tournoi</h3>
+              <h3 className="text-2xl font-headline font-black uppercase tracking-tight">Nouveau Tournoi</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <Label className="font-black uppercase text-xs">Image Principale</Label>
+                  <Label className="font-black uppercase text-xs tracking-widest">Image Principale</Label>
                   <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-50" onClick={() => tournamentUploadRef.current?.click()}>
                     {tournamentForm.imageUrl ? <img src={tournamentForm.imageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center flex-col gap-2"><ImageIcon className="w-8 h-8 text-slate-200" /></div>}
+                    <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                      <Upload className="w-8 h-8 text-white" />
+                    </div>
                   </div>
                   <input type="file" ref={tournamentUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'tournaments', (url) => setTournamentForm(f => ({...f, imageUrl: url})))} />
                 </div>
                 <div className="space-y-4">
-                  <Input placeholder="Nom du tournoi" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} className="h-14 rounded-xl" />
-                  <Input placeholder="Stade" value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} className="h-14 rounded-xl" />
-                  <Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} className="h-14 rounded-xl" />
-                  <Textarea placeholder="Description" value={tournamentForm.description} onChange={e => setTournamentForm({...tournamentForm, description: e.target.value})} className="rounded-xl h-24" />
+                  <Input placeholder="Nom du tournoi" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} className="h-14 rounded-xl border-slate-100" />
+                  <Input placeholder="Stade" value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} className="h-14 rounded-xl border-slate-100" />
+                  <Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} className="h-14 rounded-xl border-slate-100" />
+                  <Textarea placeholder="Description" value={tournamentForm.description} onChange={e => setTournamentForm({...tournamentForm, description: e.target.value})} className="rounded-xl h-24 border-slate-100" />
                 </div>
               </div>
               <Button onClick={() => addDoc(collection(db!, "tournaments"), {...tournamentForm, createdAt: serverTimestamp()}).then(() => {
                 toast({ title: "Tournoi publié !" });
                 setTournamentForm({name:"", gameType:"Football", startDate:"", locationStade:"", maxTeams:16, entryFee:0, description:"", imageUrl:"", teamsRegistered: 0});
-              })} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Publier le tournoi</Button>
+              })} className="w-full h-16 rounded-2xl font-black uppercase bg-primary glow-blue">Publier le tournoi</Button>
             </Card>
           </TabsContent>
 
           <TabsContent value="sponsors" className="space-y-8">
             <Card className="rounded-[3rem] p-10 bg-white border-none shadow-xl space-y-6">
-              <h3 className="text-2xl font-headline font-black uppercase">Nouveau Sponsor</h3>
+              <h3 className="text-2xl font-headline font-black uppercase tracking-tight">Nouveau Sponsor</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Input placeholder="Nom" value={sponsorForm.name} onChange={e => setSponsorForm({...sponsorForm, name: e.target.value})} className="h-14 rounded-xl" />
-                <Input placeholder="Logo URL" value={sponsorForm.logoUrl} onChange={e => setSponsorForm({...sponsorForm, logoUrl: e.target.value})} className="h-14 rounded-xl" />
-                <Input placeholder="Site Web" value={sponsorForm.websiteUrl} onChange={e => setSponsorForm({...sponsorForm, websiteUrl: e.target.value})} className="h-14 rounded-xl" />
+                <Input placeholder="Nom" value={sponsorForm.name} onChange={e => setSponsorForm({...sponsorForm, name: e.target.value})} className="h-14 rounded-xl border-slate-100" />
+                <Input placeholder="Logo URL" value={sponsorForm.logoUrl} onChange={e => setSponsorForm({...sponsorForm, logoUrl: e.target.value})} className="h-14 rounded-xl border-slate-100" />
+                <Input placeholder="Site Web" value={sponsorForm.websiteUrl} onChange={e => setSponsorForm({...sponsorForm, websiteUrl: e.target.value})} className="h-14 rounded-xl border-slate-100" />
               </div>
               <Button onClick={() => addDoc(collection(db!, "sponsors"), {...sponsorForm, createdAt: serverTimestamp()}).then(() => {
                 toast({ title: "Sponsor ajouté !" });
                 setSponsorForm({name:"", logoUrl:"", websiteUrl:"", category:"Partenaire"});
-              })} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Ajouter le sponsor</Button>
+              })} className="w-full h-16 rounded-2xl font-black uppercase bg-primary glow-blue">Ajouter le sponsor</Button>
             </Card>
           </TabsContent>
         </Tabs>

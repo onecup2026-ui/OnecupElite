@@ -38,7 +38,8 @@ export default function Home() {
       "https://picsum.photos/seed/onecup-4/1920/1080"
     ];
     if (siteConfig?.carouselImages && Array.isArray(siteConfig.carouselImages)) {
-      return siteConfig.carouselImages.length >= 4 ? siteConfig.carouselImages : [...siteConfig.carouselImages, ...defaults.slice(siteConfig.carouselImages.length)];
+      const filtered = siteConfig.carouselImages.filter((img: string) => img !== "");
+      return filtered.length >= 4 ? filtered.slice(0, 4) : [...filtered, ...defaults.slice(filtered.length)];
     }
     return defaults;
   }, [siteConfig]);
@@ -48,22 +49,13 @@ export default function Home() {
   const afterCupDescription = siteConfig?.afterCupDescription || "Vibrez au rythme de l'Elite. Célébrez la victoire, assistez au sacre des champions.";
   const targetDateStr = siteConfig?.targetDate || "2026-07-15T00:00:00";
 
-  // Registration stats
-  const stats = useMemo(() => {
-    if (!featuredTournaments) return { teams: 0 };
-    return { teams: featuredTournaments.reduce((acc, t: any) => acc + (t.teamsRegistered || 0), 0) };
-  }, [featuredTournaments]);
-
-  // Dynamic Countdown logic
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
     const targetDate = new Date(targetDateStr).getTime();
-
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
       const difference = targetDate - now;
-
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -75,22 +67,26 @@ export default function Home() {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
-
     calculateTimeLeft();
     const timer = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(timer);
   }, [targetDateStr]);
 
+  const stats = useMemo(() => {
+    if (!featuredTournaments) return { teams: 0 };
+    return { teams: featuredTournaments.reduce((acc, t: any) => acc + (t.teamsRegistered || 0), 0) };
+  }, [featuredTournaments]);
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Ticker TRES PETIT */}
-      <div className="bg-black text-white py-1 px-4 border-b border-white/10">
+      {/* Ticker Ultra Compact */}
+      <div className="bg-black text-white py-1 px-4 border-b border-white/10 overflow-hidden">
         <div className="container mx-auto flex items-center justify-start gap-4 md:gap-12">
-          <span className="font-headline font-black text-[8px] md:text-[10px] uppercase tracking-widest">ONE CUP 2026™</span>
+          <span className="font-headline font-black text-[8px] md:text-[10px] uppercase tracking-widest whitespace-nowrap">ONE CUP 2026™</span>
           <div className="flex items-center gap-4">
             {Object.entries(timeLeft).map(([unit, val]) => (
               <div key={unit} className="flex items-baseline gap-0.5">
-                <span className="text-xs md:text-sm font-bold">{String(val).padStart(2, '0')}</span>
+                <span className="text-xs md:text-sm font-bold tabular-nums">{String(val).padStart(2, '0')}</span>
                 <span className="text-[6px] md:text-[8px] uppercase text-white/50">{unit[0]}</span>
               </div>
             ))}
@@ -98,7 +94,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* HERO CAROUSEL "STATUS STYLE" */}
+      {/* Hero Carousel - Status Style */}
       <section className="relative w-full group">
         <Carousel
           opts={{ loop: true }}
@@ -120,7 +116,7 @@ export default function Home() {
         <div className="absolute inset-0 flex items-center bg-gradient-to-t from-[#0051a3] via-transparent to-transparent md:bg-none">
           <div className="container mx-auto px-6 md:px-20 mt-auto pb-10 md:pb-0 md:static">
             <div className="max-w-4xl space-y-4 md:space-y-6 md:bg-[#0051a3] md:p-16 md:shadow-2xl md:-mb-20 relative z-10 md:rounded-t-[3rem]">
-              <Badge className="bg-white/20 text-white border-white/20 text-[10px] tracking-[0.3em]">ONE CUP ELITE 2026™</Badge>
+              <Badge className="bg-white/20 text-white border-white/20 text-[10px] tracking-[0.3em] uppercase">ONE CUP ELITE 2026™</Badge>
               <h1 className="text-3xl md:text-7xl font-headline font-black tracking-tight leading-tight text-white uppercase">
                 {heroTitle}
               </h1>
@@ -136,7 +132,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REWARDS & PRIZE SUMMARY */}
+      {/* Rewards & Prize Summary */}
       <section className="pt-32 pb-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -167,7 +163,7 @@ export default function Home() {
                 <Card className="relative bg-slate-900 text-white rounded-[3rem] p-12 border-none shadow-2xl overflow-hidden">
                    <Trophy className="absolute top-10 right-10 w-32 h-32 text-white/5 -rotate-12" />
                    <div className="space-y-6 relative z-10">
-                      <Badge className="bg-primary text-white font-black px-4 py-1 rounded-lg">LIVE PRIZE</Badge>
+                      <Badge className="bg-primary text-white font-black px-4 py-1 rounded-lg uppercase">LIVE PRIZE</Badge>
                       <p className="text-7xl md:text-8xl font-headline font-black tracking-tighter leading-none">
                         1<span className="text-primary">M</span>
                       </p>
@@ -182,7 +178,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TOURNOIS RECENTS */}
+      {/* Tournois Récents */}
       <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4 space-y-12">
           <div className="flex items-end justify-between border-b pb-6">
@@ -200,7 +196,7 @@ export default function Home() {
               Array(3).fill(0).map((_, i) => <div key={i} className="h-64 bg-white animate-pulse rounded-3xl" />)
             ) : featuredTournaments?.map((t: any) => (
               <Link href={`/tournaments/${t.id}`} key={t.id} className="group">
-                <Card className="bg-white border-none shadow-md overflow-hidden rounded-[2rem] transition-all group-hover:shadow-2xl group-hover:-translate-y-2">
+                <Card className="bg-white border-none shadow-md overflow-hidden rounded-[2rem] transition-all group-hover:shadow-2xl group-hover:-translate-y-2 h-full">
                   <div className="relative aspect-video overflow-hidden">
                     <Image src={t.imageUrl || "https://picsum.photos/seed/tourn/800/600"} alt={t.name} fill className="object-cover transition-transform group-hover:scale-105" />
                     <Badge className="absolute top-4 left-4 bg-primary text-white text-[9px] uppercase font-black">{t.gameType}</Badge>
@@ -220,7 +216,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AFTER CUP Section */}
+      {/* After Cup Section */}
       <section className="relative w-full py-24 overflow-hidden bg-slate-900">
         <div className="absolute inset-0 z-0">
           <Image src={afterCupImage} alt="After Cup" fill className="object-cover opacity-40 grayscale" />
@@ -228,7 +224,9 @@ export default function Home() {
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl space-y-8">
-            <Badge className="bg-secondary text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.4em] border border-white/20">L'APOTHÉOSE FINALE</Badge>
+            <Badge className="bg-secondary text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.4em] border border-white/20">
+              L'APOTHÉOSE FINALE
+            </Badge>
             <h2 className="text-5xl md:text-8xl font-headline font-black text-white uppercase tracking-tighter leading-none">AFTER <span className="text-primary">CUP</span> FESTIVAL</h2>
             <p className="text-lg md:text-xl text-white/80 font-medium leading-relaxed max-w-2xl">{afterCupDescription}</p>
             <div className="flex flex-col sm:flex-row items-center gap-6 pt-6">
@@ -246,7 +244,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SPONSORS MARQUEE */}
+      {/* Sponsors Marquee */}
       <section className="bg-white py-20 border-y overflow-hidden">
         <div className="container mx-auto px-4 mb-12 text-center">
            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">NOS PARTENAIRES OFFICIELS</span>
@@ -266,7 +264,7 @@ export default function Home() {
         )}
       </section>
 
-      {/* ARCHIVES */}
+      {/* Archives Section */}
       <section className="relative w-full min-h-[60vh] flex items-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0 opacity-40">
           <Image src="https://picsum.photos/seed/history/1920/1080" alt="Archives" fill className="object-cover grayscale" />
