@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
   { name: "TOURNOIS", href: "/tournaments" },
+  { name: "RÉCOMPENSES", href: "/rewards" },
   { name: "RÉSULTATS", href: "/results" },
   { name: "NEWS", href: "/news" },
   { name: "BILLETS", href: "/tickets" },
