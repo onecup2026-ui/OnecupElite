@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Target, Zap, Star, Loader2, Trophy, Ticket, ExternalLink, ShieldCheck, ChevronRight, Calendar, MapPin, Users, Award, TrendingUp, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { useDoc, useFirestore, useCollection } from "@/firebase";
 import { doc, collection, query, orderBy, limit } from "firebase/firestore";
 import {
@@ -135,7 +136,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REWARDS & PRIZE SUMMARY - ULTRA ESTHÉTIQUE */}
+      {/* REWARDS & PRIZE SUMMARY */}
       <section className="pt-32 pb-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
