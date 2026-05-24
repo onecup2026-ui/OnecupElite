@@ -86,7 +86,7 @@ export default function Home() {
             <div className="pt-4 md:pt-6">
                <Link href="/tournaments">
                  <Button className="h-12 md:h-16 bg-white text-[#0051a3] hover:bg-white/90 rounded-full font-bold text-sm md:text-lg px-8 md:px-10 shadow-2xl transition-transform hover:scale-105">
-                    11 juin - 19 juillet 2026
+                    15 - 25 juillet 2026
                  </Button>
                </Link>
             </div>
@@ -123,7 +123,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sponsors Marquee Section - Inspired by the provided image */}
+      {/* Sponsors Marquee Section */}
       <section className="bg-[#0051a3] py-12 md:py-20 overflow-hidden">
         <div className="container mx-auto px-4 mb-10 text-center">
            <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.6em] text-white/40">ONE CUP PARTNERS</span>
