@@ -1,18 +1,20 @@
-
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Target, Zap, Star } from "lucide-react";
+import { Target, Zap, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDoc, useFirestore } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { useDoc, useFirestore, useCollection } from "@/firebase";
+import { doc, collection } from "firebase/firestore";
 
 export default function Home() {
   const db = useFirestore();
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
   const { data: siteConfig } = useDoc(configRef);
+
+  const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
+  const { data: sponsors, loading: sponsorsLoading } = useCollection(sponsorsRef);
 
   const heroImage = siteConfig?.heroImageUrl || "https://picsum.photos/seed/onecup-arena-elite/1920/1080";
   const heroTitle = siteConfig?.heroTitle || "Préparez-vous pour la plus grande Coupe du Monde de l'Histoire";
@@ -64,7 +66,6 @@ export default function Home() {
 
       {/* ONE CUP Style Immersive Hero Section */}
       <section className="relative w-full">
-        {/* Image Container */}
         <div className="relative aspect-[4/5] md:aspect-[21/9] w-full overflow-hidden">
           <Image
             src={heroImage}
@@ -75,7 +76,6 @@ export default function Home() {
           />
         </div>
 
-        {/* Info Block (Blue) */}
         <div className="bg-[#0051a3] text-white p-8 md:p-20">
           <div className="container mx-auto max-w-5xl space-y-6 md:space-y-8">
             <p className="font-bold text-sm md:text-lg text-white/90 uppercase tracking-widest">ONE CUP ELITE 2026™</p>
@@ -94,7 +94,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Grid - Responsive optimization */}
+      {/* Features Grid */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
@@ -121,6 +121,44 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Sponsors Marquee Section - Inspired by the provided image */}
+      <section className="bg-[#0051a3] py-12 md:py-20 overflow-hidden">
+        <div className="container mx-auto px-4 mb-10 text-center">
+           <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.6em] text-white/40">ONE CUP PARTNERS</span>
+        </div>
+        
+        {sponsorsLoading ? (
+          <div className="flex justify-center py-10">
+            <Loader2 className="w-6 h-6 animate-spin text-white/20" />
+          </div>
+        ) : (
+          <div className="relative flex overflow-x-hidden">
+            <div className="flex animate-marquee-reverse whitespace-nowrap items-center">
+              {[...(sponsors || []), ...(sponsors || []), ...(sponsors || [])].map((sponsor: any, i) => (
+                <div key={`${sponsor.id}-${i}`} className="mx-8 md:mx-16 shrink-0 flex items-center justify-center">
+                  <img 
+                    src={sponsor.logoUrl} 
+                    alt={sponsor.name} 
+                    className="h-10 md:h-16 w-auto object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="absolute top-0 flex animate-marquee-reverse whitespace-nowrap items-center" aria-hidden="true">
+               {[...(sponsors || []), ...(sponsors || []), ...(sponsors || [])].map((sponsor: any, i) => (
+                <div key={`clone-${sponsor.id}-${i}`} className="mx-8 md:mx-16 shrink-0 flex items-center justify-center">
+                  <img 
+                    src={sponsor.logoUrl} 
+                    alt={sponsor.name} 
+                    className="h-10 md:h-16 w-auto object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );
