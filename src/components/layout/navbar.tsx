@@ -93,36 +93,38 @@ export function Navbar() {
 
       {/* Mobile Menu Overlay - Refined design */}
       {isOpen && (
-        <div className="fixed inset-0 z-[200] bg-[#0051a3]/90 backdrop-blur-xl text-white overflow-y-auto animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[200] bg-[#0051a3]/80 backdrop-blur-2xl text-white overflow-y-auto animate-in fade-in duration-500">
           <div className="container mx-auto px-6 py-6 flex flex-col min-h-screen">
-            <div className="flex items-center justify-between mb-16">
-              <span className="font-headline font-bold text-sm uppercase tracking-[0.4em] opacity-80">MENU</span>
+            <div className="flex items-center justify-between mb-12">
+              <span className="font-headline font-bold text-[10px] uppercase tracking-[0.5em] opacity-60">MENU</span>
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full" onClick={() => setIsOpen(false)}>
-                <X className="w-8 h-8" />
+                <X className="w-6 h-6" />
               </Button>
             </div>
 
-            <div className="space-y-2 mb-20">
+            <div className="space-y-1 mb-20">
               {navItems.map((item) => (
                 <Link 
                   key={item.href} 
                   href={item.href} 
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-between py-6 border-b border-white/10 group transition-all"
+                  className="flex items-center justify-between py-5 border-b border-white/5 group transition-all"
                 >
-                  <span className="text-lg font-bold uppercase tracking-[0.3em] group-hover:pl-2 transition-all">
+                  <span className="text-[11px] font-medium uppercase tracking-[0.4em] group-hover:pl-2 transition-all opacity-90">
                     {item.name}
                   </span>
-                  <Plus className="w-4 h-4 text-white/40" />
+                  <Plus className="w-3 h-3 text-white/20" />
                 </Link>
               ))}
             </div>
 
-            <div className="mt-auto space-y-6 pb-12">
-               <Button onClick={() => { handleLogin(); setIsOpen(false); }} className="w-full h-14 bg-white text-[#0051a3] font-bold uppercase tracking-[0.2em] rounded-2xl hover:bg-white/90 shadow-2xl text-xs">
-                 {user ? "MON PROFIL ELITE" : "CONNEXION"}
-               </Button>
-               <p className="text-center text-[9px] uppercase tracking-[0.5em] opacity-40">ONE CUP ELITE 2026™</p>
+            <div className="mt-auto space-y-8 pb-12">
+               <div className="flex justify-center">
+                 <Button onClick={() => { handleLogin(); setIsOpen(false); }} variant="outline" className="w-fit px-12 h-12 border-white/20 bg-transparent text-white font-bold uppercase tracking-[0.3em] rounded-xl hover:bg-white/10 text-[9px]">
+                   {user ? "MON PROFIL" : "CONNEXION"}
+                 </Button>
+               </div>
+               <p className="text-center text-[8px] uppercase font-bold tracking-[0.6em] opacity-30">ONE CUP ELITE 2026</p>
             </div>
           </div>
         </div>
