@@ -4,10 +4,9 @@
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Target, Zap, Star, Loader2, Trophy, Ticket, ExternalLink, ShieldCheck, ChevronRight, Calendar, MapPin, Users, Award, TrendingUp, Sparkles } from "lucide-react";
+import { ChevronRight, Calendar, MapPin, Trophy, Ticket, ShieldCheck, TrendingUp, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { useDoc, useFirestore, useCollection } from "@/firebase";
 import { doc, collection, query, orderBy, limit } from "firebase/firestore";
 import {
@@ -16,9 +15,12 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const db = useFirestore();
+  const [isMounted, setIsMounted] = useState(false);
+  
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
   const { data: siteConfig } = useDoc(configRef);
 
@@ -53,6 +55,7 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
+    setIsMounted(true);
     const targetDate = new Date(targetDateStr).getTime();
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
@@ -64,8 +67,6 @@ export default function Home() {
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60),
         });
-      } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
     calculateTimeLeft();
@@ -80,137 +81,128 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Ticker Ultra Compact */}
-      <div className="bg-black text-white py-1 px-4 border-b border-white/10 overflow-hidden">
-        <div className="container mx-auto flex items-center justify-start gap-4 md:gap-12">
+      {/* Ticker Compact */}
+      <div className="bg-black text-white py-1.5 px-4 border-b border-white/10 overflow-hidden sticky top-0 z-[110]">
+        <div className="container mx-auto flex items-center justify-between gap-4">
           <span className="font-headline font-black text-[8px] md:text-[10px] uppercase tracking-widest whitespace-nowrap">ONE CUP 2026™</span>
-          <div className="flex items-center gap-4">
-            {Object.entries(timeLeft).map(([unit, val]) => (
+          <div className="flex items-center gap-3 md:gap-6">
+            {isMounted && Object.entries(timeLeft).map(([unit, val]) => (
               <div key={unit} className="flex items-baseline gap-0.5">
-                <span className="text-xs md:text-sm font-bold tabular-nums">{String(val).padStart(2, '0')}</span>
-                <span className="text-[6px] md:text-[8px] uppercase text-white/50">{unit[0]}</span>
+                <span className="text-[10px] md:text-sm font-black tabular-nums">{String(val).padStart(2, '0')}</span>
+                <span className="text-[6px] md:text-[8px] uppercase text-white/40">{unit[0]}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Hero Carousel - Status Style */}
-      <section className="relative w-full group">
+      {/* Hero Stories Carousel */}
+      <section className="relative w-full overflow-hidden">
         <Carousel
           opts={{ loop: true }}
-          plugins={[Autoplay({ delay: 5000 })]}
+          plugins={[Autoplay({ delay: 6000 })]}
           className="w-full"
         >
           <CarouselContent>
             {carouselImages.map((img, index) => (
               <CarouselItem key={index}>
-                <div className="relative aspect-[4/5] md:aspect-[21/9] w-full overflow-hidden">
-                  <Image src={img} alt={`Slide ${index + 1}`} fill className="object-cover" priority={index === 0} />
-                  <div className="absolute inset-0 bg-black/30" />
+                <div className="relative aspect-[3/4] md:aspect-[21/9] w-full overflow-hidden">
+                  <Image src={img} alt={`Elite Slide ${index + 1}`} fill className="object-cover" priority={index === 0} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
         </Carousel>
 
-        <div className="absolute inset-0 flex items-center bg-gradient-to-t from-[#0051a3] via-transparent to-transparent md:bg-none">
-          <div className="container mx-auto px-6 md:px-20 mt-auto pb-10 md:pb-0 md:static">
-            <div className="max-w-4xl space-y-4 md:space-y-6 md:bg-[#0051a3] md:p-16 md:shadow-2xl md:-mb-20 relative z-10 md:rounded-t-[3rem]">
-              <Badge className="bg-white/20 text-white border-white/20 text-[10px] tracking-[0.3em] uppercase">ONE CUP ELITE 2026™</Badge>
-              <h1 className="text-3xl md:text-7xl font-headline font-black tracking-tight leading-tight text-white uppercase">
+        <div className="absolute inset-x-0 bottom-0 py-12 md:py-24 pointer-events-none">
+          <div className="container mx-auto px-6 md:px-20 flex flex-col items-start gap-4">
+             <Badge className="bg-primary text-white border-none text-[8px] md:text-[10px] tracking-[0.4em] uppercase px-4 py-1 pointer-events-auto">ONE CUP ELITE™</Badge>
+             <h1 className="text-4xl md:text-8xl font-headline font-black tracking-tighter leading-[0.9] text-white uppercase max-w-4xl pointer-events-auto drop-shadow-2xl">
                 {heroTitle}
-              </h1>
-              <div className="pt-4">
+             </h1>
+             <div className="pt-4 pointer-events-auto">
                 <Link href="/tournaments">
-                  <Button className="h-12 md:h-16 bg-white text-[#0051a3] hover:bg-white/90 rounded-full font-black px-10 gap-3 shadow-xl transition-transform hover:scale-105">
+                  <Button className="h-12 md:h-16 bg-white text-primary hover:bg-slate-100 rounded-full font-black px-10 gap-3 shadow-xl transition-all hover:scale-105 uppercase text-xs">
                     REJOINDRE L'ARÈNE <ChevronRight className="w-5 h-5" />
                   </Button>
                 </Link>
-              </div>
-            </div>
+             </div>
           </div>
         </div>
       </section>
 
-      {/* REWARDS POSTER - COMPACT & PRESTIGIOUS */}
-      <section className="py-20 bg-white">
+      {/* AFFICHE CAGNOTTE HORIZONTALE COMPACTE */}
+      <section className="py-20 md:py-32 bg-white">
         <div className="container mx-auto px-4">
-          <Link href="/rewards" className="block group">
-            <div className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl transition-all group-hover:shadow-primary/20 group-hover:-translate-y-1">
-              {/* Background Decorative Trophy */}
-              <Trophy className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] text-white/5 -rotate-12 pointer-events-none" />
+          <Link href="/rewards" className="group">
+            <div className="relative overflow-hidden rounded-[2rem] md:rounded-[4rem] bg-slate-950 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-12 shadow-2xl transition-all border border-white/5 hover:-translate-y-2">
+              <Trophy className="absolute -bottom-10 -left-10 w-64 h-64 text-white/5 -rotate-12 pointer-events-none" />
               
-              <div className="relative z-10 space-y-8 text-center md:text-left">
-                <Badge className="bg-primary text-white border-none px-6 py-1.5 rounded-full font-black text-[10px] uppercase tracking-[0.4em] shadow-lg">
-                  Cagnotte Elite 2026
-                </Badge>
-                
-                <div className="space-y-2">
-                  <h2 className="text-4xl md:text-7xl font-headline font-black text-white leading-none tracking-tighter uppercase">
-                    UN MILLION <span className="text-primary">DE FRANCS.</span>
-                  </h2>
-                  <p className="text-xs md:text-lg text-white/40 font-black uppercase tracking-[0.3em] leading-relaxed">
-                    POUR LE CHAMPION DE L'ÉDITION ÉLITE
-                  </p>
+              <div className="relative z-10 space-y-6 text-center md:text-left">
+                <Badge className="bg-primary text-white border-none px-6 py-1.5 rounded-full font-black text-[10px] uppercase tracking-[0.4em]">Cagnotte Elite 2026</Badge>
+                <div className="space-y-1">
+                   <h2 className="text-4xl md:text-7xl font-headline font-black text-white uppercase tracking-tighter leading-none">UN MILLION <span className="text-primary">DE FRANCS.</span></h2>
+                   <p className="text-[10px] md:text-lg text-white/30 font-black uppercase tracking-[0.4em]">POUR LE CHAMPION DE L'ÉDITION ÉLITE</p>
                 </div>
-
-                <div className="flex flex-wrap justify-center md:justify-start gap-4 md:gap-8">
-                  <div className="space-y-1 border-l-2 border-primary pl-4">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Inscriptions</p>
-                    <p className="text-2xl font-black text-white">{stats.teams} <span className="text-[10px] opacity-40">ÉQUIPES</span></p>
-                  </div>
-                  <div className="space-y-1 border-l-2 border-primary pl-4">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Standard</p>
-                    <p className="text-2xl font-black text-white">100% <span className="text-[10px] opacity-40">ELITE</span></p>
-                  </div>
+                <div className="flex flex-wrap justify-center md:justify-start gap-6">
+                   <div className="border-l-2 border-primary pl-4">
+                      <p className="text-[8px] font-black text-white/20 uppercase tracking-widest">Inscrits</p>
+                      <p className="text-xl font-black text-white">{stats.teams} ÉQUIPES</p>
+                   </div>
+                   <div className="border-l-2 border-primary pl-4">
+                      <p className="text-[8px] font-black text-white/20 uppercase tracking-widest">Niveau</p>
+                      <p className="text-xl font-black text-white">ELITE+</p>
+                   </div>
                 </div>
               </div>
 
-              <div className="relative z-10 flex flex-col items-center justify-center space-y-6 shrink-0 md:pl-10">
-                <div className="flex items-start text-white">
-                   <span className="text-8xl md:text-[11rem] font-headline font-black leading-none tracking-tighter animate-fifa-in">1</span>
-                   <span className="text-primary text-5xl md:text-7xl font-headline font-black leading-none mt-2 md:mt-4">M</span>
+              <div className="relative z-10 flex flex-col items-center gap-6 md:pl-10">
+                <div className="text-white flex items-end">
+                   <span className="text-8xl md:text-[12rem] font-headline font-black leading-none tracking-tighter animate-fifa-in">1</span>
+                   <span className="text-primary text-5xl md:text-7xl font-headline font-black mb-2 md:mb-4">M</span>
                 </div>
-                <Button size="lg" className="h-16 px-12 bg-white text-slate-900 hover:bg-primary hover:text-white rounded-2xl font-black uppercase text-xs tracking-[0.2em] gap-3 shadow-2xl transition-all">
-                  VOIR LES PRIX <TrendingUp className="w-4 h-4" />
-                </Button>
+                <Button className="h-14 md:h-16 px-12 bg-white text-slate-950 hover:bg-primary hover:text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all">VOIR LES PRIX</Button>
               </div>
             </div>
           </Link>
         </div>
       </section>
 
-      {/* Tournois Récents */}
-      <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-4 space-y-12">
-          <div className="flex items-end justify-between border-b pb-6">
-            <div className="space-y-2">
-              <Badge variant="outline" className="border-primary text-primary px-4 py-1 text-[9px] font-black uppercase tracking-widest">Inscriptions Ouvertes</Badge>
-              <h2 className="text-4xl md:text-5xl font-headline font-black uppercase tracking-tighter">LES TOURNOIS <span className="text-primary">DU MOMENT.</span></h2>
+      {/* Tournois Réels */}
+      <section className="py-20 md:py-32 bg-slate-50 border-y">
+        <div className="container mx-auto px-4 space-y-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-4">
+              <Badge variant="outline" className="border-primary text-primary px-6 py-1 text-[9px] font-black uppercase tracking-widest bg-primary/5">Inscriptions Ouvertes</Badge>
+              <h2 className="text-4xl md:text-6xl font-headline font-black uppercase tracking-tighter leading-none">LES TOURNOIS <span className="text-primary">ACTUELS.</span></h2>
             </div>
             <Link href="/tournaments">
-              <Button variant="link" className="font-black uppercase text-xs tracking-widest gap-2 p-0">Voir tout <ChevronRight className="w-4 h-4" /></Button>
+              <Button variant="outline" className="rounded-full h-12 px-8 font-black uppercase text-[10px] tracking-widest gap-2">Découvrir tout <ChevronRight className="w-4 h-4" /></Button>
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {tournamentsLoading ? (
-              Array(3).fill(0).map((_, i) => <div key={i} className="h-64 bg-white animate-pulse rounded-3xl" />)
+              Array(3).fill(0).map((_, i) => <div key={i} className="aspect-[4/5] bg-white animate-pulse rounded-[2rem]" />)
             ) : featuredTournaments?.map((t: any) => (
               <Link href={`/tournaments/${t.id}`} key={t.id} className="group">
-                <Card className="bg-white border-none shadow-md overflow-hidden rounded-[2rem] transition-all group-hover:shadow-2xl group-hover:-translate-y-2 h-full">
-                  <div className="relative aspect-video overflow-hidden">
-                    <Image src={t.imageUrl || "https://picsum.photos/seed/tourn/800/600"} alt={t.name} fill className="object-cover transition-transform group-hover:scale-105" />
-                    <Badge className="absolute top-4 left-4 bg-primary text-white text-[9px] uppercase font-black">{t.gameType}</Badge>
-                  </div>
-                  <div className="p-8 space-y-4">
-                    <h3 className="font-headline font-black uppercase text-xl line-clamp-1">{t.name}</h3>
-                    <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      <div className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> {t.startDate?.split('T')[0]}</div>
-                      <div className="flex items-center gap-1.5"><MapPin className="w-3 h-3" /> {t.locationStade}</div>
+                <Card className="bg-white border-none shadow-sm overflow-hidden rounded-[2.5rem] transition-all hover:shadow-2xl hover:-translate-y-3 h-full flex flex-col">
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    <Image src={t.imageUrl || "https://picsum.photos/seed/elite-t/800/1000"} alt={t.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <Badge className="absolute top-6 left-6 bg-primary text-white text-[9px] uppercase font-black px-4 py-1">{t.gameType}</Badge>
+                    <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
+                       <span className="font-black text-[10px] uppercase tracking-widest">{t.teamsRegistered || 0} / {t.maxTeams || 16} PLACES</span>
+                       <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                     </div>
-                    <Button className="w-full h-12 bg-slate-50 hover:bg-primary hover:text-white text-slate-900 border-none shadow-none rounded-xl font-black uppercase text-[10px]">S'inscrire Maintenant</Button>
+                  </div>
+                  <div className="p-8 space-y-6 flex-1 flex flex-col">
+                    <h3 className="font-headline font-black uppercase text-2xl leading-none">{t.name}</h3>
+                    <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-auto">
+                      <div className="flex items-center gap-1.5"><Calendar className="w-3 h-3 text-primary" /> {t.startDate?.split('T')[0]}</div>
+                      <div className="flex items-center gap-1.5"><MapPin className="w-3 h-3 text-primary" /> {t.locationStade}</div>
+                    </div>
                   </div>
                 </Card>
               </Link>
@@ -219,26 +211,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* After Cup Section */}
-      <section className="relative w-full py-24 overflow-hidden bg-slate-900">
+      {/* After Cup Immersive Section */}
+      <section className="relative w-full py-32 overflow-hidden bg-slate-950">
         <div className="absolute inset-0 z-0">
-          <Image src={afterCupImage} alt="After Cup" fill className="object-cover opacity-40 grayscale" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/60 to-transparent" />
+          <Image src={afterCupImage} alt="After Cup Festival" fill className="object-cover opacity-30 grayscale" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent" />
         </div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl space-y-8">
-            <Badge className="bg-secondary text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.4em] border border-white/20">
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-4xl space-y-8">
+            <Badge className="bg-secondary text-white px-8 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.4em] border border-white/10">
               L'APOTHÉOSE FINALE
             </Badge>
             <h2 className="text-5xl md:text-8xl font-headline font-black text-white uppercase tracking-tighter leading-none">AFTER <span className="text-primary">CUP</span> FESTIVAL</h2>
-            <p className="text-lg md:text-xl text-white/80 font-medium leading-relaxed max-w-2xl">{afterCupDescription}</p>
-            <div className="flex flex-col sm:flex-row items-center gap-6 pt-6">
+            <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed max-w-3xl">{afterCupDescription}</p>
+            <div className="flex flex-col sm:flex-row items-center gap-6 pt-8">
               <Link href="/tickets">
-                <Button size="lg" className="h-16 px-10 bg-primary hover:bg-primary/90 text-white rounded-2xl font-black uppercase text-sm gap-3 shadow-2xl transition-transform hover:scale-105">
-                  <Ticket className="w-5 h-5" /> Réserver mon Pass Festival
+                <Button className="h-16 px-12 bg-primary hover:bg-primary/90 text-white rounded-2xl font-black uppercase text-xs gap-4 shadow-2xl transition-all hover:scale-105">
+                  <Ticket className="w-5 h-5" /> RÉSERVER MON PASS
                 </Button>
               </Link>
-              <div className="flex items-center gap-4 text-white/60">
+              <div className="flex items-center gap-4 text-white/40">
                 <ShieldCheck className="w-5 h-5 text-green-500" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Billetterie Officielle</span>
               </div>
@@ -247,10 +239,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sponsors Marquee */}
-      <section className="bg-white py-20 border-y overflow-hidden">
-        <div className="container mx-auto px-4 mb-12 text-center">
-           <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">NOS PARTENAIRES OFFICIELS</span>
+      {/* Sponsors Horizontal Marquee */}
+      <section className="bg-white py-24 border-b overflow-hidden">
+        <div className="container mx-auto px-4 mb-16 text-center">
+           <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300">PARTENAIRES OFFICIELS ONECUP ELITE</span>
         </div>
         {sponsorsLoading ? (
           <div className="flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-slate-200" /></div>
@@ -258,8 +250,8 @@ export default function Home() {
           <div className="relative flex overflow-x-hidden">
             <div className="flex animate-marquee-reverse whitespace-nowrap items-center">
               {[...(sponsors || []), ...(sponsors || []), ...(sponsors || [])].map((s: any, i) => (
-                <div key={`${s.id}-${i}`} className="mx-12 md:mx-20 shrink-0 flex items-center justify-center grayscale hover:grayscale-0 opacity-50 hover:opacity-100 transition-all">
-                  <img src={s.logoUrl} alt={s.name} className="h-8 md:h-12 w-auto object-contain" />
+                <div key={`${s.id}-${i}`} className="mx-16 md:mx-24 shrink-0 grayscale hover:grayscale-0 opacity-40 hover:opacity-100 transition-all">
+                  <img src={s.logoUrl} alt={s.name} className="h-10 md:h-14 w-auto object-contain" />
                 </div>
               ))}
             </div>
@@ -267,17 +259,18 @@ export default function Home() {
         )}
       </section>
 
-      {/* Archives Section */}
-      <section className="relative w-full min-h-[60vh] flex items-center overflow-hidden bg-black">
+      {/* Elite Archives Bottom */}
+      <section className="relative w-full min-h-[50vh] flex items-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0 opacity-40">
-          <Image src="https://picsum.photos/seed/history/1920/1080" alt="Archives" fill className="object-cover grayscale" />
+          <Image src="https://picsum.photos/seed/history-one/1920/1080" alt="Archives OneCup" fill className="object-cover grayscale" />
+          <div className="absolute inset-0 bg-black/40" />
         </div>
-        <div className="container mx-auto px-6 relative z-10 text-center space-y-8 py-24">
-          <h2 className="text-4xl md:text-8xl font-headline font-black text-white uppercase tracking-tighter leading-none">Archives <span className="text-white/40">ONE CUP+</span></h2>
-          <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-medium">Revivez les moments de légende qui ont forgé l'histoire d'OneCup Elite.</p>
-          <div className="pt-6">
+        <div className="container mx-auto px-6 relative z-10 text-center space-y-10 py-24">
+          <h2 className="text-4xl md:text-7xl font-headline font-black text-white uppercase tracking-tighter leading-none">Archives <br/><span className="text-white/30">ONE CUP ELITE+</span></h2>
+          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto font-medium">Explorez l'héritage et revivez les finales légendaires.</p>
+          <div className="pt-4">
             <Link href="/news">
-              <Button variant="outline" className="h-16 px-14 border-white text-white hover:bg-white hover:text-black rounded-full font-black uppercase tracking-widest text-xs transition-all bg-transparent">À DÉCOUVRIR</Button>
+              <Button variant="outline" className="h-14 px-12 border-white/20 text-white hover:bg-white hover:text-black rounded-full font-black uppercase tracking-widest text-[10px] transition-all bg-transparent">DÉCOUVRIR LE JOURNAL</Button>
             </Link>
           </div>
         </div>
