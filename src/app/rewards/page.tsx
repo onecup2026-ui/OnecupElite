@@ -1,14 +1,15 @@
+
 "use client";
 
 import { useMemo } from "react";
-import { Trophy, Award, Users, TrendingUp, Star, ShieldCheck, Zap, ArrowRight, Target, Shield, LayoutDashboard, Sparkles } from "lucide-react";
+import { Trophy, Award, Users, Star, ShieldCheck, Zap, ArrowRight, Target, Shield, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection } from "firebase/firestore";
 import Link from "next/link";
-import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
+import Image from "next/image";
 
 export default function RewardsPage() {
   const db = useFirestore();
@@ -23,158 +24,144 @@ export default function RewardsPage() {
     }), { totalTeams: 0, maxPossible: 0 });
   }, [tournaments]);
 
-  const prizeTiers = [
-    { rank: "Champion ONECUP", amount: 1000000, percentage: 70 },
-    { rank: "Finaliste Elite", amount: 250000, percentage: 20 },
-    { rank: "Prix Individuels & Surprises", amount: 0, percentage: 10, isSurprise: true },
-  ];
-
   return (
     <div className="bg-white min-h-screen">
-      {/* Header Prestigieux */}
-      <header className="bg-primary text-white py-24 md:py-32 px-4 relative overflow-hidden">
-        <div className="container mx-auto relative z-10 text-center space-y-8">
-          <Badge className="bg-white text-primary px-8 py-2 rounded-full font-black uppercase tracking-widest text-xs shadow-2xl">
-            L'ENJEU SUPRÊME
+      {/* Header Prestigieux - Plus Compact */}
+      <header className="bg-primary text-white py-16 md:py-20 px-4 relative overflow-hidden">
+        <div className="container mx-auto relative z-10 text-center space-y-4">
+          <Badge className="bg-white/20 text-white px-6 py-1 rounded-full font-black uppercase tracking-widest text-[10px] backdrop-blur-sm border-white/10">
+            L'EXCELLENCE RÉCOMPENSÉE
           </Badge>
-          <h1 className="text-5xl md:text-9xl font-headline font-black uppercase tracking-tighter leading-none">
-            RÉCOMPENSES <br/><span className="text-white/40">& PRESTIGE.</span>
+          <h1 className="text-4xl md:text-7xl font-headline font-black uppercase tracking-tighter leading-none">
+            PRIME <span className="text-white/40">& PRESTIGE.</span>
           </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto text-white/80 font-medium">
-            Entrez dans l'histoire. Une cagnotte d'élite et des distinctions de prestige pour ceux qui osent viser le sommet.
-          </p>
         </div>
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
       </header>
 
-      <div className="container mx-auto px-4 py-20 -mt-20 relative z-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="container mx-auto px-4 py-12 -mt-10 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* Section Cagnotte */}
-          <div className="lg:col-span-8 space-y-12">
-            <Card className="rounded-[3rem] border-none overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,81,163,0.3)] bg-white">
-              <div className="bg-primary py-4 px-10 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-green-400 animate-ping" />
-                  <span className="text-[10px] font-black uppercase text-white/80 tracking-[0.3em]">Cagnotte Elite en Direct</span>
-                </div>
-                <TrendingUp className="w-4 h-4 text-white/40" />
+          {/* L'AFFICHE OFFICIELLE (POSTER STYLE) */}
+          <div className="lg:col-span-8 space-y-8">
+            <Card className="rounded-[2.5rem] border-none overflow-hidden shadow-2xl bg-slate-900 text-white relative group">
+              {/* Background Effect */}
+              <div className="absolute inset-0 z-0 opacity-20">
+                <Image 
+                  src="https://picsum.photos/seed/trophy-glow/1200/800" 
+                  alt="Poster BG" 
+                  fill 
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary via-slate-900 to-black" />
               </div>
-              
-              <CardContent className="p-10 md:p-16 space-y-12">
-                <div className="text-center space-y-6">
-                  <Badge className="bg-primary/10 text-primary border-none text-[10px] px-6 py-2 rounded-full font-black tracking-[0.2em] mb-4 uppercase">
-                    ENJEUX HISTORIQUES
-                  </Badge>
-                  
-                  <div className="space-y-4">
-                    <h2 className="text-5xl md:text-8xl font-headline font-black text-slate-900 tracking-tighter leading-none flex flex-col items-center justify-center gap-2">
-                      <span className="text-primary text-3xl md:text-5xl uppercase tracking-widest mb-2">UN MILLION</span>
-                      <div className="flex items-center gap-4">
-                        <span>1 000 000</span>
-                        <span className="text-primary text-4xl md:text-6xl">FC</span>
-                      </div>
-                    </h2>
-                    <p className="text-2xl md:text-3xl font-headline font-bold text-slate-400 uppercase tracking-tight">
-                      FRANCS CONGOLAIS POUR LE CHAMPION
+
+              <CardContent className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
+                {/* Visual Side */}
+                <div className="w-full md:w-1/3 flex flex-col items-center text-center space-y-4">
+                  <div className="relative">
+                    <Trophy className="w-24 h-24 text-primary animate-float" />
+                    <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-pulse" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Sacre Elite</p>
+                    <h2 className="text-3xl font-headline font-black uppercase leading-none">CHAMPION <br/>2026</h2>
+                  </div>
+                </div>
+
+                {/* Info Side */}
+                <div className="flex-1 space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="h-px w-8 bg-primary" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-white/60">Cagnotte Officielle</span>
+                    </div>
+                    <h3 className="text-6xl md:text-8xl font-headline font-black tracking-tighter text-white leading-none">
+                      1.000.000<span className="text-primary text-3xl md:text-5xl ml-2 uppercase">FC</span>
+                    </h3>
+                    <p className="text-lg font-headline font-bold text-slate-400 uppercase tracking-tight">
+                      UN MILLION DE FRANCS CONGOLAIS
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-center gap-2 pt-4">
-                    <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-                    <span className="font-black uppercase text-xs tracking-[0.4em] text-primary">Record de Participation</span>
-                    <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-10">
-                  {prizeTiers.map((tier, idx) => (
-                    <div key={idx} className={`p-8 rounded-[2rem] border transition-all hover:scale-[1.02] ${idx === 0 ? "bg-slate-900 text-white border-slate-900 shadow-2xl" : "bg-white border-slate-100 text-slate-900"}`}>
-                      <div className="flex items-start justify-between mb-6">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${idx === 0 ? "bg-primary text-white" : "bg-slate-50 text-slate-400"}`}>
-                          {idx === 0 ? <Award className="w-5 h-5" /> : <span className="font-black text-sm">{idx + 1}</span>}
-                        </div>
-                        <Badge className={idx === 0 ? "bg-primary" : "bg-slate-100 text-slate-500 border-none"}>
-                           {tier.percentage}%
-                        </Badge>
-                      </div>
-                      <h4 className="font-black uppercase text-xs tracking-widest mb-2 opacity-60">{tier.rank}</h4>
-                      <p className="text-3xl font-headline font-black tracking-tighter">
-                        {tier.isSurprise ? "PRIX SURPRISE" : `${tier.amount.toLocaleString()} FC`}
-                      </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                      <p className="text-[8px] font-black text-white/40 uppercase tracking-widest mb-1">Finaliste</p>
+                      <p className="text-xl font-black">250.000 <span className="text-[10px] text-primary">FC</span></p>
                     </div>
-                  ))}
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                      <p className="text-[8px] font-black text-white/40 uppercase tracking-widest mb-1">Distinctions</p>
+                      <p className="text-xl font-black uppercase text-primary">Prestige+</p>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
+              
+              {/* Footer Affiche */}
+              <div className="bg-primary/20 backdrop-blur-md border-t border-white/10 py-4 px-10 flex flex-wrap justify-between items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-4 h-4 text-primary" />
+                  <span className="text-[9px] font-black uppercase tracking-widest">Garantie par ONE CUP Platform</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Users className="w-4 h-4 text-white/40" />
+                  <span className="text-[9px] font-black uppercase tracking-widest">{stats.totalTeams} / {stats.maxPossible} ÉQUIPES EN LICE</span>
+                </div>
+              </div>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card className="rounded-[3rem] p-10 bg-slate-900 text-white border-none shadow-2xl overflow-hidden relative group">
-                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
-                  <Users className="w-32 h-32" />
-                </div>
-                <div className="relative z-10 space-y-4">
-                  <h3 className="text-sm font-black uppercase tracking-widest text-primary">Inscriptions Actuelles</h3>
-                  <div className="flex items-baseline gap-4">
-                    <span className="text-7xl font-headline font-black tracking-tighter">{stats.totalTeams}</span>
-                    <span className="text-2xl text-white/40 font-bold">/ {stats.maxPossible} Équipes</span>
-                  </div>
-                  <p className="text-white/60 font-medium text-sm">Rejoignez les meilleures formations de la RDC dans la course vers l'Elite.</p>
-                  <Button asChild className="bg-white text-slate-900 hover:bg-white/90 rounded-2xl h-14 px-8 font-black uppercase mt-6">
-                    <Link href="/tournaments">Voir les tournois <ArrowRight className="ml-2 w-5 h-5" /></Link>
-                  </Button>
-                </div>
-              </Card>
-
-              <Card className="rounded-[3rem] p-10 bg-white border border-slate-100 shadow-xl space-y-6">
-                <div className="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center">
-                  <Star className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-2xl font-headline font-black uppercase tracking-tight">Status Elite</h3>
-                <p className="text-slate-500 font-medium text-sm">Chaque participant reçoit un certificat officiel ONECUP et une visibilité média accrue sur nos réseaux partenaires.</p>
-                <div className="flex items-center gap-2 text-primary">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Vérifié par la Fédération</span>
-                </div>
-              </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <Card className="rounded-3xl p-8 bg-slate-50 border-none space-y-4">
+                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                   <Star className="w-6 h-6 text-primary" />
+                 </div>
+                 <h4 className="text-lg font-headline font-black uppercase tracking-tight">Statut Elite</h4>
+                 <p className="text-slate-500 text-xs font-medium leading-relaxed">Chaque participant reçoit un certificat officiel et une exposition médiatique nationale.</p>
+               </Card>
+               <Card className="rounded-3xl p-8 bg-slate-50 border-none space-y-4">
+                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                   <Zap className="w-6 h-6 text-primary" />
+                 </div>
+                 <h4 className="text-lg font-headline font-black uppercase tracking-tight">Rapidité</h4>
+                 <p className="text-slate-500 text-xs font-medium leading-relaxed">Remise des prix instantanée lors de la cérémonie de l'After Cup le 25 juillet.</p>
+               </Card>
             </div>
           </div>
 
-          {/* Sidebar Distinctions */}
-          <div className="lg:col-span-4 space-y-8">
-            <Card className="rounded-[3rem] bg-slate-50 border-none p-10 space-y-8">
-              <h3 className="text-xl font-headline font-black uppercase tracking-tight">Distinctions Individuelles</h3>
-              <div className="space-y-6">
+          {/* SIDEBAR COMPACTE */}
+          <div className="lg:col-span-4 space-y-6">
+            <Card className="rounded-[2rem] bg-slate-50 border-none p-8 space-y-6">
+              <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Distinctions Individuelles</h3>
+              <div className="space-y-4">
                 {[
-                  { label: "MVP ONECUP", desc: "Meilleur joueur + Prix Surprise", icon: Zap },
-                  { label: "Soulier d'Or", desc: "Meilleur buteur + Prix Surprise", icon: Target },
-                  { label: "Gant d'Or", desc: "Meilleur gardien + Prix Surprise", icon: ShieldCheck },
-                  { label: "Maestro du Jeu", desc: "Meilleur milieu + Prix Surprise", icon: LayoutDashboard },
-                  { label: "Le Rempart Elite", desc: "Meilleur défenseur + Prix Surprise", icon: Shield },
-                  { label: "Prix Fair-Play", desc: "Équipe la plus exemplaire", icon: Award },
+                  { label: "MVP ONECUP", icon: Zap },
+                  { label: "Soulier d'Or", icon: Target },
+                  { label: "Gant d'Or", icon: ShieldCheck },
+                  { label: "Le Rempart Elite", icon: Shield },
+                  { label: "Maestro du Jeu", icon: Award },
                 ].map((item, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="w-10 h-10 shrink-0 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                      <item.icon className="w-5 h-5 text-primary" />
+                  <div key={i} className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                    <div className="w-8 h-8 shrink-0 bg-primary/5 rounded-lg flex items-center justify-center">
+                      <item.icon className="w-4 h-4 text-primary" />
                     </div>
-                    <div>
-                      <h4 className="font-black uppercase text-xs tracking-tight">{item.label}</h4>
-                      <p className="text-[10px] text-slate-400 font-medium">{item.desc}</p>
-                    </div>
+                    <span className="font-black uppercase text-[10px] tracking-tight">{item.label}</span>
+                    <Badge variant="outline" className="ml-auto text-[7px] border-primary/20 text-primary uppercase px-1">Prix Surprise</Badge>
                   </div>
                 ))}
               </div>
             </Card>
 
-            <Card className="rounded-[3rem] bg-primary p-10 text-white space-y-6 shadow-2xl text-center">
-              <Trophy className="w-16 h-16 opacity-50 mx-auto" />
-              <div className="space-y-2">
-                <h3 className="text-2xl font-headline font-black uppercase tracking-tighter">PRÊT POUR LE SACRE ?</h3>
-                <p className="text-white/70 text-sm font-medium">Inscrivez votre équipe dès aujourd'hui.</p>
+            <Card className="rounded-[2rem] bg-primary p-8 text-white space-y-6 shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
+                <Trophy className="w-20 h-20" />
               </div>
-              <Button asChild className="w-full h-16 bg-white text-primary hover:bg-white/90 rounded-2xl font-black uppercase text-xs tracking-widest">
-                <Link href="/tournaments">S'inscrire maintenant</Link>
-              </Button>
+              <div className="relative z-10 space-y-4">
+                <h3 className="text-lg font-headline font-black uppercase leading-tight">Visez le <br/>Sommet.</h3>
+                <p className="text-white/70 text-xs font-medium">Inscrivez votre équipe pour prétendre au million.</p>
+                <Button asChild className="w-full h-12 bg-white text-primary hover:bg-white/90 rounded-xl font-black uppercase text-[10px] tracking-widest">
+                  <Link href="/tournaments">S'inscrire <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                </Button>
+              </div>
             </Card>
           </div>
         </div>
@@ -182,3 +169,4 @@ export default function RewardsPage() {
     </div>
   );
 }
+
