@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Menu, X, Plus, Search, User } from "lucide-react";
+import { Menu, X, Plus, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -47,7 +47,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <span className="font-headline font-black text-2xl md:text-3xl tracking-tighter uppercase leading-none">
-            FIFA
+            ONE CUP
           </span>
         </Link>
 

@@ -4,7 +4,7 @@
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Target, Zap, Star } from "lucide-react";
+import { Target, Zap, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDoc, useFirestore } from "@/firebase";
 import { doc } from "firebase/firestore";
@@ -35,13 +35,11 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* FIFA Style Countdown Ticker */}
+      {/* ONE CUP Style Countdown Ticker */}
       <div className="bg-black text-white py-2 px-4 border-b border-white/10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-             <div className="w-10 h-10 flex items-center justify-center">
-                <Image src="https://picsum.photos/seed/fifa-2026-logo/100/150" alt="Logo" width={40} height={60} className="object-contain invert" />
-             </div>
+             <span className="font-headline font-black text-xs uppercase tracking-widest">ONE CUP 2026™</span>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-baseline gap-1">
@@ -64,7 +62,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FIFA Style Immersive Hero Section */}
+      {/* ONE CUP Style Immersive Hero Section */}
       <section className="relative w-full">
         {/* Image Container */}
         <div className="relative aspect-[4/5] md:aspect-[21/9] w-full overflow-hidden">
@@ -80,7 +78,7 @@ export default function Home() {
         {/* Info Block (Blue) */}
         <div className="bg-[#0051a3] text-white p-10 md:p-20">
           <div className="container mx-auto max-w-5xl space-y-8">
-            <p className="font-bold text-lg text-white/90">FIFA World Cup 2026™</p>
+            <p className="font-bold text-lg text-white/90 uppercase tracking-widest">ONE CUP ELITE 2026™</p>
             <h1 className="text-4xl md:text-7xl font-headline font-bold tracking-tight leading-tight text-white">
               {heroTitle}
             </h1>
