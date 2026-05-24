@@ -80,7 +80,7 @@ export default function Home() {
         <div className="bg-[#0051a3] text-white p-8 md:p-20">
           <div className="container mx-auto max-w-5xl space-y-6 md:space-y-8">
             <p className="font-bold text-sm md:text-lg text-white/90 uppercase tracking-widest">ONE CUP ELITE 2026™</p>
-            <h1 className="text-3xl md:text-7xl font-headline font-bold tracking-tight leading-tight text-white">
+            <h1 className="text-3xl md:text-7xl font-headline font-black tracking-tight leading-tight text-white">
               {heroTitle}
             </h1>
             
