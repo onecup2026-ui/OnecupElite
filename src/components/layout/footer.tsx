@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { Trophy, Instagram, Twitter, Youtube, Facebook, ArrowUpRight, Mail } from "lucide-react";
+import { Trophy, Instagram, Twitter, Youtube, Facebook, ArrowUpRight, Mail, ShieldAlert } from "lucide-react";
 
 export function Footer() {
   return (
@@ -66,6 +66,7 @@ export function Footer() {
             <li><Link href="/community" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 group">Hub Communautaire <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
             <li><Link href="/results" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 group">Résultats Live <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
             <li><Link href="/tickets" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 group">Billetterie <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
+            <li><Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 group text-[10px] font-bold mt-4 opacity-50 hover:opacity-100"><ShieldAlert className="w-3 h-3" /> Administration</Link></li>
           </ul>
         </div>
 
