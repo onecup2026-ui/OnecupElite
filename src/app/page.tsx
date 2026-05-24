@@ -36,27 +36,27 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* ONE CUP Style Countdown Ticker */}
-      <div className="bg-black text-white py-2 px-4 border-b border-white/10">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-             <span className="font-headline font-black text-xs uppercase tracking-widest">ONE CUP 2026™</span>
+      <div className="bg-black text-white py-1.5 px-4 border-b border-white/10 overflow-hidden">
+        <div className="container mx-auto flex items-center justify-start gap-8 md:gap-16">
+          <div className="flex items-center shrink-0">
+             <span className="font-headline font-black text-[10px] uppercase tracking-widest">ONE CUP 2026™</span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-8">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">{timeLeft.days}</span>
-              <span className="text-[10px] uppercase text-white/60">jours</span>
+              <span className="text-lg md:text-xl font-bold tabular-nums">{timeLeft.days}</span>
+              <span className="text-[8px] uppercase text-white/50 tracking-tighter">jours</span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">{String(timeLeft.hours).padStart(2, '0')}</span>
-              <span className="text-[10px] uppercase text-white/60">heures</span>
+              <span className="text-lg md:text-xl font-bold tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
+              <span className="text-[8px] uppercase text-white/50 tracking-tighter">heures</span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">{String(timeLeft.minutes).padStart(2, '0')}</span>
-              <span className="text-[10px] uppercase text-white/60">minutes</span>
+              <span className="text-lg md:text-xl font-bold tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
+              <span className="text-[8px] uppercase text-white/50 tracking-tighter">minutes</span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">{String(timeLeft.seconds).padStart(2, '0')}</span>
-              <span className="text-[10px] uppercase text-white/60">secs</span>
+              <span className="text-lg md:text-xl font-bold tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
+              <span className="text-[8px] uppercase text-white/50 tracking-tighter">secs</span>
             </div>
           </div>
         </div>
