@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useMemo } from "react";
-import { Trophy, Award, Users, TrendingUp, Star, ShieldCheck, Zap, ArrowRight, Target } from "lucide-react";
+import { Trophy, Award, Users, TrendingUp, Star, ShieldCheck, Zap, ArrowRight, Target, Shield, LayoutDashboard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,10 +24,9 @@ export default function RewardsPage() {
   }, [tournaments]);
 
   const prizeTiers = [
-    { rank: "Champion ONECUP", amount: 5000000, percentage: 50 },
-    { rank: "Finaliste Elite", amount: 2500000, percentage: 25 },
-    { rank: "3ème Place Prestige", amount: 1500000, percentage: 15 },
-    { rank: "Prix Spéciaux (MVP/Buteur)", amount: 1000000, percentage: 10 },
+    { rank: "Champion ONECUP", amount: 1000000, percentage: 70 },
+    { rank: "Finaliste Elite", amount: 250000, percentage: 20 },
+    { rank: "Prix Individuels & Surprises", amount: 0, percentage: 10, isSurprise: true },
   ];
 
   return (
@@ -43,7 +41,7 @@ export default function RewardsPage() {
             RÉCOMPENSES <br/><span className="text-white/40">& PRESTIGE.</span>
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto text-white/80 font-medium">
-            Entrez dans l'histoire. Une cagnotte record et des distinctions d'élite pour ceux qui osent viser le sommet.
+            Entrez dans l'histoire. Une cagnotte d'élite et des distinctions de prestige pour ceux qui osent viser le sommet.
           </p>
         </div>
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
@@ -55,8 +53,8 @@ export default function RewardsPage() {
           {/* Main Content: Prize Pool & Stats */}
           <div className="lg:col-span-8 space-y-12">
             <PrizePoolTracker 
-              currentPool={7500000} 
-              targetPool={10000000} 
+              currentPool={1250000} 
+              targetPool={1500000} 
               tiers={prizeTiers} 
             />
 
@@ -98,9 +96,11 @@ export default function RewardsPage() {
               <h3 className="text-xl font-headline font-black uppercase tracking-tight">Distinctions Individuelles</h3>
               <div className="space-y-6">
                 {[
-                  { label: "Soulier d'Or", desc: "Meilleur buteur du tournoi", icon: Target },
-                  { label: "Gant d'Argent", desc: "Meilleur gardien de l'édition", icon: ShieldCheck },
-                  { label: "MVP ONECUP", desc: "Meilleur joueur de la finale", icon: Zap },
+                  { label: "Soulier d'Or", desc: "Meilleur buteur + Prix Surprise", icon: Target },
+                  { label: "Gant d'Or", desc: "Meilleur gardien + Prix Surprise", icon: ShieldCheck },
+                  { label: "MVP ONECUP", desc: "Meilleur joueur + Prix Surprise", icon: Zap },
+                  { label: "Meilleur Défenseur", desc: "Le mur de l'Elite + Prix Surprise", icon: Shield },
+                  { label: "Meilleur Milieu", desc: "Le maestro du jeu + Prix Surprise", icon: LayoutDashboard },
                   { label: "Prix Fair-Play", desc: "Équipe la plus disciplinée", icon: Award },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">

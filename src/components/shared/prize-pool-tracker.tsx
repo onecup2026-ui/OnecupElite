@@ -1,14 +1,14 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { TrendingUp, Award, Target, Sparkles } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, Award, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PrizePoolProps {
   currentPool: number;
   targetPool: number;
-  tiers: { rank: string; amount: number; percentage: number }[];
+  tiers: { rank: string; amount: number; percentage: number; isSurprise?: boolean }[];
 }
 
 export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolProps) {
@@ -34,11 +34,11 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
           
           <div className="space-y-2">
             <h2 className="text-6xl md:text-9xl font-headline font-black text-slate-900 tracking-tighter leading-none flex flex-col md:flex-row items-center justify-center gap-4">
-              <span>{currentPool.toLocaleString()}</span>
+              <span>UN MILLION</span>
               <span className="text-primary text-4xl md:text-6xl">FC</span>
             </h2>
             <p className="text-2xl md:text-3xl font-headline font-bold text-slate-400 uppercase tracking-tight">
-              Dix Millions de Francs Congolais
+              POUR LE CHAMPION SUPRÊME
             </p>
           </div>
 
@@ -57,8 +57,8 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
               <p className="font-black text-xl text-primary">{Math.round(progressValue)}%</p>
             </div>
             <div className="text-right space-y-1">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Objectif Final</p>
-              <p className="font-black text-xl text-slate-900">10 000 000 FC</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pot Total Estimé</p>
+              <p className="font-black text-xl text-slate-900">1 500 000 FC</p>
             </div>
           </div>
           
@@ -92,7 +92,13 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
               </div>
               <h4 className="font-black uppercase text-xs tracking-widest mb-2 opacity-60">{tier.rank}</h4>
               <p className="text-3xl font-headline font-black tracking-tighter">
-                {tier.amount.toLocaleString()} <span className="text-sm">FC</span>
+                {tier.isSurprise ? (
+                  <span className="text-xl uppercase">Prix Surprise</span>
+                ) : (
+                  <>
+                    {tier.amount.toLocaleString()} <span className="text-sm">FC</span>
+                  </>
+                )}
               </p>
             </div>
           ))}
@@ -101,5 +107,3 @@ export function PrizePoolTracker({ currentPool, targetPool, tiers }: PrizePoolPr
     </Card>
   );
 }
-
-import { Badge } from "@/components/ui/badge";

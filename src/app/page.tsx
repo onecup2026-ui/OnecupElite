@@ -146,7 +146,7 @@ export default function Home() {
                     LA GRANDE <br/><span className="text-primary">CAGNOTTE.</span>
                   </h2>
                   <p className="text-2xl md:text-4xl font-headline font-bold text-slate-400 uppercase tracking-tight">
-                    Dix Millions de Francs Congolais
+                    UN MILLION DE FRANCS CONGOLAIS
                   </p>
                 </div>
                 <div className="flex gap-12 pt-4">
@@ -168,9 +168,9 @@ export default function Home() {
                    <div className="space-y-6 relative z-10">
                       <Badge className="bg-primary text-white font-black px-4 py-1 rounded-lg">LIVE PRIZE</Badge>
                       <p className="text-7xl md:text-8xl font-headline font-black tracking-tighter leading-none">
-                        10<span className="text-primary">M</span>
+                        1<span className="text-primary">M</span>
                       </p>
-                      <p className="text-sm font-black uppercase tracking-[0.3em] text-white/60">Francs Congolais en Jeu</p>
+                      <p className="text-sm font-black uppercase tracking-[0.3em] text-white/60">Francs Congolais pour le Champion</p>
                       <Button className="bg-white text-slate-900 hover:bg-slate-100 rounded-2xl h-14 px-8 font-black uppercase text-xs tracking-widest gap-2">
                          Détails des Gains <TrendingUp className="w-4 h-4" />
                       </Button>
