@@ -1,16 +1,17 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Calendar, Users, Newspaper, Ticket, PartyPopper, Menu, X, LogIn, LogOut, ShieldCheck, Loader2 } from "lucide-react";
+import { Trophy, Menu, X, LogIn, LogOut, Loader2, Search, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth, useUser } from "@/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const ADMIN_EMAIL = "onecup2026@gmail.com";
 
@@ -58,14 +59,14 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full bg-[#0051a3] text-white border-b border-white/10 shadow-lg">
+      <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-            <Trophy className="text-white w-5 h-5" />
+          <div className="w-8 h-8 md:w-10 md:h-10 bg-white rounded flex items-center justify-center">
+            <Trophy className="text-[#0051a3] w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <span className="font-bold text-xl tracking-tight uppercase">
-            ONECUP<span className="text-primary">2026</span>
+          <span className="font-headline font-black text-xl md:text-2xl tracking-tighter uppercase">
+            ONECUP<span className="text-white/60">2026</span>
           </span>
         </Link>
 
@@ -76,8 +77,8 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 className={cn(
-                  "px-4 h-9 font-semibold text-sm",
-                  pathname === item.href && "text-primary bg-primary/5"
+                  "px-4 h-10 font-black text-xs uppercase tracking-widest hover:bg-white/10 hover:text-white",
+                  pathname === item.href && "bg-white/10 text-white"
                 )}
               >
                 {item.name}
@@ -86,64 +87,68 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-4">
+          <Button variant="ghost" size="icon" className="hidden sm:flex hover:bg-white/10 text-white">
+            <Search className="w-5 h-5" />
+          </Button>
+
           {loading ? (
-            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            <Loader2 className="w-5 h-5 animate-spin text-white/60" />
           ) : user ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
                 <Link href="/admin">
-                  <Button variant="outline" size="sm" className="h-9 border-primary text-primary hover:bg-primary hover:text-white">
+                  <Button variant="outline" size="sm" className="hidden md:flex h-9 border-white/20 text-white bg-white/10 hover:bg-white hover:text-[#0051a3] font-bold uppercase text-[10px]">
                     Admin
                   </Button>
                 </Link>
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 overflow-hidden border">
+                  <Button variant="ghost" className="relative h-9 w-9 md:h-10 md:w-10 rounded-full p-0 overflow-hidden border border-white/20 hover:bg-white/10">
                     <Avatar className="h-full w-full">
                       <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
-                      <AvatarFallback>{user.displayName?.[0]}</AvatarFallback>
+                      <AvatarFallback className="bg-[#003d7a] text-white">{user.displayName?.[0]}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2">
-                  <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase border-b mb-1">
-                    Mon compte
+                <DropdownMenuContent align="end" className="w-56 mt-2 bg-white text-slate-900">
+                  <div className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase border-b mb-1 tracking-widest">
+                    Mon compte Elite
                   </div>
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer font-bold uppercase text-xs">
                     <LogOut className="mr-2 h-4 w-4" /> Se déconnecter
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           ) : (
-            <Button onClick={handleLogin} disabled={isAuthenticating} className="h-9 px-6 font-bold">
-              Connexion
+            <Button onClick={handleLogin} disabled={isAuthenticating} className="bg-white text-[#0051a3] hover:bg-white/90 h-9 md:h-10 px-6 font-black uppercase text-[10px] tracking-widest rounded-full shadow-lg">
+              <UserIcon className="w-4 h-4 mr-2" /> Connexion
             </Button>
           )}
-        </div>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="lg:hidden p-2 text-muted-foreground" 
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          {/* Mobile Toggle */}
+          <button 
+            className="lg:hidden p-2 text-white hover:bg-white/10 rounded-full" 
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden border-t bg-white px-4 py-6 space-y-4">
+        <div className="lg:hidden border-t border-white/10 bg-[#0051a3] px-4 py-6 space-y-4 animate-in slide-in-from-top-4">
           <div className="grid grid-cols-1 gap-1">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
                 <Button 
                   variant="ghost" 
                   className={cn(
-                    "w-full justify-start h-12 text-sm font-semibold",
-                    pathname === item.href && "text-primary bg-primary/5"
+                    "w-full justify-start h-14 text-sm font-black uppercase tracking-widest hover:bg-white/10 text-white",
+                    pathname === item.href && "bg-white/10"
                   )}
                 >
                   {item.name}
@@ -151,18 +156,18 @@ export function Navbar() {
               </Link>
             ))}
           </div>
-          <div className="pt-4 border-t">
+          <div className="pt-4 border-t border-white/10">
             {user ? (
               <div className="space-y-3">
                 {isAdmin && (
                   <Link href="/admin" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full h-12">Tableau de bord Admin</Button>
+                    <Button variant="outline" className="w-full h-12 border-white/20 text-white bg-white/10 font-black uppercase text-xs">Tableau de bord Admin</Button>
                   </Link>
                 )}
-                <Button onClick={handleLogout} variant="destructive" className="w-full h-12">Déconnexion</Button>
+                <Button onClick={handleLogout} variant="destructive" className="w-full h-12 font-black uppercase text-xs">Déconnexion</Button>
               </div>
             ) : (
-              <Button onClick={handleLogin} className="w-full h-12 font-bold">Se connecter</Button>
+              <Button onClick={handleLogin} className="w-full h-14 bg-white text-[#0051a3] font-black uppercase tracking-widest text-xs rounded-xl">Se connecter</Button>
             )}
           </div>
         </div>
