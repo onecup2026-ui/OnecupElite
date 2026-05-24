@@ -1,20 +1,19 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, Settings, Save, Edit2, MessageCircle, ImageIcon } from "lucide-react";
+import { Trophy, Plus, Trash2, ShieldCheck, Loader2, Upload, Settings, Save, Edit2, MessageCircle, ImageIcon, Layout } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { useCollection, useFirestore, useUser, useDoc, useStorage } from "@/firebase";
+import { useCollection, useFirestore, useUser, useDoc, useStorage, useAuth } from "@/firebase";
 import { doc, addDoc, deleteDoc, collection, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { signOut } from "firebase/auth";
-import { useAuth } from "@/firebase";
 
 const ADMIN_EMAIL = "onecup2026@gmail.com";
 
@@ -102,120 +101,139 @@ export default function AdminDashboard() {
   };
 
   if (userLoading) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-primary" /></div>;
-  if (!isAdmin) return <div className="p-20 text-center flex flex-col items-center gap-6"><ShieldCheck className="w-16 h-16 text-destructive" /><h2 className="text-3xl font-bold uppercase">Accès Admin Requis</h2><Button variant="destructive" onClick={() => auth && signOut(auth)}>Se déconnecter</Button></div>;
+  if (!isAdmin) return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#f3f3f3]">
+      <div className="bg-white p-12 rounded-[3rem] shadow-2xl text-center space-y-8 max-w-lg w-full">
+        <ShieldCheck className="w-24 h-24 text-destructive mx-auto" />
+        <div className="space-y-4">
+          <h2 className="text-4xl font-headline font-black uppercase tracking-tighter">Accès Admin Requis</h2>
+          <p className="text-slate-400 font-medium">Vous devez être connecté avec l'adresse administrateur officielle pour accéder à cet espace.</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <Button variant="destructive" onClick={() => auth && signOut(auth)} className="h-14 rounded-2xl font-black uppercase tracking-widest">
+            Changer de compte
+          </Button>
+          <Link href="/">
+            <Button variant="ghost" className="h-14 font-bold uppercase text-xs">Retour à l'accueil</Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8 min-h-screen">
-      <header className="flex flex-col md:flex-row items-center justify-between gap-4 border-b pb-6">
-        <h1 className="text-2xl md:text-4xl font-headline font-black uppercase tracking-tighter">Console Admin</h1>
-        <div className="flex items-center gap-3">
-          <Badge className="bg-primary px-3 py-1 font-black">ADMIN</Badge>
-          <Button variant="outline" size="sm" onClick={() => auth && signOut(auth)} className="rounded-full font-bold">Quitter</Button>
+    <div className="bg-[#f3f3f3] min-h-screen pb-20">
+      <header className="bg-primary text-white py-10 md:py-16">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="space-y-2 text-center md:text-left">
+            <h1 className="text-4xl md:text-6xl font-headline font-black uppercase tracking-tighter leading-none">Console Elite</h1>
+            <p className="text-white/60 font-medium uppercase tracking-[0.3em] text-[10px]">Gestion du Hub ONECUP 2026</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <Badge className="bg-white text-primary px-6 py-2 font-black rounded-full shadow-lg">ADMIN</Badge>
+            <Button variant="outline" onClick={() => auth && signOut(auth)} className="h-12 border-white/20 text-white hover:bg-white/10 rounded-xl font-bold uppercase text-[10px] tracking-widest px-8">Quitter</Button>
+          </div>
         </div>
       </header>
 
-      <Tabs defaultValue="tournaments" className="w-full">
-        <TabsList className="bg-muted p-1 rounded-xl mb-8 flex flex-wrap h-auto gap-1">
-          <TabsTrigger value="tournaments" className="flex-1 uppercase font-black text-[10px] py-2 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">Tournois</TabsTrigger>
-          <TabsTrigger value="registrations" className="flex-1 uppercase font-black text-[10px] py-2 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">Inscriptions</TabsTrigger>
-          <TabsTrigger value="config" className="flex-1 uppercase font-black text-[10px] py-2 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white gap-2"><Settings className="w-3 h-3" /> Design</TabsTrigger>
-        </TabsList>
+      <div className="container mx-auto px-4 -mt-10 relative z-20">
+        <Tabs defaultValue="tournaments" className="w-full">
+          <TabsList className="bg-white p-2 rounded-2xl mb-12 flex flex-wrap h-auto gap-2 shadow-xl border border-slate-100">
+            <TabsTrigger value="tournaments" className="flex-1 uppercase font-black text-xs py-4 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Tournois</TabsTrigger>
+            <TabsTrigger value="registrations" className="flex-1 uppercase font-black text-xs py-4 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Inscriptions</TabsTrigger>
+            <TabsTrigger value="config" className="flex-1 uppercase font-black text-xs py-4 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"><Layout className="w-4 h-4" /> Design</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="config" className="space-y-8">
-          <Card className="rounded-3xl overflow-hidden border-none shadow-lg">
-            <CardHeader className="bg-primary/5 p-6 border-b">
-              <CardTitle className="font-headline font-black uppercase text-lg">Personnalisation du site</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <Label className="font-black uppercase text-[10px] tracking-widest text-primary">Image de Bienvenue (Home)</Label>
-                  <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-100" onClick={() => heroUploadRef.current?.click()}>
-                    {configForm.heroImageUrl ? <img src={configForm.heroImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-8 h-8 text-muted-foreground" /></div>}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all"><Upload className="w-6 h-6 text-white" /></div>
-                    {isUploading && <div className="absolute inset-0 bg-white/80 flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>}
+          <TabsContent value="config" className="space-y-10">
+            <Card className="rounded-[3rem] overflow-hidden border-none shadow-2xl bg-white">
+              <CardHeader className="bg-slate-50 p-10 border-b">
+                <CardTitle className="font-headline font-black uppercase text-2xl tracking-tight">Identité Visuelle du Site</CardTitle>
+              </CardHeader>
+              <CardContent className="p-10 space-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="space-y-4">
+                    <Label className="font-black uppercase text-xs tracking-widest text-primary">Bannière Accueil (Hero)</Label>
+                    <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-50 border-slate-200" onClick={() => heroUploadRef.current?.click()}>
+                      {configForm.heroImageUrl ? <img src={configForm.heroImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-10 h-10 text-slate-300" /></div>}
+                      <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm"><Upload className="w-10 h-10 text-white" /></div>
+                      {isUploading && <div className="absolute inset-0 bg-white/80 flex items-center justify-center"><Loader2 className="animate-spin text-primary w-10 h-10" /></div>}
+                    </div>
+                    <input type="file" ref={heroUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'hero', 'heroImageUrl')} />
                   </div>
-                  <input type="file" ref={heroUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'hero', 'heroImageUrl')} />
-                </div>
-                <div className="space-y-3">
-                  <Label className="font-black uppercase text-[10px] tracking-widest text-primary">Image After Cup</Label>
-                  <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-100" onClick={() => afterCupUploadRef.current?.click()}>
-                    {configForm.afterCupImageUrl ? <img src={configForm.afterCupImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-8 h-8 text-muted-foreground" /></div>}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all"><Upload className="w-6 h-6 text-white" /></div>
+                  <div className="space-y-4">
+                    <Label className="font-black uppercase text-xs tracking-widest text-primary">Bannière After Cup</Label>
+                    <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-50 border-slate-200" onClick={() => afterCupUploadRef.current?.click()}>
+                      {configForm.afterCupImageUrl ? <img src={configForm.afterCupImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-10 h-10 text-slate-300" /></div>}
+                      <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm"><Upload className="w-10 h-10 text-white" /></div>
+                    </div>
+                    <input type="file" ref={afterCupUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'aftercup', 'afterCupImageUrl')} />
                   </div>
-                  <input type="file" ref={afterCupUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'aftercup', 'afterCupImageUrl')} />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t">
-                <div className="space-y-2"><Label className="font-black uppercase text-[10px]">Titre Principal</Label><Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="rounded-lg" /></div>
-                <div className="space-y-2"><Label className="font-black uppercase text-[10px]">Sous-titre</Label><Textarea value={configForm.heroSubtitle} onChange={e => setConfigForm({...configForm, heroSubtitle: e.target.value})} className="rounded-lg min-h-[80px]" /></div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t">
-                <div className="space-y-2"><Label className="font-black uppercase text-[10px]">Écoles</Label><Input value={configForm.statSchools} onChange={e => setConfigForm({...configForm, statSchools: e.target.value})} /></div>
-                <div className="space-y-2"><Label className="font-black uppercase text-[10px]">Matchs</Label><Input value={configForm.statMatches} onChange={e => setConfigForm({...configForm, statMatches: e.target.value})} /></div>
-                <div className="space-y-2"><Label className="font-black uppercase text-[10px]">Talents</Label><Input value={configForm.statTalents} onChange={e => setConfigForm({...configForm, statTalents: e.target.value})} /></div>
-              </div>
-
-              <Button onClick={() => db && setDoc(doc(db, "settings", "config"), configForm, { merge: true }).then(() => toast({ title: "Design sauvegardé !" }))} className="w-full h-12 font-black uppercase rounded-xl bg-primary shadow-md">
-                <Save className="w-4 h-4 mr-2" /> Appliquer les modifications
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="tournaments" className="space-y-8">
-          <Card className="rounded-3xl border-none shadow-lg">
-            <CardHeader className="bg-primary/5 p-6 border-b">
-              <CardTitle className="font-headline font-black uppercase text-lg">{editingTournamentId ? "Modifier" : "Publier"} un tournoi</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1"><Label className="font-black uppercase text-[10px]">Nom</Label><Input value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} /></div>
-                <div className="space-y-1"><Label className="font-black uppercase text-[10px]">Stade</Label><Input value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} /></div>
-              </div>
-              <Button onClick={handleSaveTournament} className="w-full h-12 font-black uppercase rounded-lg">Enregistrer</Button>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tournaments?.map((t: any) => (
-              <Card key={t.id} className="p-4 flex items-center justify-between rounded-2xl border-none shadow-sm bg-slate-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><Trophy className="w-5 h-5" /></div>
-                  <div><h3 className="font-black uppercase text-xs">{t.name}</h3><p className="text-[9px] font-bold text-muted-foreground">{t.locationStade}</p></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-10 border-t">
+                  <div className="space-y-2"><Label className="font-black uppercase text-xs tracking-widest">Titre Hero</Label><Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none font-bold" /></div>
+                  <div className="space-y-2"><Label className="font-black uppercase text-xs tracking-widest">Sous-titre</Label><Textarea value={configForm.heroSubtitle} onChange={e => setConfigForm({...configForm, heroSubtitle: e.target.value})} className="rounded-2xl bg-slate-50 border-none font-medium min-h-[100px]" /></div>
                 </div>
-                <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" onClick={() => { setEditingTournamentId(t.id); setTournamentForm({...t}); }}><Edit2 className="w-3 h-3" /></Button>
-                  <Button size="icon" variant="ghost" className="hover:text-destructive" onClick={() => handleDelete('tournaments', t.id)}><Trash2 className="w-3 h-3" /></Button>
+
+                <Button onClick={() => db && setDoc(doc(db, "settings", "config"), configForm, { merge: true }).then(() => toast({ title: "Design mis à jour !" }))} className="w-full h-20 font-black uppercase rounded-3xl bg-primary text-xl shadow-xl glow-blue hover:scale-[1.02] transition-transform">
+                  <Save className="w-6 h-6 mr-3" /> Appliquer les modifications visuelles
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="tournaments" className="space-y-12">
+            <Card className="rounded-[3rem] border-none shadow-2xl bg-white">
+              <CardHeader className="bg-slate-50 p-10 border-b">
+                <CardTitle className="font-headline font-black uppercase text-2xl tracking-tight">{editingTournamentId ? "Modifier" : "Créer"} une Compétition</CardTitle>
+              </CardHeader>
+              <CardContent className="p-10 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2"><Label className="font-black uppercase text-xs">Nom</Label><Input value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} className="h-14 rounded-xl bg-slate-50 border-none" /></div>
+                  <div className="space-y-2"><Label className="font-black uppercase text-xs">Stade</Label><Input value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} className="h-14 rounded-xl bg-slate-50 border-none" /></div>
+                </div>
+                <Button onClick={handleSaveTournament} className="w-full h-16 font-black uppercase rounded-2xl bg-primary shadow-lg text-lg">Publier la compétition</Button>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tournaments?.map((t: any) => (
+                <Card key={t.id} className="p-8 flex items-center justify-between rounded-[2.5rem] border-none shadow-xl bg-white hover:scale-[1.01] transition-transform group">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-colors"><Trophy className="w-8 h-8 text-primary group-hover:text-white" /></div>
+                    <div><h3 className="font-black uppercase text-xl tracking-tight leading-none">{t.name}</h3><p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">{t.locationStade}</p></div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="icon" variant="ghost" className="w-12 h-12 rounded-xl" onClick={() => { setEditingTournamentId(t.id); setTournamentForm({...t}); }}><Edit2 className="w-5 h-5" /></Button>
+                    <Button size="icon" variant="ghost" className="w-12 h-12 rounded-xl hover:text-destructive" onClick={() => handleDelete('tournaments', t.id)}><Trash2 className="w-5 h-5" /></Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="registrations" className="space-y-6">
+            {registrations?.map((r: any) => (
+              <Card key={r.id} className="p-10 rounded-[3rem] border-none shadow-xl bg-white flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="space-y-2 text-center md:text-left">
+                  <div className="flex items-center gap-4 justify-center md:justify-start">
+                    <h4 className="font-black uppercase text-3xl tracking-tighter">{r.teamName}</h4>
+                    <Badge className="bg-green-500 font-black text-[10px] tracking-widest px-4 py-1">{r.status}</Badge>
+                  </div>
+                  <p className="font-bold text-sm text-slate-400 uppercase tracking-widest">{r.captainName} • {r.contactPhone}</p>
+                  <Badge variant="outline" className="text-[10px] border-primary text-primary font-black uppercase tracking-widest px-6 mt-2">{r.tournamentName}</Badge>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Button size="lg" variant="outline" onClick={() => window.open(`https://wa.me/${r.contactPhone.replace(/\D/g, '')}`, '_blank')} className="h-16 px-10 gap-3 rounded-2xl border-green-500 text-green-500 font-black uppercase text-xs tracking-widest hover:bg-green-50">
+                    <MessageCircle className="w-6 h-6" /> WhatsApp
+                  </Button>
+                  <Button size="icon" variant="ghost" className="h-16 w-16 rounded-2xl hover:text-destructive" onClick={() => handleDelete('registrations', r.id)}><Trash2 className="w-6 h-6" /></Button>
                 </div>
               </Card>
             ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="registrations" className="space-y-4">
-          {registrations?.map((r: any) => (
-            <Card key={r.id} className="p-6 rounded-2xl border-none shadow-sm bg-slate-50 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="space-y-1 text-center md:text-left">
-                <div className="flex items-center gap-2 justify-center md:justify-start">
-                  <h4 className="font-black uppercase text-lg tracking-tight">{r.teamName}</h4>
-                  <Badge className="bg-green-500 font-black text-[9px]">{r.status}</Badge>
-                </div>
-                <p className="font-bold text-[10px] text-muted-foreground uppercase">{r.captainName} • {r.contactPhone}</p>
-                <Badge variant="outline" className="text-[8px] border-primary text-primary font-black uppercase">{r.tournamentName}</Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => window.open(`https://wa.me/${r.contactPhone.replace(/\D/g, '')}`, '_blank')} className="h-10 px-4 gap-2 rounded-lg border-green-500 text-green-500 font-black uppercase text-[10px]">
-                  <MessageCircle className="w-4 h-4" /> WhatsApp
-                </Button>
-                <Button size="icon" variant="ghost" className="h-10 w-10 hover:text-destructive" onClick={() => handleDelete('registrations', r.id)}><Trash2 className="w-4 h-4" /></Button>
-              </div>
-            </Card>
-          ))}
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

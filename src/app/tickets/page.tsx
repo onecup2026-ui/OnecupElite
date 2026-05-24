@@ -1,8 +1,8 @@
-
 "use client";
 
 import { useMemo } from "react";
-import { Ticket as TicketIcon, ExternalLink, ShieldCheck, Zap, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { Ticket as TicketIcon, ExternalLink, ShieldCheck, Zap, ArrowRight, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,109 +17,139 @@ export default function TicketsPage() {
   const { data: tickets, loading } = useCollection(ticketsRef);
 
   return (
-    <div className="container mx-auto px-4 py-12 space-y-12">
-      <header className="space-y-4 text-center max-w-3xl mx-auto">
-        <Badge variant="outline" className="border-primary text-primary px-3 py-1 font-bold uppercase tracking-widest">ACCÈS OFFICIEL</Badge>
-        <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter uppercase">BILLETTERIE ÉLITE</h1>
-        <p className="text-muted-foreground text-lg">
-          Réservez vos places pour les événements les plus attendus de la saison OneCup. 
-          Tous nos liens redirigent vers notre plateforme de billetterie sécurisée.
-        </p>
-      </header>
-
-      {/* Main Official Ticket CTA */}
-      <section className="max-w-4xl mx-auto">
-        <Card className="bg-primary glow-blue border-none overflow-hidden rounded-[2.5rem] text-white">
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="p-10 space-y-6 flex flex-col justify-center">
-              <Badge className="bg-white text-primary w-fit font-bold uppercase">OFFRE PRINCIPALE</Badge>
-              <h2 className="text-3xl font-headline font-bold uppercase leading-none">PASS FESTIVAL & FINALE ONECUP</h2>
-              <p className="text-white/80 text-sm">Accès complet à la grande finale du 24 juillet et au festival After Cup du 25 juillet.</p>
-              <a href={OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-black uppercase w-full md:w-auto h-14 px-8 rounded-xl gap-2">
-                  Acheter sur Digital Event <ExternalLink className="w-5 h-5" />
-                </Button>
-              </a>
-            </div>
-            <div className="relative aspect-video md:aspect-auto">
-              <img 
-                src="https://picsum.photos/seed/onecup-ticket-main/800/600" 
-                alt="Tickets" 
-                className="absolute inset-0 w-full h-full object-cover opacity-80"
-                data-ai-hint="crowd concert"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary via-transparent to-transparent hidden md:block" />
-            </div>
+    <div className="bg-[#f3f3f3] min-h-screen">
+      {/* Immersive FIFA Style Header */}
+      <section className="relative h-[50vh] bg-secondary flex items-end overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://picsum.photos/seed/onecup-ticketing/1920/1080"
+            alt="Elite Ticketing"
+            fill
+            className="object-cover opacity-60"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10 pb-16">
+          <div className="max-w-4xl space-y-6 animate-fifa-in">
+            <Badge className="bg-primary text-white px-8 py-2 rounded-full font-black text-xs uppercase tracking-[0.4em] shadow-2xl">
+              ACCÈS OFFICIEL
+            </Badge>
+            <h1 className="text-6xl md:text-9xl font-headline font-black text-white uppercase tracking-tighter leading-none">
+              BILLETTERIE <br/><span className="text-white/40">ÉLITE.</span>
+            </h1>
           </div>
-        </Card>
+        </div>
       </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {loading ? (
-          Array(3).fill(0).map((_, i) => (
-            <Card key={i} className="bg-card border-white/5 h-[400px] animate-pulse" />
-          ))
-        ) : tickets && tickets.length > 0 ? (
-          tickets.map((ticket: any) => (
-            <Card key={ticket.id} className="bg-card border-white/5 hover:border-primary/30 transition-all duration-300 group overflow-hidden flex flex-col shadow-2xl">
-              <div className="relative aspect-video overflow-hidden">
-                <img
-                  src={ticket.imageUrl || "https://picsum.photos/seed/ticket/800/600"}
-                  alt={ticket.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80"
-                />
-                <Badge className="absolute top-4 right-4 bg-primary glow-blue font-bold text-lg px-4 py-1">
-                  {ticket.price || "TBA"}
-                </Badge>
-              </div>
-              
-              <CardHeader className="flex-grow">
-                <div className="flex items-center gap-2 text-xs text-primary font-bold uppercase tracking-widest mb-2">
-                  <Zap className="w-3 h-3" /> {ticket.tournamentName || "Événement OneCup"}
+      <div className="container mx-auto px-4 py-20 -mt-10 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Main Official Pass */}
+          <div className="lg:col-span-8 space-y-12">
+            <Card className="bg-primary glow-blue border-none overflow-hidden rounded-[4rem] text-white shadow-2xl">
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                <div className="p-12 md:p-16 space-y-8 flex flex-col justify-center">
+                  <div className="flex items-center gap-3">
+                    <Star className="text-white fill-white w-6 h-6" />
+                    <span className="font-black uppercase text-xs tracking-[0.5em]">OFFRE SUPRÊME</span>
+                  </div>
+                  <h2 className="text-4xl md:text-6xl font-headline font-black uppercase leading-[0.9] tracking-tighter">PASS FESTIVAL <br/>& FINALE 2026</h2>
+                  <p className="text-white/80 text-lg font-medium">L'expérience totale : Accès VIP à la Grande Finale du 24 Juillet et au Festival After Cup du 25 Juillet.</p>
+                  <a href={OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer">
+                    <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-black uppercase w-full h-20 text-xl rounded-3xl gap-3 shadow-2xl transition-transform hover:scale-105 active:scale-95">
+                      Réserver mon Pass <ExternalLink className="w-6 h-6" />
+                    </Button>
+                  </a>
                 </div>
-                <CardTitle className="text-2xl font-headline font-bold uppercase leading-tight group-hover:text-primary transition-colors">
-                  {ticket.title}
-                </CardTitle>
-                {ticket.description && (
-                  <p className="text-muted-foreground text-sm mt-3 line-clamp-3">
-                    {ticket.description}
-                  </p>
-                )}
-              </CardHeader>
-              
-              <CardFooter className="p-6 border-t border-white/5">
-                <a href={ticket.externalUrl || OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer" className="w-full">
-                  <Button className="w-full h-12 bg-primary hover:bg-primary/90 glow-blue gap-2 uppercase font-bold text-sm">
-                    Réserver sur Digital Event <ExternalLink className="w-4 h-4" />
-                  </Button>
-                </a>
-              </CardFooter>
+                <div className="relative aspect-square md:aspect-auto">
+                  <Image 
+                    src="https://picsum.photos/seed/onecup-vip-pass/1000/1000" 
+                    alt="VIP Tickets" 
+                    fill 
+                    className="object-cover opacity-90"
+                    data-ai-hint="luxury stadium"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary via-transparent to-transparent hidden md:block" />
+                </div>
+              </div>
             </Card>
-          ))
-        ) : (
-          <div className="col-span-full py-20 text-center border border-dashed border-white/10 rounded-3xl bg-card/30">
-            <TicketIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-10" />
-            <h3 className="text-xl font-bold uppercase">Ventes bientôt ouvertes</h3>
-            <p className="text-muted-foreground max-w-sm mx-auto mt-2">
-              Les billets pour les phases éliminatoires arrivent. Restez connectés.
-            </p>
-          </div>
-        )}
-      </div>
 
-      {/* Info Section */}
-      <section className="bg-primary/5 rounded-[2.5rem] p-8 border border-primary/20 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
-        <div className="bg-primary/10 p-6 rounded-2xl shrink-0">
-          <ShieldCheck className="w-12 h-12 text-primary" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {loading ? (
+                Array(2).fill(0).map((_, i) => <div key={i} className="h-64 bg-white animate-pulse rounded-[3rem]" />)
+              ) : (
+                tickets?.map((ticket: any) => (
+                  <Card key={ticket.id} className="bg-white rounded-[3rem] border-none shadow-xl group hover:shadow-2xl transition-all duration-700 overflow-hidden flex flex-col">
+                    <div className="relative aspect-video overflow-hidden">
+                      <Image
+                        src={ticket.imageUrl || "https://picsum.photos/seed/ticket-standard/800/600"}
+                        alt={ticket.title}
+                        fill
+                        className="object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90"
+                      />
+                      <div className="absolute inset-0 bg-black/20" />
+                      <div className="absolute top-8 right-8">
+                        <Badge className="bg-primary text-white font-black text-xl px-6 py-2 rounded-2xl shadow-2xl">
+                          {ticket.price || "TBA"}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <CardHeader className="p-10 flex-grow">
+                      <div className="flex items-center gap-3 text-primary font-black uppercase text-[10px] tracking-[0.3em] mb-4">
+                        <Zap className="w-4 h-4 fill-primary" /> {ticket.tournamentName || "ÉVÉNEMENT ONECUP"}
+                      </div>
+                      <CardTitle className="text-3xl font-headline font-black uppercase leading-tight tracking-tight">
+                        {ticket.title}
+                      </CardTitle>
+                    </CardHeader>
+                    
+                    <CardFooter className="p-10 pt-0">
+                      <a href={ticket.externalUrl || OFFICIAL_TICKET_URL} target="_blank" rel="noopener noreferrer" className="w-full">
+                        <Button className="w-full h-16 bg-slate-900 hover:bg-black text-white gap-3 uppercase font-black text-xs tracking-widest rounded-2xl">
+                          Acheter Maintenant <ArrowRight className="w-4 h-4" />
+                        </Button>
+                      </a>
+                    </CardFooter>
+                  </Card>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Secure Sidebar */}
+          <div className="lg:col-span-4 space-y-8">
+            <Card className="bg-white rounded-[3rem] p-10 shadow-xl border-none space-y-8">
+              <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center">
+                <ShieldCheck className="w-10 h-10 text-primary" />
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-2xl font-headline font-black uppercase tracking-tight">Transactions 100% Sécurisées</h4>
+                <p className="text-slate-400 font-medium leading-relaxed">
+                  Pour votre sécurité, OneCup Elite collabore exclusivement avec <strong>Digital Event</strong>. 
+                  Assurez-vous de toujours passer par nos liens officiels pour garantir l'authenticité de vos titres d'accès.
+                </p>
+              </div>
+              <ul className="space-y-4 pt-4 border-t border-slate-50">
+                {["Confirmation immédiate", "E-billet sur smartphone", "Support client 24/7", "Revendeurs interdits"].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-slate-500">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary" /> {item}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+
+            <div className="bg-secondary rounded-[3rem] p-10 text-white space-y-6 relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[50px] rounded-full" />
+               <h5 className="text-xl font-headline font-black uppercase tracking-tight">Besoin d'un accès de groupe ?</h5>
+               <p className="text-white/60 text-sm font-medium">Pour les délégations scolaires ou les entreprises, contactez notre service Prestige.</p>
+               <Button variant="outline" className="w-full h-14 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase text-[10px] tracking-widest">
+                 Contactez-nous
+               </Button>
+            </div>
+          </div>
         </div>
-        <div className="space-y-2">
-          <h4 className="text-xl font-bold uppercase">Transactions Sécurisées</h4>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Pour votre sécurité, OneCup Elite collabore exclusivement avec <strong>Digital Event</strong>. 
-            Assurez-vous de toujours passer par nos liens officiels pour éviter toute fraude.
-          </p>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }
