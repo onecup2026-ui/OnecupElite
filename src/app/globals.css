@@ -60,7 +60,7 @@
 
 @layer components {
   .glow-blue {
-    @apply shadow-[0_0_20px_rgba(37,99,235,0.3)];
+    @apply shadow-[0_0_20px_rgba(37,99,235,0.25)];
   }
   
   .glass-card {
@@ -81,4 +81,12 @@
   display: flex;
   width: max-content;
   animation: marquee 30s linear infinite;
+}
+
+/* Fix text overflow on small mobile */
+@media (max-width: 380px) {
+  h1 { @apply text-3xl; }
+  .text-4xl { @apply text-2xl; }
+  .text-5xl { @apply text-3xl; }
+  .text-8xl { @apply text-4xl; }
 }

@@ -6,22 +6,18 @@ import Link from "next/link";
 import { Trophy, Users, Star, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useDoc, useFirestore, useCollection } from "@/firebase";
-import { doc, collection } from "firebase/firestore";
+import { useDoc, useFirestore } from "@/firebase";
+import { doc } from "firebase/firestore";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function Home() {
   const db = useFirestore();
-
   const configRef = useMemo(() => (db ? doc(db, "settings", "config") : null), [db]);
-  const sponsorsRef = useMemo(() => (db ? collection(db, "sponsors") : null), [db]);
-  
   const { data: siteConfig } = useDoc(configRef);
-  const { data: sponsors } = useCollection(sponsorsRef);
 
   const heroImage = siteConfig?.heroImageUrl || PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || "";
-  const heroTitle = siteConfig?.heroTitle || "Le sport de haut niveau en RDC.";
-  const heroSubtitle = siteConfig?.heroSubtitle || "Découvrez OneCup, la plateforme qui unit le football et l'e-sport. Compétition, émotion et gloire.";
+  const heroTitle = siteConfig?.heroTitle || "L'élite du sport en RDC.";
+  const heroSubtitle = siteConfig?.heroSubtitle || "La plateforme qui unit le football et l'e-sport. Compétition, émotion et gloire pour tous les talents.";
 
   const stats = [
     { label: "Écoles", value: siteConfig?.statSchools || "32+", icon: Users },
@@ -31,32 +27,32 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* Immersive Hero Section - Responsive & Non-Zoomed */}
-      <section className="relative min-h-[60vh] md:min-h-[75vh] flex items-center bg-slate-900 text-white overflow-hidden">
+      {/* Immersive Hero Section - Optimized for all screens */}
+      <section className="relative min-h-[65vh] md:min-h-[75vh] flex items-center bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src={heroImage}
-            alt="OneCup Hero"
+            alt="OneCup Banner"
             fill
-            className="object-contain md:object-cover opacity-70 animate-in fade-in duration-1000"
+            className="object-contain lg:object-cover opacity-60 animate-in fade-in duration-1000"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
         
-        <div className="container mx-auto px-4 relative z-10 py-12 md:py-24">
-          <div className="max-w-4xl space-y-6 md:space-y-8 animate-in slide-in-from-bottom-10 duration-700">
-            <Badge className="bg-primary hover:bg-primary border-none text-white px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]">ÉDITION 2026</Badge>
-            <h1 className="text-3xl sm:text-4xl md:text-8xl font-headline font-black tracking-tighter uppercase whitespace-pre-line leading-[0.9] drop-shadow-2xl">
+        <div className="container mx-auto px-4 relative z-10 py-16">
+          <div className="max-w-4xl space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+            <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full font-black uppercase tracking-widest text-[9px] w-fit">EDITION 2026</Badge>
+            <h1 className="text-4xl md:text-8xl font-headline font-black tracking-tighter uppercase leading-[0.85] text-white drop-shadow-xl whitespace-pre-line">
               {heroTitle}
             </h1>
-            <p className="text-sm md:text-2xl text-white/90 font-medium leading-relaxed max-w-xl drop-shadow-lg">
+            <p className="text-base md:text-2xl text-white font-medium max-w-2xl drop-shadow-lg leading-relaxed">
               {heroSubtitle}
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <Link href="/tournaments" className="w-full sm:w-auto">
-                <Button size="lg" className="h-14 md:h-18 w-full sm:w-auto px-8 md:px-14 text-sm md:text-xl font-black uppercase rounded-xl md:rounded-2xl bg-primary glow-blue">
-                  Rejoindre l'Élite
+                <Button size="lg" className="h-14 md:h-20 w-full sm:w-auto px-10 md:px-16 text-sm md:text-xl font-black uppercase rounded-2xl bg-primary glow-blue transition-transform hover:scale-105 active:scale-95">
+                  Rejoindre l'élite
                 </Button>
               </Link>
             </div>
@@ -65,15 +61,15 @@ export default function Home() {
       </section>
 
       {/* Stats Bar */}
-      <section className="py-8 md:py-16 bg-white border-b">
+      <section className="py-12 md:py-20 bg-white border-b">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {stats.map((stat, idx) => (
-              <div key={idx} className="flex flex-row md:flex-col items-center justify-between md:justify-center p-6 border rounded-2xl bg-slate-50 transition-all hover:scale-[1.02]">
-                <stat.icon className="w-6 h-6 md:w-10 md:h-10 text-primary mb-0 md:mb-4" />
+              <div key={idx} className="flex flex-row md:flex-col items-center justify-between md:justify-center p-8 border rounded-3xl bg-slate-50 transition-all hover:border-primary/30">
+                <stat.icon className="w-8 h-8 md:w-12 md:h-12 text-primary mb-0 md:mb-4" />
                 <div className="text-right md:text-center">
-                  <span className="text-2xl md:text-5xl font-headline font-black tracking-tighter block leading-none">{stat.value}</span>
-                  <span className="text-muted-foreground uppercase text-[9px] md:text-[10px] font-black tracking-widest block mt-1">{stat.label}</span>
+                  <span className="text-3xl md:text-6xl font-headline font-black tracking-tighter block leading-none">{stat.value}</span>
+                  <span className="text-muted-foreground uppercase text-[9px] font-black tracking-widest block mt-1">{stat.label}</span>
                 </div>
               </div>
             ))}
@@ -81,43 +77,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 md:py-32 bg-slate-50">
-        <div className="container mx-auto px-4 text-center mb-12 md:mb-20 space-y-4">
-          <h2 className="text-3xl md:text-6xl font-headline font-black uppercase tracking-tighter leading-none">UNE EXPÉRIENCE INÉGALÉE.</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-xl font-medium">L'innovation au service de la passion sportive en République Démocratique du Congo.</p>
-        </div>
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-          {[
-            { title: "Organisation Élite", desc: "Des tableaux de matchs clairs, précis et mis à jour en temps réel pour une équité totale.", icon: Trophy },
-            { title: "Pulse Communautaire", desc: "Vibrez avec des milliers de passionnés et suivez l'ascension de vos champions favoris.", icon: Users },
-            { title: "Prestige & Gains", desc: "Des récompenses à la hauteur de votre talent avec des cagnottes transparentes et records.", icon: DollarSign },
-          ].map((item, i) => (
-            <div key={i} className="bg-white p-8 md:p-12 rounded-[2rem] border shadow-sm space-y-6 text-center hover:shadow-xl transition-all">
-              <div className="w-14 h-14 md:w-20 md:h-20 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto">
-                <item.icon className="w-8 h-8 md:w-10 md:h-10" />
-              </div>
-              <h3 className="font-headline font-black text-xl md:text-3xl uppercase tracking-tight">{item.title}</h3>
-              <p className="text-muted-foreground text-xs md:text-base leading-relaxed font-medium">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Final CTA */}
-      <section className="py-16 md:py-32 container mx-auto px-4 text-center">
-        <div className="bg-primary p-10 md:p-28 rounded-[2rem] md:rounded-[4rem] text-white space-y-8 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
+      <section className="py-20 md:py-32 container mx-auto px-4 text-center">
+        <div className="bg-primary p-12 md:p-32 rounded-[3rem] text-white space-y-8 shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 transition-transform group-hover:scale-125" />
           <h2 className="text-3xl md:text-8xl font-headline font-black uppercase tracking-tighter leading-[0.85] relative z-10">
             PRÊT À ENTRER <br className="hidden md:block" /> DANS L'HISTOIRE ?
           </h2>
           <p className="text-white/90 text-sm md:text-2xl max-w-3xl mx-auto font-medium relative z-10 leading-relaxed">
-            Les inscriptions pour la saison 2026 sont officiellement ouvertes. Ne laissez pas passer votre chance de devenir une légende.
+            Ne laissez pas passer votre chance de devenir une légende. Les inscriptions 2026 sont officiellement lancées.
           </p>
           <div className="relative z-10 pt-4">
             <Link href="/tournaments" className="inline-block w-full sm:w-auto">
-              <Button size="lg" variant="secondary" className="h-16 md:h-24 px-10 md:px-20 font-black text-lg md:text-2xl uppercase rounded-xl md:rounded-3xl shadow-2xl transition-transform hover:scale-105 w-full sm:w-auto">
-                S'inscrire Maintenant
+              <Button size="lg" variant="secondary" className="h-16 md:h-24 px-12 md:px-24 font-black text-lg md:text-2xl uppercase rounded-2xl md:rounded-[2rem] shadow-2xl transition-transform hover:scale-105 active:scale-95 w-full">
+                S'inscrire maintenant
               </Button>
             </Link>
           </div>
