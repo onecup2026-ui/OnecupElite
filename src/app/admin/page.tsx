@@ -39,6 +39,7 @@ export default function AdminDashboard() {
   
   const heroUploadRef = useRef<HTMLInputElement>(null);
   const afterCupUploadRef = useRef<HTMLInputElement>(null);
+  const tournamentUploadRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
@@ -63,13 +64,14 @@ export default function AdminDashboard() {
   // Forms States
   const [configForm, setConfigForm] = useState({
     heroTitle: "", heroSubtitle: "", heroImageUrl: "", afterCupImageUrl: "", 
+    afterCupDescription: "Célébrez la victoire, assistez au sacre des champions.",
     currentPrizePool: 0, targetPrizePool: 5000000, 
     statSchools: "0", statMatches: "0", statTalents: "0"
   });
 
   const [tournamentForm, setTournamentForm] = useState({
     name: "", gameType: "Football", startDate: "", locationStade: "", 
-    maxTeams: 16, entryFee: 0, description: "", imageUrl: ""
+    maxTeams: 16, entryFee: 0, description: "", imageUrl: "", teamsRegistered: 0
   });
 
   const [newsForm, setNewsForm] = useState({
@@ -95,7 +97,7 @@ export default function AdminDashboard() {
     if (!file || !storage) return;
     setIsUploading(true);
     try {
-      const storageRef = ref(storage, `design/${path}_${Date.now()}`);
+      const storageRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
       const snapshot = await uploadBytes(storageRef, file);
       const url = await getDownloadURL(snapshot.ref);
       callback(url);
@@ -175,22 +177,26 @@ export default function AdminDashboard() {
                   <Label className="font-black uppercase text-xs tracking-widest text-primary">Bannière Accueil (Hero)</Label>
                   <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-50" onClick={() => heroUploadRef.current?.click()}>
                     {configForm.heroImageUrl ? <img src={configForm.heroImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-10 h-10 text-slate-300" /></div>}
-                    <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm"><Upload className="w-10 h-10 text-white" /></div>
+                    <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm">
+                      {isUploading ? <Loader2 className="animate-spin text-white w-10 h-10" /> : <Upload className="w-10 h-10 text-white" />}
+                    </div>
                   </div>
-                  <input type="file" ref={heroUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'hero', (url) => setConfigForm(f => ({...f, heroImageUrl: url})))} />
+                  <input type="file" ref={heroUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'design', (url) => setConfigForm(f => ({...f, heroImageUrl: url})))} />
                 </div>
                 <div className="space-y-4">
                   <Label className="font-black uppercase text-xs tracking-widest text-primary">Bannière After Cup</Label>
                   <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-50" onClick={() => afterCupUploadRef.current?.click()}>
                     {configForm.afterCupImageUrl ? <img src={configForm.afterCupImageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center"><ImageIcon className="w-10 h-10 text-slate-300" /></div>}
-                    <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm"><Upload className="w-10 h-10 text-white" /></div>
+                    <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm">
+                      {isUploading ? <Loader2 className="animate-spin text-white w-10 h-10" /> : <Upload className="w-10 h-10 text-white" />}
+                    </div>
                   </div>
-                  <input type="file" ref={afterCupUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'aftercup', (url) => setConfigForm(f => ({...f, afterCupImageUrl: url})))} />
+                  <input type="file" ref={afterCupUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'design', (url) => setConfigForm(f => ({...f, afterCupImageUrl: url})))} />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2"><Label className="font-black uppercase text-xs tracking-widest">Titre Accueil</Label><Input value={configForm.heroTitle} onChange={e => setConfigForm({...configForm, heroTitle: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none font-bold" /></div>
-                <div className="space-y-2"><Label className="font-black uppercase text-xs tracking-widest">Stat Écoles</Label><Input value={configForm.statSchools} onChange={e => setConfigForm({...configForm, statSchools: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" /></div>
+                <div className="space-y-2"><Label className="font-black uppercase text-xs tracking-widest">Description After Cup</Label><Input value={configForm.afterCupDescription} onChange={e => setConfigForm({...configForm, afterCupDescription: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" /></div>
               </div>
               <Button onClick={() => db && setDoc(doc(db, "settings", "config"), configForm, { merge: true }).then(() => toast({ title: "Design mis à jour" }))} className="w-full h-20 font-black uppercase rounded-3xl bg-primary text-xl shadow-xl">Appliquer les modifications</Button>
             </Card>
@@ -201,18 +207,37 @@ export default function AdminDashboard() {
             <Card className="rounded-[3rem] p-10 bg-white border-none shadow-xl space-y-6">
               <h3 className="text-2xl font-headline font-black uppercase">Nouveau Tournoi</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input placeholder="Nom du tournoi" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" />
-                <Input placeholder="Stade / Lieu" value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" />
-                <Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" />
+                <div className="space-y-4">
+                  <Label className="font-black uppercase text-xs tracking-widest">Image du Tournoi</Label>
+                  <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-dashed group cursor-pointer bg-slate-50" onClick={() => tournamentUploadRef.current?.click()}>
+                    {tournamentForm.imageUrl ? <img src={tournamentForm.imageUrl} className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center flex-col gap-2"><ImageIcon className="w-8 h-8 text-slate-300" /><span className="text-[10px] text-slate-400 font-bold uppercase">Ajouter Photo</span></div>}
+                    <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm">
+                      {isUploading ? <Loader2 className="animate-spin text-white w-8 h-8" /> : <Upload className="w-8 h-8 text-white" />}
+                    </div>
+                  </div>
+                  <input type="file" ref={tournamentUploadRef} className="hidden" accept="image/*" onChange={(e) => handleStorageUpload(e, 'tournaments', (url) => setTournamentForm(f => ({...f, imageUrl: url})))} />
+                </div>
+                <div className="space-y-6">
+                  <Input placeholder="Nom du tournoi" value={tournamentForm.name} onChange={e => setTournamentForm({...tournamentForm, name: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" />
+                  <Input placeholder="Stade / Lieu" value={tournamentForm.locationStade} onChange={e => setTournamentForm({...tournamentForm, locationStade: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" />
+                  <Input type="date" value={tournamentForm.startDate} onChange={e => setTournamentForm({...tournamentForm, startDate: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-none" />
+                </div>
                 <Input placeholder="Capacité (Equipes)" type="number" value={tournamentForm.maxTeams} onChange={e => setTournamentForm({...tournamentForm, maxTeams: parseInt(e.target.value)})} className="h-14 rounded-2xl bg-slate-50 border-none" />
+                <Select value={tournamentForm.gameType} onValueChange={v => setTournamentForm({...tournamentForm, gameType: v})}>
+                  <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none"><SelectValue /></SelectTrigger>
+                  <SelectContent><SelectItem value="Football">Football</SelectItem><SelectItem value="PlayStation">PlayStation</SelectItem><SelectItem value="Elite">Elite</SelectItem></SelectContent>
+                </Select>
+                <Textarea placeholder="Description du tournoi" value={tournamentForm.description} onChange={e => setTournamentForm({...tournamentForm, description: e.target.value})} className="md:col-span-2 rounded-2xl bg-slate-50 border-none min-h-[100px]" />
               </div>
-              <Button onClick={() => handleSave("tournaments", tournamentForm).then(() => setTournamentForm({name:"", gameType:"Football", startDate:"", locationStade:"", maxTeams:16, entryFee:0, description:"", imageUrl:""}))} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Publier le Tournoi</Button>
+              <Button onClick={() => handleSave("tournaments", tournamentForm).then(() => setTournamentForm({name:"", gameType:"Football", startDate:"", locationStade:"", maxTeams:16, entryFee:0, description:"", imageUrl:"", teamsRegistered: 0}))} className="w-full h-16 rounded-2xl font-black uppercase bg-primary">Publier le Tournoi</Button>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {tournaments?.map((t: any) => (
                 <Card key={t.id} className="p-6 rounded-3xl bg-white border-none shadow-md flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <Trophy className="w-10 h-10 text-primary" />
+                    <div className="w-16 h-12 bg-slate-50 rounded-lg overflow-hidden shrink-0">
+                      {t.imageUrl && <img src={t.imageUrl} className="w-full h-full object-cover" />}
+                    </div>
                     <div><h4 className="font-black uppercase text-lg">{t.name}</h4><p className="text-xs text-slate-400">{t.locationStade}</p></div>
                   </div>
                   <Button size="icon" variant="ghost" className="hover:text-destructive" onClick={() => handleDelete("tournaments", t.id)}><Trash2 className="w-5 h-5" /></Button>

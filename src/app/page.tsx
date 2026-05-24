@@ -4,7 +4,7 @@
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Target, Zap, Star, Loader2 } from "lucide-react";
+import { Target, Zap, Star, Loader2, Trophy, Ticket, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDoc, useFirestore, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
@@ -19,6 +19,8 @@ export default function Home() {
 
   const heroImage = siteConfig?.heroImageUrl || "https://picsum.photos/seed/onecup-arena-elite/1920/1080";
   const heroTitle = siteConfig?.heroTitle || "Préparez-vous pour la plus grande Coupe du Monde de l'Histoire";
+  const afterCupImage = siteConfig?.afterCupImageUrl || "https://picsum.photos/seed/after-cup-fest/1600/900";
+  const afterCupDescription = siteConfig?.afterCupDescription || "Vibrez au rythme de l'Elite. Célébrez la victoire, assistez au sacre des champions.";
 
   // Countdown logic
   const [timeLeft, setTimeLeft] = useState({ days: 18, hours: 9, minutes: 41, seconds: 9 });
@@ -166,6 +168,46 @@ export default function Home() {
             </div>
           </div>
         )}
+      </section>
+
+      {/* AFTER CUP Section - FESTIVAL & TICKETS */}
+      <section className="relative w-full py-24 overflow-hidden bg-slate-900">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={afterCupImage}
+            alt="After Cup Festival"
+            fill
+            className="object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-1000"
+            data-ai-hint="music festival"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/60 to-transparent" />
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl space-y-8">
+            <Badge className="bg-secondary text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.4em] border border-white/20">
+              L'APOTHÉOSE FINALE
+            </Badge>
+            <h2 className="text-5xl md:text-8xl font-headline font-black text-white uppercase tracking-tighter leading-none">
+              AFTER <span className="text-primary">CUP</span> FESTIVAL
+            </h2>
+            <p className="text-lg md:text-xl text-white/80 font-medium leading-relaxed max-w-2xl line-clamp-2">
+              {afterCupDescription}
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-6 pt-6">
+              <Link href="/tickets">
+                <Button size="lg" className="h-16 px-10 bg-primary hover:bg-primary/90 text-white rounded-2xl font-black uppercase text-sm gap-3 shadow-2xl transition-transform hover:scale-105">
+                  <Ticket className="w-5 h-5" /> Réserver mon Pass Festival
+                </Button>
+              </Link>
+              <div className="flex items-center gap-4 text-white/60">
+                <ShieldCheck className="w-5 h-5 text-green-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Billetterie Digitale Officielle</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Archive Section - ONE CUP+ Style */}
