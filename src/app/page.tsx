@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
@@ -159,6 +160,37 @@ export default function Home() {
             </div>
           </div>
         )}
+      </section>
+
+      {/* Archive Section - ONE CUP+ Style */}
+      <section className="relative w-full min-h-[60vh] md:h-[80vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://picsum.photos/seed/onecup-archives-history/1920/1080"
+            alt="Archives ONE CUP+"
+            fill
+            className="object-cover grayscale"
+            priority
+            data-ai-hint="vintage soccer stadium"
+          />
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+        
+        <div className="container mx-auto px-6 relative z-10 text-center space-y-8 max-w-4xl py-20">
+          <h2 className="text-4xl md:text-8xl font-headline font-black text-white uppercase tracking-tighter leading-none">
+            Archives <span className="text-white/40">ONE CUP+</span>
+          </h2>
+          <p className="text-lg md:text-2xl text-white/80 font-medium leading-relaxed">
+            La bibliothèque la plus complète au monde de matches, séquences vidéo et temps forts de la ONE CUP. Revivez les moments qui ont marqué l'histoire et vibrez au rythme de la passion.
+          </p>
+          <div className="pt-6">
+            <Link href="/news">
+              <Button variant="outline" className="h-14 md:h-16 px-10 md:px-14 border-white text-white hover:bg-white hover:text-black rounded-full font-black uppercase tracking-widest text-[10px] md:text-xs transition-all bg-transparent">
+                À découvrir
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   );
