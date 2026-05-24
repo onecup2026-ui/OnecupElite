@@ -47,19 +47,30 @@ export default function Home() {
   const afterCupImage = siteConfig?.afterCupImageUrl || "https://picsum.photos/seed/after-cup-fest/1600/900";
   const afterCupDescription = siteConfig?.afterCupDescription || "Vibrez au rythme de l'Elite. Célébrez la victoire, assistez au sacre des champions.";
 
-  // Countdown logic
-  const [timeLeft, setTimeLeft] = useState({ days: 18, hours: 9, minutes: 41, seconds: 9 });
+  // Dynamic Countdown logic
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        if (prev.days > 0) return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        return prev;
-      });
-    }, 1000);
+    const targetDate = new Date('2026-07-15T00:00:00').getTime();
+
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -123,8 +134,8 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center">
-                <Target className="w-3.5 h-3.5 text-[#0051a3]" />
+              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center">
+                <Target className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3]" />
               </div>
               <div>
                 <h3 className="text-[10px] font-headline font-black uppercase tracking-widest">ÉQUITÉ TOTALE</h3>
@@ -132,8 +143,8 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center">
-                <Zap className="w-3.5 h-3.5 text-[#0051a3]" />
+              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center">
+                <Zap className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3]" />
               </div>
               <div>
                 <h3 className="text-[10px] font-headline font-black uppercase tracking-widest">LIVE DATA</h3>
@@ -141,8 +152,8 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center">
-                <Star className="w-3.5 h-3.5 text-[#0051a3]" />
+              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center">
+                <Star className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3]" />
               </div>
               <div>
                 <h3 className="text-[10px] font-headline font-black uppercase tracking-widest">PRESTIGE ELITE</h3>
