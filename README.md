@@ -1,54 +1,45 @@
+# ONECUP Elite 2026 - Plateforme Officielle
 
-# ONECUP Elite Platform 2026
+Une plateforme premium inspirée de l'excellence sportive mondiale, conçue pour la gestion des tournois ONECUP en RDC.
 
-Une plateforme événementielle dynamique et premium pour la gestion des tournois **ONECUP**, alliant le prestige du football et l'innovation de l'e-sport.
+## 🚀 Déploiement sur un nouveau compte GitHub
 
-## 🚀 Caractéristiques principales
+Si vous souhaitez lier ce projet à un nouveau compte GitHub, suivez ces étapes dans votre terminal :
 
-- **Architecture 100% Dynamique** : Tout le contenu (tournois, matchs, sponsors, statistiques) est piloté via un panneau d'administration sécurisé.
-- **Gestion des Inscriptions** : Système d'inscription ultra-rapide pour les capitaines avec nom d'équipe et validation du règlement.
-- **Bouton WhatsApp Direct** : Contactez les capitaines directement depuis l'administration d'un simple clic.
-- **Suivi des Scores en Live** : Mise à jour en temps réel des résultats des matchs.
-- **Cagnotte Progressive (Prize Pool)** : Visualisation dynamique de l'objectif financier.
-- **Partage Dynamique** : Partagez les tournois et l'agenda via l'API native (WhatsApp, etc.).
-- **Assistant IA** : Chatbot intelligent pour répondre aux questions des participants.
-
-## 📦 Comment envoyer ce projet sur GitHub ?
-
-Pour sauvegarder votre projet sur votre compte GitHub, suivez ces étapes dans votre terminal :
-
-1. **Initialisez le dépôt local** :
+1. **Supprimer l'ancienne liaison Git** (localement) :
    ```bash
+   rm -rf .git
    git init
    ```
 
-2. **Ajoutez tous les fichiers** :
+2. **Ajouter tous les fichiers** :
    ```bash
    git add .
    ```
 
-3. **Créez votre premier commit** :
+3. **Créer le premier commit** :
    ```bash
-   git commit -m "Initial commit - ONECUP Elite Platform"
+   git commit -m "Initial commit - ONECUP Elite New Era"
    ```
 
-4. **Liez à votre dépôt GitHub distant** :
+4. **Lier à votre NOUVEAU dépôt GitHub** :
    ```bash
-   git remote add origin https://github.com/christianrwemera7-max/onecup-2026.git
+   git remote add origin https://github.com/VOTRE_NOUVEL_UTILISATEUR/VOTRE_DEPOT.git
    ```
 
-5. **Poussez votre code** :
+5. **Pousser votre code** :
    ```bash
    git branch -M main
    git push -u origin main
    ```
 
-## 🛠 Stack Technique
+## ⚡️ Déploiement sur Vercel
 
-- **Framework** : Next.js 15 (App Router)
-- **Base de données & Auth** : Firebase (Firestore, Authentication)
-- **UI & Styling** : Tailwind CSS, Shadcn UI
-- **IA** : Genkit (Google Gemini)
+1. Rendez-vous sur [Vercel](https://vercel.com).
+2. Cliquez sur **"Add New"** > **"Project"**.
+3. Importez votre nouveau dépôt GitHub.
+4. **Important** : Ajoutez vos variables d'environnement Firebase (si nécessaire) dans les paramètres du projet sur Vercel.
+5. Cliquez sur **"Deploy"**.
 
 ---
-© 2026 ONE CUP Platform. Tous droits réservés.
+© 2026 ONE CUP Platform. Élite • Prestige • Performance.
