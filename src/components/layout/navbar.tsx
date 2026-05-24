@@ -1,21 +1,28 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Menu, X, User as UserIcon } from "lucide-react";
+import { Trophy, Menu, X, Plus, ExternalLink, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth, useUser } from "@/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
-  { name: "Compétitions", href: "/tournaments" },
-  { name: "Résultats", href: "/results" },
-  { name: "Actualités", href: "/news" },
-  { name: "Communauté", href: "/community" },
-  { name: "Billets", href: "/tickets" },
+  { name: "TOURNOIS ET ÉVÉNEMENTS", href: "/tournaments", hasSub: true },
+  { name: "MATCH CENTRE", href: "/results", hasSub: false },
+  { name: "L'ACTU", href: "/news", hasSub: false },
+  { name: "BILLETS ET HOSPITALITÉ", href: "/tickets", hasSub: false },
+  { name: "COMMUNAUTÉ ELITE", href: "/community", hasSub: false },
+];
+
+const secondaryItems = [
+  { name: "ONE CUP REWARDS", href: "#" },
+  { name: "ONE CUP+", href: "https://fifa.com", external: true },
+  { name: "ELITE STORE", href: "#", external: true },
 ];
 
 export function Navbar() {
@@ -24,6 +31,18 @@ export function Navbar() {
   const { user } = useUser();
   const auth = useAuth();
 
+  // Prevent scrolling when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   const handleLogin = async () => {
     if (!auth) return;
     const provider = new GoogleAuthProvider();
@@ -31,10 +50,10 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-[100] w-full bg-primary text-white border-b border-white/10 shadow-2xl">
-      <div className="container mx-auto px-4 h-16 md:h-24 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-[1rem] flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95">
+    <nav className="sticky top-0 z-[100] w-full bg-primary text-white border-b border-white/10 shadow-xl">
+      <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-4 group">
+          <div className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-105">
             <Trophy className="text-primary w-6 h-6 md:w-8 md:h-8" />
           </div>
           <div className="flex flex-col">
@@ -48,13 +67,13 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1.5 rounded-2xl backdrop-blur-md border border-white/10">
+        <div className="hidden lg:flex items-center gap-2">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
               <Button
                 variant="ghost"
                 className={cn(
-                  "px-8 h-12 font-black text-[10px] uppercase tracking-widest hover:bg-white/10 text-white rounded-xl transition-all",
+                  "px-6 h-12 font-black text-[10px] uppercase tracking-widest hover:bg-white/10 text-white rounded-xl transition-all",
                   pathname === item.href && "bg-white/20"
                 )}
               >
@@ -66,42 +85,98 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           {user ? (
-            <div className="flex items-center gap-4">
-               <Avatar className="w-10 h-10 md:w-12 md:h-12 border-2 border-white/20 shadow-xl cursor-pointer hover:border-white transition-all">
-                <AvatarImage src={user.photoURL || ""} />
-                <AvatarFallback className="bg-white/10">{user.displayName?.[0]}</AvatarFallback>
-              </Avatar>
-              <Button onClick={() => auth && signOut(auth)} variant="ghost" className="hidden md:flex font-bold uppercase text-[9px] tracking-widest text-white/60 hover:text-white">Déconnexion</Button>
-            </div>
+            <Avatar className="w-10 h-10 md:w-12 md:h-12 border-2 border-white/20 shadow-xl cursor-pointer hover:border-white transition-all">
+              <AvatarImage src={user.photoURL || ""} />
+              <AvatarFallback className="bg-white/10">{user.displayName?.[0]}</AvatarFallback>
+            </Avatar>
           ) : (
-            <Button onClick={handleLogin} className="bg-white text-primary hover:bg-white/90 font-black uppercase text-[10px] px-8 h-12 rounded-xl shadow-xl transition-all hover:scale-105">
+            <Button onClick={handleLogin} className="hidden md:flex bg-white text-primary hover:bg-white/90 font-black uppercase text-[10px] px-8 h-12 rounded-xl shadow-xl transition-all">
               Connexion
             </Button>
           )}
-          <button className="lg:hidden p-2 bg-white/10 rounded-xl" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <button className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors" onClick={() => setIsOpen(true)}>
+            <Menu className="w-6 h-6" />
           </button>
         </div>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Full Screen Mobile Overlay */}
       {isOpen && (
-        <div className="lg:hidden bg-primary border-t border-white/10 p-6 space-y-3 animate-fifa-in shadow-inner">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
-              <Button variant="ghost" className={cn(
-                "w-full justify-start text-white font-black uppercase text-xs h-14 px-6 rounded-2xl",
-                pathname === item.href ? "bg-white/10" : "hover:bg-white/5"
-              )}>
-                {item.name}
-              </Button>
-            </Link>
-          ))}
-          {user && (
-            <Button onClick={() => auth && signOut(auth)} variant="destructive" className="w-full h-14 rounded-2xl font-black uppercase text-xs mt-6">
-              Déconnexion
-            </Button>
-          )}
+        <div className="fixed inset-0 z-[200] bg-primary text-white overflow-y-auto animate-in fade-in duration-300">
+          <div className="container mx-auto px-6 py-6 flex flex-col min-h-screen">
+            {/* Header Overlay */}
+            <div className="flex items-center justify-between mb-12">
+              <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10">
+                <Globe className="w-4 h-4" />
+                <span className="font-black text-xs uppercase tracking-widest">Français</span>
+                <Plus className="w-3 h-3 rotate-45 ml-2" />
+              </div>
+              <button 
+                className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="w-8 h-8" />
+              </button>
+            </div>
+
+            {/* Menu Items */}
+            <div className="space-y-4 mb-20">
+              {navItems.map((item) => (
+                <Link 
+                  key={item.href} 
+                  href={item.href} 
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-between py-6 border-b border-white/5 group"
+                >
+                  <span className="text-xl md:text-3xl font-black uppercase tracking-tighter group-hover:text-white/70 transition-colors">
+                    {item.name}
+                  </span>
+                  {item.hasSub && <Plus className="w-6 h-6 text-white/40" />}
+                </Link>
+              ))}
+            </div>
+
+            {/* Secondary Section */}
+            <div className="mt-auto space-y-10 pb-12">
+              <div className="pt-8 border-t border-white/10">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 mb-10">
+                  CONTENU SUPPLÉMENTAIRE ELITE
+                </p>
+                <div className="space-y-8">
+                  {secondaryItems.map((item) => (
+                    <Link 
+                      key={item.name} 
+                      href={item.href} 
+                      target={item.external ? "_blank" : undefined}
+                      className="flex items-center justify-between group"
+                    >
+                      <span className="text-lg font-black uppercase tracking-widest group-hover:text-white/70">
+                        {item.name}
+                      </span>
+                      {item.external && <ExternalLink className="w-5 h-5 text-white/40" />}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              
+              {user ? (
+                <Button 
+                  onClick={() => { auth && signOut(auth); setIsOpen(false); }} 
+                  variant="outline" 
+                  className="w-full h-16 border-white/20 text-white font-black uppercase tracking-widest rounded-2xl hover:bg-white/10"
+                >
+                  Déconnexion
+                </Button>
+              ) : (
+                <Button 
+                  onClick={() => { handleLogin(); setIsOpen(false); }} 
+                  className="w-full h-16 bg-white text-primary font-black uppercase tracking-widest rounded-2xl hover:bg-white/90"
+                >
+                  Connexion au compte
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </nav>
