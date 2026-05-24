@@ -4,8 +4,9 @@
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Target, Zap, Star, Loader2, Trophy, Ticket, ExternalLink } from "lucide-react";
+import { Target, Zap, Star, Loader2, Trophy, Ticket, ExternalLink, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useDoc, useFirestore, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
 
@@ -102,30 +103,30 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
             <div className="flex items-start gap-4 group">
-              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Target className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3] group-hover:text-white" />
+              <div className="w-4 h-4 md:w-6 md:h-6 shrink-0 bg-[#0051a3]/10 rounded flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Target className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#0051a3] group-hover:text-white" />
               </div>
-              <div className="space-y-1">
-                <h3 className="text-sm md:text-base font-headline font-black uppercase tracking-tighter leading-none">100% <span className="text-[#0051a3]">ÉQUITÉ</span></h3>
-                <p className="text-muted-foreground font-medium text-[10px] md:text-xs leading-tight max-w-[200px]">Justice sportive garantie à chaque match.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4 group">
-              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Zap className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3] group-hover:text-white" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm md:text-base font-headline font-black uppercase tracking-tighter leading-none">LIVE <span className="text-[#0051a3]">DATA</span></h3>
-                <p className="text-muted-foreground font-medium text-[10px] md:text-xs leading-tight max-w-[200px]">Stats et scores en temps réel.</p>
+              <div className="space-y-0.5">
+                <h3 className="text-[10px] md:text-xs font-headline font-black uppercase tracking-tighter leading-none">100% <span className="text-[#0051a3]">ÉQUITÉ</span></h3>
+                <p className="text-muted-foreground font-medium text-[8px] md:text-[9px] leading-tight max-w-[150px]">Justice sportive garantie.</p>
               </div>
             </div>
             <div className="flex items-start gap-4 group">
-              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Star className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3] group-hover:text-white" />
+              <div className="w-4 h-4 md:w-6 md:h-6 shrink-0 bg-[#0051a3]/10 rounded flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Zap className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#0051a3] group-hover:text-white" />
               </div>
-              <div className="space-y-1">
-                <h3 className="text-sm md:text-base font-headline font-black uppercase tracking-tighter leading-none">GLOBAL <span className="text-[#0051a3]">REACH</span></h3>
-                <p className="text-muted-foreground font-medium text-[10px] md:text-xs leading-tight max-w-[200px]">Visibilité média sans précédent.</p>
+              <div className="space-y-0.5">
+                <h3 className="text-[10px] md:text-xs font-headline font-black uppercase tracking-tighter leading-none">LIVE <span className="text-[#0051a3]">DATA</span></h3>
+                <p className="text-muted-foreground font-medium text-[8px] md:text-[9px] leading-tight max-w-[150px]">Stats en temps réel.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 group">
+              <div className="w-4 h-4 md:w-6 md:h-6 shrink-0 bg-[#0051a3]/10 rounded flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Star className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#0051a3] group-hover:text-white" />
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="text-[10px] md:text-xs font-headline font-black uppercase tracking-tighter leading-none">GLOBAL <span className="text-[#0051a3]">REACH</span></h3>
+                <p className="text-muted-foreground font-medium text-[8px] md:text-[9px] leading-tight max-w-[150px]">Visibilité maximale.</p>
               </div>
             </div>
           </div>
