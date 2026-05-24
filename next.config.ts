@@ -31,12 +31,10 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    serverActions: {
-      allowedOrigins: [
-        '6000-firebase-studio-1779541602251.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
-        '*.cloudworkstations.dev'
-      ]
-    }
+    allowedDevOrigins: [
+      '6000-firebase-studio-1779541602251.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
+      '*.cloudworkstations.dev'
+    ]
   }
 };
 
