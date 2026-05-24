@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Users, Star, DollarSign, ArrowRight, Play } from "lucide-react";
+import { Trophy, Users, Star, DollarSign, ArrowRight, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PrizePoolTracker } from "@/components/shared/prize-pool-tracker";
@@ -35,10 +35,10 @@ export default function Home() {
   const targetPool = siteConfig?.targetPrizePool || 5000000;
 
   const stats = [
-    { label: "Écoles Élite", value: siteConfig?.statSchools || "32+", icon: Users, color: "text-blue-500" },
-    { label: "Matchs Épiques", value: siteConfig?.statMatches || "15+", icon: Trophy, color: "text-yellow-500" },
-    { label: "Cagnotte Globale", value: `${(currentPool / 1000000).toFixed(1)}M FC`, icon: DollarSign, color: "text-green-500" },
-    { label: "Talents Révélés", value: siteConfig?.statTalents || "257+", icon: Star, color: "text-red-500" },
+    { label: "Écoles Élite", value: siteConfig?.statSchools || "32+", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Matchs Épiques", value: siteConfig?.statMatches || "15+", icon: Trophy, color: "text-yellow-500", bg: "bg-yellow-500/10" },
+    { label: "Cagnotte Globale", value: `${(currentPool / 1000000).toFixed(1)}M FC`, icon: DollarSign, color: "text-green-500", bg: "bg-green-500/10" },
+    { label: "Talents Révélés", value: siteConfig?.statTalents || "257+", icon: Star, color: "text-red-500", bg: "bg-red-500/10" },
   ];
 
   const tiers = [
@@ -48,50 +48,62 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col bg-background">
+    <div className="flex flex-col bg-background selection:bg-primary selection:text-white">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden py-20">
+      <section className="relative min-h-screen flex items-center overflow-hidden py-32">
         <div className="absolute inset-0 z-0">
           <Image
             src={heroImage}
             alt="OneCup Action"
             fill
-            className="object-cover opacity-60"
+            className="object-cover opacity-40 scale-105"
             priority
-            style={{ objectPosition: 'center 30%' }}
+            style={{ objectPosition: 'center 20%' }}
             data-ai-hint="soccer player"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/80 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-16 items-center">
-            <div className="max-w-3xl space-y-10 text-center xl:text-left">
-              <Badge variant="outline" className="border-primary/50 text-primary px-6 py-2 rounded-full bg-primary/5 font-bold uppercase tracking-[0.3em] text-xs animate-pulse">
-                <Trophy className="w-3 h-3 mr-2" /> ÉVÉNEMENT OFFICIEL 2026
-              </Badge>
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-headline font-bold leading-[0.85] tracking-tighter uppercase whitespace-pre-line">
-                {heroTitle}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-24 items-center">
+            <div className="max-w-4xl space-y-12 text-center xl:text-left">
+              <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full glass-card border-primary/20 text-primary animate-bounce">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em]">Édition Prestige 2026</span>
+              </div>
+              
+              <h1 className="text-7xl md:text-9xl font-headline font-black leading-[0.8] tracking-tighter uppercase whitespace-pre-line text-foreground drop-shadow-sm">
+                {heroTitle.split('\n').map((line, i) => (
+                  <span key={i} className={cn("block", i === 1 && "text-primary")}>{line}</span>
+                ))}
               </h1>
+              
               <p className="text-xl md:text-2xl text-muted-foreground max-w-xl mx-auto xl:mx-0 leading-relaxed font-medium">
                 {heroSubtitle}
               </p>
-              <div className="flex flex-wrap justify-center xl:justify-start gap-5 pt-6">
+              
+              <div className="flex flex-wrap justify-center xl:justify-start gap-6 pt-6">
                 <Link href="/tournaments">
-                  <Button size="lg" className="h-20 px-12 bg-primary hover:bg-primary/90 glow-blue text-xl gap-3 uppercase font-black rounded-2xl transition-all hover:scale-105">
-                    Participer maintenant <ArrowRight className="w-6 h-6" />
+                  <Button size="lg" className="h-20 px-12 bg-primary hover:bg-primary/90 glow-blue text-xl gap-4 uppercase font-black rounded-[2rem] transition-all hover:scale-105 active:scale-95">
+                    Entrer dans l'arène <ArrowRight className="w-6 h-6" />
                   </Button>
                 </Link>
                 {heroVideoUrl && (
-                  <Button size="lg" variant="outline" className="h-20 px-12 text-xl gap-3 backdrop-blur-md bg-white/5 uppercase font-bold border-white/20 hover:bg-white/10" onClick={() => setIsVideoOpen(true)}>
-                    <Play className="w-6 h-6" /> Voir le Teaser
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="h-20 px-12 text-xl gap-4 glass-card border-white/20 uppercase font-bold rounded-[2rem] hover:bg-white/5 transition-all"
+                    onClick={() => setIsVideoOpen(true)}
+                  >
+                    <Play className="w-6 h-6 fill-current" /> Voir le Teaser
                   </Button>
                 )}
               </div>
             </div>
 
             <div className="flex justify-center xl:justify-end">
-              <div className="w-full max-w-[460px] animate-float">
+              <div className="w-full max-w-[500px] animate-float">
                 <PrizePoolTracker
                   currentPool={currentPool}
                   targetPool={targetPool}
@@ -104,39 +116,49 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="relative z-20 -mt-16 container mx-auto px-4 mb-20">
-        <div className="bg-card/90 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 shadow-2xl">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+      <section className="relative z-20 -mt-24 container mx-auto px-4 mb-32">
+        <div className="glass-card rounded-[4rem] p-12 md:p-16 border-white/5 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-16">
             {stats.map((stat, idx) => (
-              <div key={idx} className="flex flex-col items-center text-center space-y-3 group">
-                <div className={cn("p-5 bg-card/50 rounded-2xl group-hover:scale-110 transition-all border border-white/5", stat.color)}>
-                  <stat.icon className="w-8 h-8" />
+              <div key={idx} className="flex flex-col items-center text-center space-y-4 group">
+                <div className={cn("p-6 rounded-[2rem] group-hover:scale-110 transition-all duration-500 border border-white/5", stat.bg, stat.color)}>
+                  <stat.icon className="w-10 h-10" />
                 </div>
-                <p className="text-3xl md:text-5xl font-headline font-bold tracking-tighter">{stat.value}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">{stat.label}</p>
+                <div className="space-y-1">
+                  <p className="text-4xl md:text-6xl font-headline font-black tracking-tighter text-foreground">{stat.value}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">{stat.label}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Sponsors Scrolling Marquee */}
+      {/* Sponsors Section */}
       {sponsors && sponsors.length > 0 && (
-        <section className="py-20 bg-muted/30 border-y border-white/5 overflow-hidden">
-          <div className="container mx-auto px-4 mb-10 flex items-center justify-between">
-            <h2 className="text-xs font-bold uppercase tracking-[0.4em] text-muted-foreground">PARTENAIRES OFFICIELS</h2>
-            <Link href="/sponsors" className="text-[10px] font-black uppercase text-primary hover:underline tracking-widest">Voir tous les sponsors</Link>
+        <section className="py-32 bg-muted/20 border-y border-white/5 overflow-hidden">
+          <div className="container mx-auto px-4 mb-16 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-center md:text-left">
+              <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Le Standard Elite</h2>
+              <p className="text-3xl font-headline font-bold uppercase">Soutenus par les meilleurs</p>
+            </div>
+            <Link href="/sponsors">
+              <Button variant="ghost" className="uppercase font-black tracking-widest text-[10px] gap-2 hover:bg-primary/10 hover:text-primary transition-all">
+                Devenir Partenaire <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
-          <div className="relative flex overflow-x-hidden">
-            <div className="animate-marquee flex whitespace-nowrap gap-20 items-center py-4">
+          
+          <div className="relative flex overflow-x-hidden group">
+            <div className="animate-marquee flex whitespace-nowrap gap-32 items-center py-8">
               {sponsors.map((s: any) => (
-                <div key={s.id} className="w-44 h-24 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all p-4">
+                <div key={s.id} className="w-56 h-32 flex items-center justify-center shrink-0 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all duration-700 p-6 glass-card rounded-3xl border-transparent hover:border-primary/20">
                   <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
                 </div>
               ))}
               {/* Duplication pour le défilement infini */}
               {sponsors.map((s: any) => (
-                <div key={`${s.id}-dup`} className="w-44 h-24 flex items-center justify-center shrink-0 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all p-4">
+                <div key={`${s.id}-dup`} className="w-56 h-32 flex items-center justify-center shrink-0 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all duration-700 p-6 glass-card rounded-3xl border-transparent hover:border-primary/20">
                   <img src={s.logoUrl} alt={s.name} className="max-w-full max-h-full object-contain" />
                 </div>
               ))}
@@ -146,14 +168,14 @@ export default function Home() {
       )}
 
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="max-w-5xl p-0 overflow-hidden bg-black border-none">
+        <DialogContent className="max-w-6xl p-0 overflow-hidden bg-black border-none ring-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Teaser Vidéo OneCup 2026</DialogTitle>
             <DialogDescription>Vidéo de présentation de l'événement.</DialogDescription>
           </DialogHeader>
           <div className="aspect-video w-full">
             <iframe
-              src={heroVideoUrl ? `https://www.youtube.com/embed/${heroVideoUrl.split('v=')[1] || heroVideoUrl.split('/').pop()}?autoplay=1` : ""}
+              src={heroVideoUrl ? `https://www.youtube.com/embed/${heroVideoUrl.split('v=')[1] || heroVideoUrl.split('/').pop()}?autoplay=1&modestbranding=1&rel=0` : ""}
               title="OneCup Teaser"
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

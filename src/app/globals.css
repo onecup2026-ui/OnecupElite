@@ -24,28 +24,28 @@
     --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 227 100% 60%;
-    --radius: 0.75rem;
+    --radius: 1.25rem;
   }
 
   .dark {
-    --background: 228 24% 8%;
+    --background: 228 24% 6%;
     --foreground: 210 20% 98%;
-    --card: 228 24% 10%;
+    --card: 228 24% 8%;
     --card-foreground: 210 20% 98%;
-    --popover: 228 24% 10%;
+    --popover: 228 24% 8%;
     --popover-foreground: 210 20% 98%;
     --primary: 227 100% 60%;
     --primary-foreground: 0 0% 100%;
     --secondary: 199 100% 40%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 228 24% 15%;
+    --muted: 228 24% 12%;
     --muted-foreground: 215 20% 65%;
     --accent: 199 100% 40%;
     --accent-foreground: 210 20% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 20% 98%;
-    --border: 228 24% 18%;
-    --input: 228 24% 18%;
+    --border: 228 24% 15%;
+    --input: 228 24% 15%;
     --ring: 227 100% 60%;
   }
 }
@@ -58,16 +58,26 @@
     @apply bg-background text-foreground font-body;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline tracking-tight;
+    @apply font-headline tracking-tighter uppercase;
   }
 }
 
-.glow-orange {
-  box-shadow: 0 10px 25px -5px rgba(255, 120, 0, 0.3);
-}
+@layer components {
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-marquee;
+  }
 
-.glow-blue {
-  box-shadow: 0 10px 25px -5px rgba(51, 85, 255, 0.4);
+  .glow-blue {
+    box-shadow: 0 0 30px -5px rgba(51, 85, 255, 0.4);
+  }
+
+  .glow-primary {
+    @apply shadow-[0_0_40px_-10px_rgba(var(--primary),0.5)];
+  }
 }
 
 ::-webkit-scrollbar {
@@ -79,5 +89,14 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full hover:bg-muted-foreground transition-colors;
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
 }
