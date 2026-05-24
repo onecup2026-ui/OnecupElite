@@ -35,28 +35,28 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* ONE CUP Style Countdown Ticker */}
-      <div className="bg-black text-white py-1.5 px-4 border-b border-white/10 overflow-hidden">
-        <div className="container mx-auto flex items-center justify-start gap-8 md:gap-16">
+      {/* ONE CUP Style Countdown Ticker - ULTRA SMALL */}
+      <div className="bg-black text-white py-1 px-4 border-b border-white/10 overflow-hidden">
+        <div className="container mx-auto flex items-center justify-start gap-4 md:gap-12">
           <div className="flex items-center shrink-0">
-             <span className="font-headline font-black text-[10px] uppercase tracking-widest">ONE CUP 2026™</span>
+             <span className="font-headline font-black text-[8px] md:text-[10px] uppercase tracking-widest">ONE CUP 2026™</span>
           </div>
-          <div className="flex items-center gap-4 md:gap-8">
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg md:text-xl font-bold tabular-nums">{timeLeft.days}</span>
-              <span className="text-[8px] uppercase text-white/50 tracking-tighter">jours</span>
+          <div className="flex items-center gap-3 md:gap-6">
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xs md:text-sm font-bold tabular-nums">{timeLeft.days}</span>
+              <span className="text-[6px] md:text-[8px] uppercase text-white/50 tracking-tighter">j</span>
             </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg md:text-xl font-bold tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
-              <span className="text-[8px] uppercase text-white/50 tracking-tighter">heures</span>
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xs md:text-sm font-bold tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
+              <span className="text-[6px] md:text-[8px] uppercase text-white/50 tracking-tighter">h</span>
             </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg md:text-xl font-bold tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
-              <span className="text-[8px] uppercase text-white/50 tracking-tighter">minutes</span>
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xs md:text-sm font-bold tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
+              <span className="text-[6px] md:text-[8px] uppercase text-white/50 tracking-tighter">m</span>
             </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg md:text-xl font-bold tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
-              <span className="text-[8px] uppercase text-white/50 tracking-tighter">secs</span>
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xs md:text-sm font-bold tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
+              <span className="text-[6px] md:text-[8px] uppercase text-white/50 tracking-tighter">s</span>
             </div>
           </div>
         </div>
@@ -76,16 +76,16 @@ export default function Home() {
         </div>
 
         {/* Info Block (Blue) */}
-        <div className="bg-[#0051a3] text-white p-10 md:p-20">
-          <div className="container mx-auto max-w-5xl space-y-8">
-            <p className="font-bold text-lg text-white/90 uppercase tracking-widest">ONE CUP ELITE 2026™</p>
-            <h1 className="text-4xl md:text-7xl font-headline font-bold tracking-tight leading-tight text-white">
+        <div className="bg-[#0051a3] text-white p-8 md:p-20">
+          <div className="container mx-auto max-w-5xl space-y-6 md:space-y-8">
+            <p className="font-bold text-sm md:text-lg text-white/90 uppercase tracking-widest">ONE CUP ELITE 2026™</p>
+            <h1 className="text-3xl md:text-7xl font-headline font-bold tracking-tight leading-tight text-white">
               {heroTitle}
             </h1>
             
-            <div className="pt-6">
+            <div className="pt-4 md:pt-6">
                <Link href="/tournaments">
-                 <Button className="h-16 bg-white text-[#0051a3] hover:bg-white/90 rounded-full font-bold text-lg px-10 shadow-2xl transition-transform hover:scale-105">
+                 <Button className="h-12 md:h-16 bg-white text-[#0051a3] hover:bg-white/90 rounded-full font-bold text-sm md:text-lg px-8 md:px-10 shadow-2xl transition-transform hover:scale-105">
                     11 juin - 19 juillet 2026
                  </Button>
                </Link>
@@ -94,30 +94,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-24 bg-white">
+      {/* Features Grid - Responsive optimization */}
+      <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div className="space-y-6 group">
-              <div className="w-16 h-16 bg-[#0051a3]/10 rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Target className="w-8 h-8 text-[#0051a3] group-hover:text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
+            <div className="space-y-4 md:space-y-6 group">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-[#0051a3]/10 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Target className="w-6 h-6 md:w-8 md:h-8 text-[#0051a3] group-hover:text-white" />
               </div>
-              <h3 className="text-3xl font-headline font-black uppercase tracking-tighter">100%<br/><span className="text-[#0051a3]">ÉQUITÉ</span></h3>
-              <p className="text-muted-foreground font-medium text-lg">Un règlement strict pour garantir la justice sportive à chaque match.</p>
+              <h3 className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">100%<br/><span className="text-[#0051a3]">ÉQUITÉ</span></h3>
+              <p className="text-muted-foreground font-medium text-base md:text-lg">Un règlement strict pour garantir la justice sportive à chaque match.</p>
             </div>
-            <div className="space-y-6 group">
-              <div className="w-16 h-16 bg-[#0051a3]/10 rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Zap className="w-8 h-8 text-[#0051a3] group-hover:text-white" />
+            <div className="space-y-4 md:space-y-6 group">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-[#0051a3]/10 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Zap className="w-6 h-6 md:w-8 md:h-8 text-[#0051a3] group-hover:text-white" />
               </div>
-              <h3 className="text-3xl font-headline font-black uppercase tracking-tighter">LIVE<br/><span className="text-[#0051a3]">DATA</span></h3>
-              <p className="text-muted-foreground font-medium text-lg">Suivez les statistiques et les scores en temps réel sur tous vos écrans.</p>
+              <h3 className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">LIVE<br/><span className="text-[#0051a3]">DATA</span></h3>
+              <p className="text-muted-foreground font-medium text-base md:text-lg">Suivez les statistiques et les scores en temps réel sur tous vos écrans.</p>
             </div>
-            <div className="space-y-6 group">
-              <div className="w-16 h-16 bg-[#0051a3]/10 rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
-                <Star className="w-8 h-8 text-[#0051a3] group-hover:text-white" />
+            <div className="space-y-4 md:space-y-6 group">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-[#0051a3]/10 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-[#0051a3] transition-colors duration-500">
+                <Star className="w-6 h-6 md:w-8 md:h-8 text-[#0051a3] group-hover:text-white" />
               </div>
-              <h3 className="text-3xl font-headline font-black uppercase tracking-tighter">GLOBAL<br/><span className="text-[#0051a3]">REACH</span></h3>
-              <p className="text-muted-foreground font-medium text-lg">Une visibilité média sans précédent pour les talents émergents.</p>
+              <h3 className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">GLOBAL<br/><span className="text-[#0051a3]">REACH</span></h3>
+              <p className="text-muted-foreground font-medium text-base md:text-lg">Une visibilité média sans précédent pour les talents émergents.</p>
             </div>
           </div>
         </div>

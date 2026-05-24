@@ -44,14 +44,14 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-[100] w-full bg-[#0051a3] text-white">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="font-headline font-black text-3xl md:text-4xl tracking-tighter uppercase leading-none">
+          <span className="font-headline font-black text-2xl md:text-4xl tracking-tighter uppercase leading-none">
             ONE CUP
           </span>
         </Link>
 
-        {/* Desktop Nav Items (Centered or hidden depending on FIFA look) */}
+        {/* Desktop Nav Items */}
         <div className="hidden xl:flex items-center gap-2">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
@@ -68,25 +68,25 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Right Icons (Search, User, Menu) */}
-        <div className="flex items-center gap-2 md:gap-6">
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-10 h-10">
-            <Search className="w-5 h-5" />
+        {/* Right Icons */}
+        <div className="flex items-center gap-1 md:gap-6">
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-9 h-9 md:w-10 md:h-10">
+            <Search className="w-4 h-4 md:w-5 h-5" />
           </Button>
           
           {user ? (
-            <Avatar className="w-8 h-8 md:w-10 md:h-10 border border-white/20 cursor-pointer" onClick={() => auth && signOut(auth)}>
+            <Avatar className="w-7 h-7 md:w-10 md:h-10 border border-white/20 cursor-pointer" onClick={() => auth && signOut(auth)}>
               <AvatarImage src={user.photoURL || ""} />
-              <AvatarFallback className="bg-white/10 text-[10px]">{user.displayName?.[0]}</AvatarFallback>
+              <AvatarFallback className="bg-white/10 text-[9px]">{user.displayName?.[0]}</AvatarFallback>
             </Avatar>
           ) : (
-            <Button variant="ghost" size="icon" onClick={handleLogin} className="text-white hover:bg-white/10 rounded-full w-10 h-10">
-              <User className="w-6 h-6" />
+            <Button variant="ghost" size="icon" onClick={handleLogin} className="text-white hover:bg-white/10 rounded-full w-9 h-9 md:w-10 md:h-10">
+              <User className="w-5 h-5 md:w-6 h-6" />
             </Button>
           )}
           
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-10 h-10" onClick={() => setIsOpen(true)}>
-            <Menu className="w-7 h-7" />
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full w-9 h-9 md:w-10 md:h-10" onClick={() => setIsOpen(true)}>
+            <Menu className="w-6 h-6 md:w-7 h-7" />
           </Button>
         </div>
       </div>
@@ -110,7 +110,7 @@ export function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between py-6 border-b border-white/10 group"
                 >
-                  <span className="text-3xl font-black uppercase tracking-tighter">
+                  <span className="text-2xl md:text-3xl font-black uppercase tracking-tighter">
                     {item.name}
                   </span>
                   <Plus className="w-6 h-6 text-white/40" />
@@ -119,7 +119,7 @@ export function Navbar() {
             </div>
 
             <div className="mt-auto space-y-6 pb-12">
-               <Button onClick={() => { handleLogin(); setIsOpen(false); }} className="w-full h-16 bg-white text-[#0051a3] font-black uppercase tracking-widest rounded-full hover:bg-white/90 shadow-xl">
+               <Button onClick={() => { handleLogin(); setIsOpen(false); }} className="w-full h-14 md:h-16 bg-white text-[#0051a3] font-black uppercase tracking-widest rounded-full hover:bg-white/90 shadow-xl">
                  {user ? "MON COMPTE" : "CONNEXION"}
                </Button>
             </div>
