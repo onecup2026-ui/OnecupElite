@@ -5,7 +5,8 @@ import { useMemo, useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
   Trophy, Calendar, MapPin, ArrowLeft, Loader2, 
-  AlertCircle, ShieldCheck, Info, Share2, Play, Medal, CheckCircle2
+  AlertCircle, ShieldCheck, Info, Share2, Play, Medal, CheckCircle2,
+  Clock, MapPinned
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -110,7 +111,7 @@ export default function TournamentDetailPage() {
       navigator.share(shareData).catch((err) => console.log('Erreur de partage:', err));
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Lien copié !", description: "Le lien du tournoi a été copié dans votre presse-papiers." });
+      toast({ title: "Lien copié !", description: "Le lien du tournoi a été copié." });
     }
   };
 
@@ -122,198 +123,211 @@ export default function TournamentDetailPage() {
   };
 
   if (loadingTournament) return <div className="py-24 text-center"><Loader2 className="w-12 h-12 animate-spin mx-auto text-primary" /></div>;
-  if (!tournament) return <div className="py-24 text-center">Tournoi introuvable ou supprimé.</div>;
+  if (!tournament) return <div className="py-24 text-center">Tournoi introuvable.</div>;
 
   return (
-    <div className="bg-background min-h-screen pb-20">
-      <section className="relative h-[60vh] min-h-[500px] flex items-end overflow-hidden">
+    <div className="bg-background min-h-screen">
+      {/* Hero Section - Plus compacte et mieux équilibrée */}
+      <section className="relative h-[45vh] min-h-[400px] flex items-end">
         <div className="absolute inset-0 z-0">
           <Image 
             src={tournament.imageUrl || "https://picsum.photos/seed/onecup/1920/1080"} 
             alt={tournament.name} 
             fill 
-            className="object-cover opacity-70"
+            className="object-cover opacity-60"
             priority
-            data-ai-hint="stadium grass"
+            data-ai-hint="stadium ground"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
         
-        <div className="container mx-auto px-4 relative z-10 pb-16 space-y-8">
-          <Link href="/tournaments">
-            <Button variant="outline" size="sm" className="gap-2 bg-background/50 backdrop-blur-xl border-white/20 text-foreground font-bold uppercase text-[10px] rounded-full px-6 h-10 hover:bg-white/20 transition-all">
-              <ArrowLeft className="w-4 h-4" /> Voir tous les tournois
-            </Button>
-          </Link>
-          
-          <div className="space-y-4 text-center md:text-left">
-            <Badge className={cn(
-              "uppercase font-black px-6 py-2 text-xs rounded-full shadow-lg",
-              status === "Ouvert" ? "bg-green-500 animate-pulse" : "bg-destructive"
-            )}>
-              {status === "Ouvert" ? "Inscriptions Ouvertes" : "Tournoi Complet"}
-            </Badge>
-            <h1 className="text-5xl md:text-8xl font-headline font-bold text-foreground uppercase tracking-tighter leading-[0.9] drop-shadow-2xl">
-              {tournament.name}
-            </h1>
+        <div className="container mx-auto px-4 relative z-10 pb-12">
+          <div className="space-y-6">
+            <Link href="/tournaments">
+              <Button variant="ghost" size="sm" className="gap-2 text-white hover:bg-white/10 rounded-full font-bold uppercase text-[10px] tracking-widest h-9 border border-white/20">
+                <ArrowLeft className="w-4 h-4" /> Tournois
+              </Button>
+            </Link>
+            <div className="space-y-3">
+              <Badge className={cn(
+                "uppercase font-bold px-4 py-1 text-[10px] rounded-full",
+                status === "Ouvert" ? "bg-green-500" : "bg-destructive"
+              )}>
+                {status === "Ouvert" ? "Inscriptions Ouvertes" : "Complet"}
+              </Badge>
+              <h1 className="text-4xl md:text-7xl font-headline font-black text-white uppercase tracking-tighter leading-none">
+                {tournament.name}
+              </h1>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          <div className="lg:col-span-8 space-y-16">
-            <section className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
-                   <Info className="w-6 h-6" />
-                </div>
-                <h2 className="text-4xl font-headline font-bold uppercase tracking-tighter">L'ÉVÉNEMENT EN DÉTAILS</h2>
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Main Content */}
+          <div className="lg:col-span-7 space-y-12">
+            <div className="space-y-8">
+              <div className="flex items-center gap-3">
+                <div className="h-1 bg-primary w-12 rounded-full" />
+                <h2 className="text-2xl font-headline font-black uppercase tracking-tight">Présentation</h2>
               </div>
-              <div className="text-muted-foreground text-xl leading-relaxed bg-card/50 p-10 rounded-[3rem] border border-white/5 shadow-inner">
-                <div className="whitespace-pre-line font-medium">{tournament.description || "Un tournoi d'exception pour révéler les nouveaux talents de la RDC."}</div>
+              <div className="text-muted-foreground text-lg leading-relaxed font-medium">
+                {tournament.description || "Un tournoi d'exception pour révéler les nouveaux talents."}
               </div>
-            </section>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-               <Card className="rounded-[2.5rem] border-white/5 bg-primary/5 p-8 space-y-6 overflow-hidden relative group shadow-sm">
-                 <h4 className="text-sm font-bold uppercase tracking-widest text-primary">Prestige & Récompenses</h4>
-                 <div className="space-y-6 relative z-10">
-                    <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-500"><Trophy className="w-6 h-6" /></div>
-                      <div><p className="font-black uppercase text-sm">🥇 Champion OneCup</p><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Trophée Élite + Prime</p></div>
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 rounded-xl bg-slate-300/20 flex items-center justify-center text-slate-400"><Medal className="w-6 h-6" /></div>
-                      <div><p className="font-black uppercase text-sm">🥈 Vice-Champion</p><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Médailles + Prime</p></div>
-                    </div>
-                 </div>
-               </Card>
-               
-               <Card className="rounded-[2.5rem] border-white/5 p-8 space-y-6 bg-card/50 shadow-xl">
-                 <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Localisation & Timing</h4>
-                 <div className="space-y-6">
-                    <div className="flex items-start gap-5">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0"><MapPin className="w-6 h-6" /></div>
-                      <div className="space-y-1">
-                        <span className="text-sm font-black uppercase block tracking-tighter">{tournament.locationStade || "OneCup Arena"}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase block font-bold tracking-widest leading-relaxed">
-                          {tournament.locationCommune} {tournament.locationCommune && "•"} {tournament.locationAdresse || "Kinshasa, RDC"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Calendar className="w-6 h-6" /></div>
-                      <span className="text-sm font-black uppercase tracking-tighter">
-                        {tournament.startDate ? new Date(tournament.startDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : "JUILLET 2026"}
-                      </span>
-                    </div>
-                 </div>
-               </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="border-none bg-muted/30 p-8 rounded-3xl space-y-6">
+                <div className="flex items-center gap-3 text-primary">
+                  <Trophy className="w-6 h-6" />
+                  <h3 className="font-bold uppercase tracking-tight">Récompenses</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs font-black bg-primary text-white w-6 h-6 flex items-center justify-center rounded-lg">1</span>
+                    <p className="text-sm font-bold uppercase">Champion OneCup : Trophée + Prime</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs font-black bg-muted w-6 h-6 flex items-center justify-center rounded-lg">2</span>
+                    <p className="text-sm font-bold uppercase">Finaliste : Médailles + Prime</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="border-none bg-muted/30 p-8 rounded-3xl space-y-6">
+                <div className="flex items-center gap-3 text-primary">
+                  <MapPinned className="w-6 h-6" />
+                  <h3 className="font-bold uppercase tracking-tight">Infos Pratiques</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 text-sm font-medium">
+                    <MapPin className="w-4 h-4 text-primary" />
+                    <span>{tournament.locationStade} • {tournament.locationCommune}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm font-medium">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span>{tournament.startDate ? new Date(tournament.startDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : "À venir"}</span>
+                  </div>
+                </div>
+              </Card>
             </div>
 
             {tournament.teaserVideoUrl && (
-              <section className="space-y-8">
-                 <h2 className="text-4xl font-headline font-bold uppercase tracking-tighter">TEASER OFFICIEL</h2>
+              <div className="space-y-6">
+                 <h2 className="text-2xl font-headline font-black uppercase tracking-tight">Vidéos</h2>
                  <div 
-                  className="aspect-video bg-muted rounded-[3rem] flex items-center justify-center border border-white/10 group cursor-pointer overflow-hidden relative shadow-2xl"
+                  className="aspect-video bg-muted rounded-3xl flex items-center justify-center border group cursor-pointer overflow-hidden relative"
                   onClick={() => setIsVideoOpen(true)}
                  >
                     <Image 
                       src={tournament.imageUrl || "https://picsum.photos/seed/teaser/1200/600"} 
                       fill 
-                      alt="Teaser Preview" 
-                      className="object-cover opacity-60 group-hover:scale-110 transition-transform duration-[1.5s]" 
-                      data-ai-hint="stadium crowd"
+                      alt="Teaser" 
+                      className="object-cover opacity-50 group-hover:scale-105 transition-transform duration-700" 
                     />
-                    <div className="relative z-20 flex flex-col items-center gap-6">
-                      <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center glow-blue shadow-2xl">
-                        <Play className="w-10 h-10 text-white fill-current" />
+                    <div className="relative z-10 flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white shadow-xl group-hover:scale-110 transition-transform">
+                        <Play className="w-7 h-7 fill-current" />
                       </div>
-                      <p className="font-black uppercase tracking-[0.3em] text-white text-xs animate-pulse">Lancer le Teaser Vidéo</p>
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Voir le teaser</span>
                     </div>
                  </div>
-              </section>
+              </div>
             )}
           </div>
 
-          <div className="lg:col-span-4">
-            <div className="sticky top-24 space-y-8">
-              <Card className="rounded-[3rem] border-primary/20 shadow-2xl overflow-hidden bg-card/80 backdrop-blur-3xl border-2">
-                <CardHeader className="bg-primary p-8 text-center">
-                  <h3 className="text-white uppercase font-black tracking-tighter text-2xl">REJOINDRE L'ÉLITE</h3>
-                </CardHeader>
-                <CardContent className="p-10 space-y-8">
-                  {isFull ? (
-                    <div className="text-center py-10 space-y-6">
-                      <div className="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center mx-auto text-destructive">
-                        <AlertCircle className="w-10 h-10" />
-                      </div>
-                      <div className="space-y-2">
-                        <p className="font-black uppercase text-destructive text-xl tracking-tighter">Tournoi complet</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Toutes les places ont été réservées.</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleLoginAndSubmit} className="space-y-6">
-                      <div className="space-y-2">
-                        <Label className="text-[10px] uppercase font-black text-primary tracking-widest">Nom de l'équipe</Label>
-                        <Input required placeholder="Ex: AS Elite Kinshasa" className="h-14 rounded-2xl bg-background/50 border-primary/20 font-bold" value={formData.teamName} onChange={e => setFormData({...formData, teamName: e.target.value})} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-[10px] uppercase font-black text-primary tracking-widest">Capitaine responsable</Label>
-                        <Input required placeholder="Votre nom complet" className="h-14 rounded-2xl bg-background/50" value={formData.captainName} onChange={e => setFormData({...formData, captainName: e.target.value})} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-[10px] uppercase font-black text-primary tracking-widest">Numéro WhatsApp</Label>
-                        <Input required type="tel" placeholder="+243 ..." className="h-14 rounded-2xl bg-background/50" value={formData.contactPhone} onChange={e => setFormData({...formData, contactPhone: e.target.value})} />
-                      </div>
-
-                      <div className="flex items-start space-x-3 bg-muted/30 p-4 rounded-2xl border border-white/5">
-                        <Checkbox 
-                          id="rules" 
-                          checked={agreedToRules} 
-                          onCheckedChange={(checked) => setAgreedToRules(!!checked)} 
-                          className="mt-1 border-primary"
-                        />
-                        <label htmlFor="rules" className="text-[9px] font-bold leading-tight uppercase text-muted-foreground cursor-pointer">
-                          Je certifie avoir pris connaissance du règlement officiel et m'engage à respecter les valeurs de fair-play de la OneCup.
-                        </label>
-                      </div>
-                      
-                      <Button 
-                        type="submit" 
-                        disabled={isSubmitting} 
-                        className="w-full h-20 uppercase font-black text-xl bg-primary glow-blue rounded-[2rem] shadow-xl"
-                      >
-                        {isSubmitting ? <Loader2 className="w-8 h-8 animate-spin" /> : user ? "Valider mon inscription" : "Se connecter pour s'inscrire"}
-                      </Button>
-                    </form>
-                  )}
-                  
-                  <div className="pt-6 border-t border-white/10 flex gap-3">
-                     <Button variant="outline" onClick={handleShare} className="w-full h-12 rounded-2xl uppercase font-black text-[10px] tracking-widest border-white/10 gap-2 hover:bg-primary/10 hover:text-primary transition-all">
-                       <Share2 className="w-4 h-4" /> Partager l'événement
-                     </Button>
+          {/* Sidebar Form - Plus aérée et plus "premium" */}
+          <div className="lg:col-span-5">
+            <Card className="sticky top-24 border-none shadow-2xl rounded-3xl overflow-hidden">
+              <div className="bg-primary p-6 text-center">
+                <h3 className="text-white uppercase font-black tracking-tight text-xl">S'inscrire au tournoi</h3>
+              </div>
+              <CardContent className="p-8 space-y-8">
+                {isFull ? (
+                  <div className="text-center py-8 space-y-4">
+                    <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
+                    <p className="font-bold uppercase text-destructive">Complet</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest">Les inscriptions sont closes.</p>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                ) : (
+                  <form onSubmit={handleLoginAndSubmit} className="space-y-6">
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest ml-1">Nom de l'équipe</Label>
+                      <Input 
+                        required 
+                        placeholder="Ex: AS Elite" 
+                        className="h-12 rounded-xl bg-muted/50 border-none focus-visible:ring-primary/20" 
+                        value={formData.teamName} 
+                        onChange={e => setFormData({...formData, teamName: e.target.value})} 
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest ml-1">Capitaine</Label>
+                      <Input 
+                        required 
+                        placeholder="Votre nom complet" 
+                        className="h-12 rounded-xl bg-muted/50 border-none focus-visible:ring-primary/20" 
+                        value={formData.captainName} 
+                        onChange={e => setFormData({...formData, captainName: e.target.value})} 
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest ml-1">Numéro WhatsApp</Label>
+                      <Input 
+                        required 
+                        type="tel" 
+                        placeholder="+243 ..." 
+                        className="h-12 rounded-xl bg-muted/50 border-none focus-visible:ring-primary/20" 
+                        value={formData.contactPhone} 
+                        onChange={e => setFormData({...formData, contactPhone: e.target.value})} 
+                      />
+                    </div>
+
+                    <div className="flex items-start space-x-3 p-4 rounded-xl border bg-muted/20">
+                      <Checkbox 
+                        id="rules" 
+                        checked={agreedToRules} 
+                        onCheckedChange={(checked) => setAgreedToRules(!!checked)} 
+                        className="mt-1"
+                      />
+                      <label htmlFor="rules" className="text-[9px] font-bold leading-tight uppercase text-muted-foreground cursor-pointer">
+                        J'accepte le règlement officiel et les conditions de participation.
+                      </label>
+                    </div>
+                    
+                    <Button 
+                      type="submit" 
+                      disabled={isSubmitting} 
+                      className="w-full h-14 uppercase font-black text-sm bg-primary hover:bg-primary/90 rounded-xl shadow-lg transition-all"
+                    >
+                      {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : user ? "Confirmer l'inscription" : "Connexion & Inscription"}
+                    </Button>
+                  </form>
+                )}
+                
+                <div className="pt-4 border-t flex flex-col gap-3">
+                   <Button variant="ghost" onClick={handleShare} className="w-full h-10 rounded-xl uppercase font-bold text-[10px] tracking-widest gap-2 hover:bg-muted">
+                     <Share2 className="w-3 h-3" /> Partager ce tournoi
+                   </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
 
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="max-w-6xl p-0 overflow-hidden bg-black border-none ring-0">
+        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-none">
           <DialogHeader className="sr-only">
             <DialogTitle>Teaser - {tournament.name}</DialogTitle>
-            <DialogDescription>Vidéo de présentation du tournoi.</DialogDescription>
+            <DialogDescription>Vidéo de présentation.</DialogDescription>
           </DialogHeader>
           <div className="aspect-video w-full">
             {tournament.teaserVideoUrl && (
               <iframe
                 src={getYoutubeEmbedUrl(tournament.teaserVideoUrl) + "?autoplay=1&modestbranding=1&rel=0"}
-                title="Tournament Teaser"
+                title="Teaser"
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
