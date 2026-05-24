@@ -1,10 +1,9 @@
-
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Target, Zap, Star, Loader2, Trophy, Ticket, ExternalLink, ShieldCheck, ChevronRight, Calendar, MapPin, Users, Award, TrendingUp } from "lucide-react";
+import { Target, Zap, Star, Loader2, Trophy, Ticket, ExternalLink, ShieldCheck, ChevronRight, Calendar, MapPin, Users, Award, TrendingUp, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useDoc, useFirestore, useCollection } from "@/firebase";
@@ -136,37 +135,48 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REWARDS & REGISTRATION SUMMARY */}
-      <section className="pt-32 pb-8 bg-white border-b border-slate-50">
+      {/* REWARDS & PRIZE SUMMARY - ULTRA ESTHÉTIQUE */}
+      <section className="pt-32 pb-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link href="/rewards" className="flex items-center gap-3 group">
-              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center group-hover:bg-[#0051a3] transition-colors">
-                <Trophy className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3] group-hover:text-white" />
-              </div>
-              <div>
-                <h3 className="text-[10px] font-headline font-black uppercase tracking-widest">CAGNOTTE RECORD</h3>
-                <p className="text-[9px] text-muted-foreground font-medium">10M FC à gagner.</p>
-              </div>
-            </Link>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center">
-                <Users className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3]" />
-              </div>
-              <div>
-                <h3 className="text-[10px] font-headline font-black uppercase tracking-widest">INSCRIPTIONS</h3>
-                <p className="text-[9px] text-muted-foreground font-medium">{stats.teams} équipes inscrites.</p>
-              </div>
-            </div>
-            <Link href="/rewards" className="flex items-center gap-3 group">
-              <div className="w-6 h-6 md:w-8 md:h-8 shrink-0 bg-[#0051a3]/10 rounded-lg flex items-center justify-center group-hover:bg-[#0051a3] transition-colors">
-                <Award className="w-3 h-3 md:w-4 md:h-4 text-[#0051a3] group-hover:text-white" />
-              </div>
-              <div>
-                <h3 className="text-[10px] font-headline font-black uppercase tracking-widest">PRIX ELITE</h3>
-                <p className="text-[9px] text-muted-foreground font-medium">Récompenses exclusives.</p>
-              </div>
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+             <div className="space-y-8">
+                <Badge variant="outline" className="border-primary text-primary px-4 py-1 text-[10px] font-black uppercase tracking-[0.4em]">ENJEUX FINAUX</Badge>
+                <div className="space-y-2">
+                  <h2 className="text-5xl md:text-8xl font-headline font-black text-slate-900 leading-none tracking-tighter uppercase">
+                    LA GRANDE <br/><span className="text-primary">CAGNOTTE.</span>
+                  </h2>
+                  <p className="text-2xl md:text-4xl font-headline font-bold text-slate-400 uppercase tracking-tight">
+                    Dix Millions de Francs Congolais
+                  </p>
+                </div>
+                <div className="flex gap-12 pt-4">
+                   <div className="space-y-1">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Inscriptions</p>
+                      <p className="text-3xl font-black text-slate-900">{stats.teams} <span className="text-sm opacity-40">Equipes</span></p>
+                   </div>
+                   <div className="space-y-1">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prestige</p>
+                      <p className="text-3xl font-black text-slate-900">100% <span className="text-sm opacity-40">Elite</span></p>
+                   </div>
+                </div>
+             </div>
+
+             <div className="relative group cursor-pointer" onClick={() => window.location.href='/rewards'}>
+                <div className="absolute -inset-4 bg-primary/5 rounded-[3rem] blur-2xl group-hover:bg-primary/10 transition-all" />
+                <Card className="relative bg-slate-900 text-white rounded-[3rem] p-12 border-none shadow-2xl overflow-hidden">
+                   <Trophy className="absolute top-10 right-10 w-32 h-32 text-white/5 -rotate-12" />
+                   <div className="space-y-6 relative z-10">
+                      <Badge className="bg-primary text-white font-black px-4 py-1 rounded-lg">LIVE PRIZE</Badge>
+                      <p className="text-7xl md:text-8xl font-headline font-black tracking-tighter leading-none">
+                        10<span className="text-primary">M</span>
+                      </p>
+                      <p className="text-sm font-black uppercase tracking-[0.3em] text-white/60">Francs Congolais en Jeu</p>
+                      <Button className="bg-white text-slate-900 hover:bg-slate-100 rounded-2xl h-14 px-8 font-black uppercase text-xs tracking-widest gap-2">
+                         Détails des Gains <TrendingUp className="w-4 h-4" />
+                      </Button>
+                   </div>
+                </Card>
+             </div>
           </div>
         </div>
       </section>
