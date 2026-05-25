@@ -2,44 +2,40 @@
 
 Une plateforme premium inspirée de l'excellence sportive mondiale, conçue pour la gestion des tournois ONECUP en RDC.
 
-## 🚀 Déploiement sur un nouveau compte GitHub
+## 🚀 Déploiement & Configuration
 
-Si vous souhaitez lier ce projet à un nouveau compte GitHub, suivez ces étapes dans votre terminal :
+### 1. Domaines Autorisés (Firebase Auth)
+Si vous voyez l'erreur `auth/unauthorized-domain`, vous devez autoriser votre URL de développement :
+1. Allez sur la [Console Firebase](https://console.firebase.google.com/).
+2. Accédez à **Authentication** > **Settings** > **Authorized domains**.
+3. Ajoutez le domaine de votre environnement actuel (ex: `*.cloudworkstations.dev`).
 
-1. **Supprimer l'ancienne liaison Git** (localement) :
+### 2. Publication sur GitHub
+Pour lier ce projet à votre compte GitHub (`christianrwemera7-max`) :
+
+1. **Initialiser Git** :
    ```bash
    rm -rf .git
    git init
    ```
 
-2. **Ajouter tous les fichiers** :
+2. **Ajouter et Commiter** :
    ```bash
    git add .
+   git commit -m "Initial commit - ONECUP Elite Platform"
    ```
 
-3. **Créer le premier commit** :
+3. **Lier au dépôt** :
    ```bash
-   git commit -m "Initial commit - ONECUP Elite New Era"
-   ```
-
-4. **Lier à votre NOUVEAU dépôt GitHub** :
-   ```bash
-   git remote add origin https://github.com/VOTRE_NOUVEL_UTILISATEUR/VOTRE_DEPOT.git
-   ```
-
-5. **Pousser votre code** :
-   ```bash
+   git remote add origin https://github.com/christianrwemera7-max/onecup.git
    git branch -M main
    git push -u origin main
    ```
 
-## ⚡️ Déploiement sur Vercel
-
-1. Rendez-vous sur [Vercel](https://vercel.com).
-2. Cliquez sur **"Add New"** > **"Project"**.
-3. Importez votre nouveau dépôt GitHub.
-4. **Important** : Ajoutez vos variables d'environnement Firebase (si nécessaire) dans les paramètres du projet sur Vercel.
-5. Cliquez sur **"Deploy"**.
+## ⚡️ Déploiement Vercel
+1. Importez votre dépôt GitHub sur Vercel.
+2. Configurez les variables d'environnement si nécessaire.
+3. Déployez.
 
 ---
 © 2026 ONE CUP Platform. Élite • Prestige • Performance.
