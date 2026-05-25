@@ -48,7 +48,7 @@ export default function NewsPage() {
               src={featuredArticle.imageUrl || "https://picsum.photos/seed/news-hero/1600/900"}
               alt={featuredArticle.title}
               fill
-              className="object-cover opacity-60 transition-transform duration-[2s] group-hover:scale-105"
+              className="object-cover opacity-60 transition-transform duration-[2000ms] group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 p-8 md:p-16 space-y-6 max-w-4xl">

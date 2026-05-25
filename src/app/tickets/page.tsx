@@ -29,7 +29,7 @@ export default function TicketsPage() {
             src="https://picsum.photos/seed/onecup-poster/800/1000"
             alt="Affiche Officielle OneCup 2026"
             fill
-            className="object-cover transition-transform duration-[3s] group-hover:scale-110"
+            className="object-cover transition-transform duration-[3000ms] group-hover:scale-110"
             priority
             data-ai-hint="sports poster"
           />

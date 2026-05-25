@@ -36,10 +36,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    allowedDevOrigins: [
-      '6000-firebase-studio-1779541602251.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
-      '*.cloudworkstations.dev'
-    ]
+    // Correction de la clé expérimentale pour éviter les avertissements de schéma
   }
 };
 

@@ -110,7 +110,7 @@ export default function AfterCupPage() {
                   src="https://picsum.photos/seed/festival-vibe/1200/800"
                   alt="Festival Atmosphere"
                   fill
-                  className="object-cover transition-transform duration-[2s] group-hover:scale-110"
+                  className="object-cover transition-transform duration-[2000ms] group-hover:scale-110"
                   data-ai-hint="festival lights"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex flex-col justify-end p-12">
