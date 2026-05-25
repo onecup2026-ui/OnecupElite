@@ -2,16 +2,9 @@
 
 Une plateforme premium inspirée de l'excellence sportive mondiale, conçue pour la gestion des tournois ONECUP en RDC.
 
-## 🚀 Déploiement & Configuration
+## 🚀 Publication sur GitHub
 
-### 1. Domaines Autorisés (Firebase Auth)
-Si vous voyez l'erreur `auth/unauthorized-domain`, vous devez autoriser votre URL de développement :
-1. Allez sur la [Console Firebase](https://console.firebase.google.com/).
-2. Accédez à **Authentication** > **Settings** > **Authorized domains**.
-3. Ajoutez le domaine de votre environnement actuel (ex: `*.cloudworkstations.dev`).
-
-### 2. Publication sur GitHub
-Pour lier ce projet à votre compte GitHub (`christianrwemera7-max`) :
+Pour publier ce projet sur votre compte GitHub (`christianrwemera7-max`) :
 
 1. **Initialiser Git** :
    ```bash
@@ -32,10 +25,15 @@ Pour lier ce projet à votre compte GitHub (`christianrwemera7-max`) :
    git push -u origin main
    ```
 
-## ⚡️ Déploiement Vercel
-1. Importez votre dépôt GitHub sur Vercel.
-2. Configurez les variables d'environnement si nécessaire.
-3. Déployez.
+## 🛠 Configuration Firebase (Important)
+Si vous rencontrez l'erreur `auth/unauthorized-domain` lors de l'authentification :
+1. Allez sur la [Console Firebase](https://console.firebase.google.com/).
+2. Accédez à **Authentication** > **Settings** > **Authorized domains**.
+3. Ajoutez l'URL de votre environnement actuel (ex: `*.cloudworkstations.dev`).
+
+## ⚡️ Déploiement
+Cette application est optimisée pour un déploiement sur **Vercel** ou **Firebase App Hosting**.
+N'oubliez pas de configurer la variable d'environnement `GEMINI_API_KEY` pour les fonctionnalités d'IA.
 
 ---
 © 2026 ONE CUP Platform. Élite • Prestige • Performance.
